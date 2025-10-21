@@ -1,0 +1,156 @@
+/* src/features/appHeader/AppHeader.module.css */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-2) var(--spacing-4);
+  height: 64px;
+  background-color: var(--surface-bg-primary-solid);
+  color: var(--control-fg-on-solid);
+  flex-shrink: 0;
+  gap: var(--spacing-4);
+}
+
+.leftGroup, .rightGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.leftGroup {
+  flex-grow: 1;
+  min-width: 0; /* Allow elements to shrink */
+}
+
+.rightGroup {
+  flex-shrink: 0;
+}
+
+.appTitle {
+  font-weight: 600;
+  font-size: 1.1em;
+  white-space: nowrap;
+}
+
+.userInfo, .dateInfo {
+  font-size: 0.9em;
+  white-space: nowrap;
+  color: var(--surface-fg-secondary_on_brand);
+}
+
+.dateInfo {
+  margin-left: var(--spacing-2);
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--spacing-2);
+  color: var(--control-fg-on-solid);
+  width: 38px;
+  height: 38px;
+  transition: background-color 0.2s;
+}
+
+.actionButton:hover:not(:disabled) {
+  background-color: var(--control-bg-on-solid-hover);
+}
+
+.actionButton:active:not(:disabled) {
+  background-color: var(--control-bg-on-solid-pressed);
+}
+
+.searchContainer {
+  display: none;
+  align-items: center;
+  background-color: var(--surface-bg-primary);
+  border-radius: 6px;
+  padding: 0 var(--spacing-2);
+  height: 38px;
+  min-width: 200px;
+  flex-shrink: 1;
+}
+
+.searchIcon {
+  color: var(--surface-fg-tertiary);
+  font-size: 22px;
+}
+
+.searchInput {
+  all: unset;
+  font-family: var(--font-family-sans);
+  font-size: 0.9em;
+  color: var(--surface-fg-primary);
+  width: 100%;
+  padding: var(--spacing-2);
+}
+
+.searchInput::placeholder {
+  color: var(--control-fg-placeholder);
+}
+
+.languagePickerContainer {
+  display: none;
+  width: 120px;
+}
+
+.casePickerContainer {
+  display: none;
+  width: 200px;
+}
+
+.departmentInfo {
+  display: none;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: 0.9em;
+  color: var(--surface-fg-secondary_on_brand);
+}
+
+.departmentInfo .material-symbols-rounded {
+  font-size: 20px;
+}
+
+.separator {
+  width: 1px;
+  height: 24px;
+  background-color: var(--surface-fg-quaternary_on_brand);
+  margin: 0 var(--spacing-2);
+}
+
+/* --- Responsive Breakpoints --- */
+
+/* FIX: Use CSS variable for breakpoint to prevent syntax issues and maintain consistency. */
+@media (min-width: var(--breakpoint-mobile)) {
+  .header {
+    padding: var(--spacing-2) var(--spacing-6);
+  }
+  .leftGroup > .actionButton:first-child[aria-label="Open menu"] {
+    display: none;
+  }
+  .searchContainer, .casePickerContainer, .departmentInfo {
+    display: flex;
+  }
+  .userInfo {
+    display: block;
+  }
+  .leftGroup > .actionButton:not(:first-child), .dateInfo, .appTitle, .languagePickerContainer {
+    display: none;
+  }
+}
+
+@media (min-width: 1200px) {
+  .leftGroup > .actionButton, .dateInfo, .appTitle, .languagePickerContainer {
+    display: inline-flex;
+  }
+  .userInfo {
+    margin-left: var(--spacing-2);
+  }
+  .appTitle {
+    margin-left: auto;
+  }
+}

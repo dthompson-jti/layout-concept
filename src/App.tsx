@@ -3,10 +3,12 @@
 import { CaseDashboard } from './features/caseDashboard/CaseDashboard';
 import styles from './App.module.css';
 import { ToastContainer } from './components/ToastContainer';
+import { AppHeader } from './features/appHeader/AppHeader';
 
 function App() {
   return (
     <div className={styles.appContainer}>
+      <AppHeader />
       <main className={styles.appMain}>
         {/* CaseDashboard now provides its own header, so it's a direct child of main */}
         <CaseDashboard />
