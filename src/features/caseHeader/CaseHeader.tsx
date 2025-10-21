@@ -24,6 +24,10 @@ export const CaseHeader: React.FC<CaseHeaderProps> = ({ data }) => {
           <div className={styles.statusBadges}>
             <Badge variant="success">{data.status}</Badge>
             {data.isSealed && <Badge variant="warning">Case Sealed</Badge>}
+            {/* CHANGE: Render high-visibility tags here for mobile view, controlled by CSS */}
+            {data.tags.map(tag => tag.visibility === 'mobile' && (
+              <Tag key={`${tag.label}-mobile`} {...tag} inverted className={styles.mobileOnlyTag} />
+            ))}
           </div>
           <div className={styles.caseIdentifiers}>
             <span className={styles.caseNumber}>{data.caseNumber}</span>
@@ -83,7 +87,13 @@ export const CaseHeader: React.FC<CaseHeaderProps> = ({ data }) => {
       {/* Row 4: Tags */}
       <div className={styles.row4}>
         {data.tags.map((tag) => (
-          <Tag key={tag.label} {...tag} />
+          <Tag 
+            key={tag.label} 
+            {...tag}
+            // Conditionally apply inverted style and mobile visibility class
+            inverted={tag.visibility !== 'desktop'}
+            className={tag.visibility === 'mobile' ? styles.hideOnMobile : ''}
+          />
         ))}
       </div>
     </div>

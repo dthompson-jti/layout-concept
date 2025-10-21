@@ -25,6 +25,7 @@
 
 .statusBadges {
   display: flex;
+  flex-wrap: wrap; /* Allow badges to wrap if needed */
   gap: var(--spacing-2);
   flex-shrink: 0;
   padding-top: var(--spacing-1);
@@ -65,15 +66,18 @@
 }
 
 /* --- Row 2 & 3: Info Grids --- */
-.row2, .row3 {
+.row3 {
   display: grid;
   gap: var(--spacing-6);
 }
 
+/* CHANGE: Row 2 is now a flex container for left-alignment */
 .row2 {
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  padding-bottom: var(--spacing-4);
-  border-bottom: 1px solid var(--surface-border-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--spacing-6);
+  /* CHANGE: Removed border-bottom and padding-bottom */
 }
 
 .row3 {
@@ -91,6 +95,16 @@
   flex-wrap: wrap;
   gap: var(--spacing-2);
 }
+
+/* --- Responsive Tag Visibility --- */
+/* For the "Move tag to top row on mobile" feature */
+.mobileOnlyTag {
+  display: none; /* Hidden by default */
+}
+.hideOnMobile {
+  display: inline-flex; /* Shown by default */
+}
+
 
 /* --- Tablet and Desktop Layout --- */
 @media (min-width: 1200px) {
@@ -145,5 +159,13 @@
   /* Hide tertiary info on mobile */
   .row3 > div:nth-child(1) {
     display: none;
+  }
+
+  /* Logic for moving the high-vis tag on mobile */
+  .mobileOnlyTag {
+    display: inline-flex; /* Show the duplicated tag */
+  }
+  .hideOnMobile {
+    display: none; /* Hide the original tag */
   }
 }

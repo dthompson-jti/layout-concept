@@ -1,11 +1,13 @@
 /* src/features/caseHeader/Tag.module.css */
 .tag {
   display: none; /* Hidden by default, shown via visibility classes */
-  padding: var(--spacing-1) var(--spacing-2p5);
+  /* CHANGE: Increased padding for more breathing room */
+  padding: var(--spacing-1p5) var(--spacing-3);
   border-radius: 6px;
   font-size: 0.85em;
   font-weight: 500;
   white-space: nowrap;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 /* Color Variants */
@@ -23,6 +25,18 @@
   background-color: var(--primitives-grey-100, #F2F4F7);
   color: var(--primitives-grey-500, #717680);
 }
+
+/* CHANGE: Added inverted styles for high/med-vis tags */
+.orange[data-inverted="true"] {
+  background-color: var(--utility-orange-dark-400, #FF692E);
+  color: var(--surface-fg-white);
+}
+
+.blue[data-inverted="true"] {
+  background-color: var(--gray-blue-500, #4E5BA6);
+  color: var(--surface-fg-white);
+}
+
 
 /* Visibility Control */
 .mobile {
