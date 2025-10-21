@@ -10,6 +10,11 @@ export interface CaseInfo {
   department: string;
 }
 
+export interface Language {
+  value: string;
+  label: string;
+}
+
 export const mockUser: User = {
   name: 'Eleanor Vance',
 };
@@ -20,7 +25,7 @@ export const mockCaseList: CaseInfo[] = [
   { id: '25CVPI009876', name: 'Rodriguez vs. Statewide Insurance', department: 'Department 2B' },
 ];
 
-export const mockLanguages = [
+export const mockLanguages: Language[] = [
     { value: 'en', label: 'English' },
     { value: 'es', label: 'Español' },
 ];

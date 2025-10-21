@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Tooltip } from '../../components/Tooltip';
 import { Select, SelectItem } from '../../components/Select';
+// FIX: Updated the import path to reflect the file's new location in src/data.
 import { mockUser, mockCaseList, mockLanguages, CaseInfo, Language } from '../../data/appHeaderData';
 import styles from './AppHeader.module.css';
 
@@ -28,13 +29,12 @@ const ActionButton = ({ icon, label }: { icon: string; label: string }) => (
   </Tooltip>
 );
 
-// FIX: Added the 'export' keyword to make this component available for import.
 export const AppHeader = () => {
   const isMobile = useMediaQuery('(max-width: 767px)');
   const [currentCaseId, setCurrentCaseId] = useState(mockCaseList[0].id);
   const [currentLanguage, setCurrentLanguage] = useState(mockLanguages[0].value);
 
-  const currentCase = mockCaseList.find(c => c.id === currentCaseId) || mockCaseList[0];
+  const currentCase = mockCaseList.find((c: CaseInfo) => c.id === currentCaseId) || mockCaseList[0];
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'short',
     year: 'numeric',
