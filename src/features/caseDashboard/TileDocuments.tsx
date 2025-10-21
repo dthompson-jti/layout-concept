@@ -1,5 +1,5 @@
 // src/features/caseDashboard/TileDocuments.tsx
-import { useEffect, useState } from 'react'; // FIX: Removed unused 'useMemo' import.
+import { useEffect, useState, useCallback } from 'react'; // FIX: Imported useCallback
 import { useAtom } from 'jotai';
 import { SortingState, getCoreRowModel, getSortedRowModel, useReactTable, createColumnHelper, getFilteredRowModel } from '@tanstack/react-table';
 import { tileViewModesAtom, TileContentViewMode } from './dashboardState';
@@ -33,7 +33,7 @@ export const TileDocuments = ({ tileId, setHeaderControls }: TileDocumentsProps)
   const [viewModes, setViewModes] = useAtom(tileViewModesAtom);
   const viewMode = viewModes[tileId] || 'table';
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [globalFilter, setGlobalFilter] = useState(''); // State for search/filter
+  const [globalFilter, setGlobalFilter] = useState('');
 
   const table = useReactTable({
     data: documentsData,
@@ -48,9 +48,12 @@ export const TileDocuments = ({ tileId, setHeaderControls }: TileDocumentsProps)
 
   const { rows } = table.getRowModel();
 
-  const setViewMode = (mode: TileContentViewMode) => {
+  // FIX: Wrap the setViewMode function definition in useCallback.
+  // This memoizes the function, ensuring its reference is stable across re-renders
+  // and satisfying the exhaustive-deps lint rule.
+  const setViewMode = useCallback((mode: TileContentViewMode) => {
     setViewModes(prev => ({ ...prev, [tileId]: mode }));
-  };
+  }, [setViewModes, tileId]);
   
   useEffect(() => {
     const viewToggleOptions = [

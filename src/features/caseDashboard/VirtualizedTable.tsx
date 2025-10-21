@@ -15,10 +15,10 @@ interface VirtualizedTableProps<T extends object> {
 }
 
 export const VirtualizedTable = <T extends object>({ tableInstance: table }: VirtualizedTableProps<T>) => {
-  // FIX: Provide an explicit type for globalFilter to prevent unsafe assignment.
+  // FIX: Disable the linter rule for this specific line. This is the correct location for the override,
+  // as `table.getState().globalFilter` is the source of the `any` type.
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const globalFilter: string = table.getState().globalFilter ?? '';
-  const setGlobalFilter = table.setGlobalFilter;
-  const rowSelection = table.getState().rowSelection;
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const { rows } = table.getRowModel();
@@ -35,13 +35,13 @@ export const VirtualizedTable = <T extends object>({ tableInstance: table }: Vir
 
   const paddingTop = virtualRows.length > 0 ? virtualRows[0]?.start ?? 0 : 0;
   const paddingBottom = virtualRows.length > 0 ? totalSize - (virtualRows[virtualRows.length - 1]?.end ?? 0) : 0;
-  const numSelected = Object.keys(rowSelection).length;
+  const numSelected = Object.keys(table.getState().rowSelection ?? {}).length;
 
   return (
     <div className={styles.tableContainer}>
       <div className={styles.toolbar}>
         <div className={styles.searchWrapper}>
-          <SearchInput value={globalFilter} onChange={setGlobalFilter} placeholder="Filter items..." variant="integrated" />
+          <SearchInput value={globalFilter} onChange={table.setGlobalFilter} placeholder="Filter items..." variant="integrated" />
         </div>
         <AnimatePresence>
           {numSelected > 0 && (
@@ -62,7 +62,6 @@ export const VirtualizedTable = <T extends object>({ tableInstance: table }: Vir
                   <th key={header.id} onClick={header.column.getToggleSortingHandler()} style={{ width: header.getSize() }}>
                     {flexRender(header.column.columnDef.header, header.getContext())}
                     <span className={styles.sortIndicator}>
-                      {/* FIX: Use a type-safe object lookup without the `as string` cast. */}
                       {{ asc: <span className="material-symbols-rounded">arrow_upward</span>, desc: <span className="material-symbols-rounded">arrow_downward</span> }[header.column.getIsSorted() as SortDirection] ?? null}
                     </span>
                   </th>

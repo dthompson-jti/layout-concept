@@ -1,11 +1,12 @@
 // src/data/tanstack-table.d.ts
-// FIX: Import RowData to make it available within the module declaration.
 import { RowData } from '@tanstack/react-table';
 import '@tanstack/react-table';
 
 declare module '@tanstack/react-table' {
-  // FIX: The generic parameters <TData extends RowData, TValue> must exactly match
-  // the original library's declaration for augmentation to be successful.
+  // FIX: Use a direct eslint-disable comment. This is the most robust way to
+  // handle required-but-unused parameters in type declarations. The generic
+  // parameters are restored to their original names to ensure a perfect signature match.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnMeta<TData extends RowData, TValue> {
     priority?: number;
     cardRole?: 'title' | 'subtitle' | 'badge' | 'meta';

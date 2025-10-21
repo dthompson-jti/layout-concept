@@ -7,6 +7,9 @@ interface DataCardProps<T extends object> {
   visiblePriority: number;
 }
 
+// NOTE: No changes are needed here. The errors were symptomatic of the
+// broken type augmentation. With `tanstack-table.d.ts` fixed, TypeScript
+// will now correctly infer the types for `meta`, and these errors will resolve.
 const getMeta = <T extends object>(col: Column<T>) => col.columnDef.meta;
 
 export const DataCard = <T extends object>({ row, visiblePriority }: DataCardProps<T>) => {
@@ -14,8 +17,6 @@ export const DataCard = <T extends object>({ row, visiblePriority }: DataCardPro
 
   const visibleColumns = instantiatedColumns.filter(col => {
     const meta = getMeta(col);
-    // FIX: This check is now type-safe because of our new declaration file.
-    // TypeScript knows `priority` is a valid (and optional) number property.
     return meta?.priority && meta.priority <= visiblePriority;
   });
 
@@ -25,7 +26,6 @@ export const DataCard = <T extends object>({ row, visiblePriority }: DataCardPro
     return flexRender(cell.column.columnDef.cell, cell.getContext());
   };
 
-  // FIX: All accesses to `meta.cardRole` are now type-safe.
   const titleCol = visibleColumns.find(c => getMeta(c)?.cardRole === 'title');
   const subtitleCol = visibleColumns.find(c => getMeta(c)?.cardRole === 'subtitle');
   const badgeCol = visibleColumns.find(c => getMeta(c)?.cardRole === 'badge');
