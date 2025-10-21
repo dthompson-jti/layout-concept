@@ -9,37 +9,43 @@ import { AppHeader } from './features/appHeader/AppHeader';
 import { headerVisibilityAtom } from './features/caseDashboard/dashboardState';
 
 function App() {
-  // CHANGE: Use useAtom to get both the value and the setter.
   const [isHeaderVisible, setHeaderVisible] = useAtom(headerVisibilityAtom);
-  const mainRef = useRef<HTMLElement>(null);
+  // DEBUGGING: Create a ref for the scrollable container.
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   
-  const { scrollY } = useScroll({ container: mainRef });
+  // DEBUGGING: Pass the container ref to the useScroll hook to ensure it's
+  // listening to the correct element, not the window.
+  const { scrollY } = useScroll({ container: scrollContainerRef });
 
-  // FIX: Implement more robust, state-aware logic for showing/hiding the header.
   useMotionValueEvent(scrollY, "change", (latest) => {
+    // DEBUGGING: This log is the most critical piece of evidence.
+    // If it appears in the console, we know the hook is correctly detecting scroll events.
+    console.log('Scroll event fired. Value:', latest);
+
     const previous = scrollY.getPrevious() ?? 0;
     const diff = latest - previous;
 
-    // At the very top of the page, always show the header.
+    // In a "safe zone" at the top, always show the header.
     if (latest < 100) {
       if (!isHeaderVisible) setHeaderVisible(true);
       return;
     }
 
-    // If scrolling down and the header is currently visible, hide it.
+    // When scrolling down, if the header is visible, hide it.
     if (diff > 0 && isHeaderVisible) {
       setHeaderVisible(false);
     } 
-    // If scrolling up and the header is currently hidden, show it.
+    // When scrolling up, if the header is hidden, show it.
     else if (diff < 0 && !isHeaderVisible) {
       setHeaderVisible(true);
     }
   });
 
   return (
-    <div className={styles.appContainer}>
+    // DEBUGGING: Attach the ref to the div that has `overflow-y: auto`.
+    <div ref={scrollContainerRef} className={styles.appContainer}>
       <AppHeader />
-      <main ref={mainRef} className={styles.appMain}>
+      <main className={styles.appMain}>
         <CaseDashboard />
       </main>
       <ToastContainer />
