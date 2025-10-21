@@ -1,116 +1,191 @@
-/* src/features/caseDashboard/CaseDashboard.module.css */
-.dashboardContainer {
-  padding: var(--spacing-6);
-  width: 100%;
+/* src/features/caseHeader/CaseHeader.module.css */
+.headerContainer {
+  background-color: var(--surface-bg-primary);
+  box-shadow: var(--surface-shadow-md);
+  position: sticky;
+  /* CHANGE: This is now the static top position. The transform will handle movement. */
+  top: 64px;
+  z-index: 10;
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  /* REMOVED: No longer transitioning the `top` property. */
 }
 
-/* REMOVED .header styles, as this is now handled by the CaseHeader component */
+/* REMOVED: .parentHidden class is no longer needed. */
 
-/* NEW: Styles for the view mode and personalization controls */
-.controlsHeader {
+/* --- Row 1: Core ID, Title, and Actions --- */
+.row1 {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-6);
-  padding: 0 var(--spacing-2);
-  gap: var(--spacing-4);
-}
-
-.viewToggle {
-  display: flex;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap; /* Allows items to wrap into rows */
   gap: var(--spacing-3);
 }
 
-.viewToggle > div { /* Target the IconToggleGroup wrapper */
-  width: 120px;
+.titleGroup {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-3);
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
-.personalizeActions {
+.statusBadges {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--spacing-2);
-}
-
-/* --- Layout Containers --- */
-
-.masonryGrid {
-  display: flex;
-  gap: var(--spacing-4);
-  width: 100%;
-}
-
-.masonryGridColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  background-clip: padding-box;
-}
-
-/* NEW: Styles for the List View container */
-.listViewContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 0; /* The tile itself will provide separation */
-}
-
-/* NEW: Style override for tiles when in List View to create a "seamless" feed */
-.listViewContainer [data-view-mode="list"] {
-  background-color: transparent;
-  border: none;
-  border-bottom: 1px solid var(--surface-border-secondary);
-  border-radius: 0;
-  box-shadow: none;
-  margin-bottom: 0;
-}
-.listViewContainer [data-view-mode="list"]:last-child {
-  border-bottom: none;
-}
-
-
-/* --- Modal Styles for Shared Layout Animation --- */
-.modalBackdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(10, 12, 18, 0.7);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-8);
-}
-
-.modalContentWrapper {
-  width: 100%;
-  height: 100%;
-  background-color: var(--surface-bg-primary);
-  border-radius: var(--spacing-3);
-  box-shadow: var(--surface-shadow-2xl);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid var(--surface-border-primary);
-}
-
-.modalHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--spacing-4);
-  border-bottom: 1px solid var(--surface-border-secondary);
   flex-shrink: 0;
 }
 
-.modalHeader h2 {
-  margin: 0;
-  font-size: 1.2em;
+.caseIdentifiers {
+  display: flex;
+  flex-direction: row; /* Default to row for desktop */
+  align-items: baseline;
+  gap: 0;
+  min-width: 0;
 }
 
-.modalBody {
-  flex-grow: 1;
-  overflow: auto;
-  padding: var(--spacing-4);
+.caseNumber {
+  font-size: 1.25em;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.caseName {
+  margin: 0;
+  font-size: 1.25em;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--surface-fg-secondary);
+}
+
+.actionsGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  flex-shrink: 0;
+}
+
+/* --- Row Spacing Control --- */
+.row1, .row2, .row3 {
+  width: 100%;
+}
+.row1 { margin-bottom: var(--spacing-1); }
+.row2 { margin-bottom: var(--spacing-6); }
+.row3 { margin-bottom: var(--spacing-6); }
+
+/* --- Info Grids --- */
+.row3, .row2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--spacing-6);
+}
+
+.row3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.row3 > div:nth-child(n+3) {
+  display: none;
+}
+
+.badgeSeparator {
+  display: none;
+  width: 1px;
+  align-self: stretch;
+  background-color: var(--surface-border-secondary);
+  margin: 0 var(--spacing-1);
+}
+
+/* --- Desktop Layout (> 1200px) --- */
+@media (min-width: 1200px) {
+  .row3 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .row3 > div:nth-child(n+3) {
+    display: flex;
+  }
+
+  .caseNumber::after {
+    content: '';
+    display: inline-block;
+    width: 1px;
+    height: 18px;
+    background-color: var(--surface-border-secondary);
+    margin: 0 var(--spacing-3);
+    transform: translateY(3px);
+  }
+}
+
+/* --- Tablet Layout (768px - 1199px) --- */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .statusBadges {
+    flex-basis: 100%;
+    order: 1;
+  }
+  .titleGroup {
+    order: 2;
+  }
+  .actionsGroup {
+    order: 3;
+  }
+
+  .badgeSeparator {
+    display: block;
+  }
+}
+
+/* --- Mobile Layout (< 768px) --- */
+@media (max-width: 767px) {
+  .headerContainer {
+    padding: var(--spacing-3) var(--spacing-3) var(--spacing-2);
+  }
+
+  .row1 {
+    margin-bottom: var(--spacing-4);
+  }
+
+  .statusBadges {
+    flex-basis: 100%;
+    order: 1;
+  }
+  .titleGroup {
+    flex-basis: 100%;
+    order: 2;
+  }
+  .actionsGroup {
+    flex-basis: 100%;
+    justify-content: space-between;
+    order: 3;
+  }
+
+  .caseIdentifiers {
+    flex-direction: column;
+    gap: var(--spacing-0p5);
+  }
+  
+  .caseName {
+    white-space: normal;
+  }
+
+  .row2 {
+    margin-bottom: var(--spacing-4);
+  }
+
+  .row2 > div:nth-child(2),
+  .row2 > div:nth-child(3) {
+    display: none;
+  }
+  
+  .row3 > div:nth-child(1) {
+    display: none;
+  }
+
+  .badgeSeparator {
+    display: block;
+  }
 }

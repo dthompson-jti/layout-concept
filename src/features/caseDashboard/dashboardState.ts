@@ -38,5 +38,4 @@ export const dashboardViewModeAtom = atomWithStorage<DashboardViewMode>('dashboa
 
 export const tileViewModesAtom = atomWithStorage<Record<string, TileContentViewMode>>('tile-content-view-modes', {});
 
-// NEW: Atom to control the visibility of the smart sticky headers.
-export const headerVisibilityAtom = atom(true);
+// REMOVED: The binary headerVisibilityAtom is no longer needed.

@@ -3,9 +3,36 @@
 .appContainer {
   display: flex;
   flex-direction: column;
-  /* CRITICAL: This div is the scroll container. It must have a fixed height and overflow. */
   height: 100vh;
   overflow-y: auto;
+  /* NEW: Add position relative to be the containing block for the fixed header */
+  position: relative;
+}
+
+/* NEW: A single container for both headers that will be animated */
+.fixedHeaderUnit {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 20;
+  /* The background from the case header is now applied here to prevent gaps */
+  background-color: var(--surface-bg-primary);
+}
+
+/* NEW: A spacer div that sits in the document flow and pushes the main content down */
+.headerSpacer {
+  flex-shrink: 0;
+}
+
+
+.appMain {
+  display: flex;
+  flex-direction: column; 
+  padding: 0; 
+  background-color: var(--surface-bg-secondary);
+  /* NEW: Ensure the main content is rendered on its own layer */
+  z-index: 1;
 }
 
 .appHeader {
@@ -24,14 +51,6 @@
 .appHeader p {
   margin: var(--spacing-1) 0 0;
   color: var(--surface-fg-secondary);
-}
-
-.appMain {
-  /* This is just a content wrapper now, not the scroll container. */
-  display: flex;
-  flex-direction: column; 
-  padding: 0; 
-  background-color: var(--surface-bg-secondary);
 }
 
 .card {

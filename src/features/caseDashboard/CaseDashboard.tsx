@@ -16,7 +16,6 @@ import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } 
 import { CSS } from '@dnd-kit/utilities';
 import { AnimatePresence, motion } from 'framer-motion';
 
-// FIX: Import from the renamed 'TileRegistry.tsx' file.
 import { TILE_COMPONENT_MAP } from './TileRegistry';
 import { userLayoutAtom, isEditModeAtom, TileConfig, maximizedTileAtom, activeDragIdAtom, dashboardViewModeAtom, DashboardViewMode } from './dashboardState';
 import { Tile } from './Tile';
@@ -24,8 +23,7 @@ import { EditModeOverlay } from './EditModeOverlay';
 import { HiddenTilesTray } from './HiddenTilesTray';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import { Tooltip } from '../../components/Tooltip';
-import { CaseHeader } from '../caseHeader/CaseHeader';
-import { mockCaseData } from '../../data/caseData';
+// REMOVED: CaseHeader is no longer rendered here
 import styles from './CaseDashboard.module.css';
 
 interface SortableTileProps {
@@ -65,6 +63,7 @@ const SortableTile = ({ tile, isEditMode, viewMode, onToggleCollapse, onMaximize
   );
 };
 
+// CHANGE: This component no longer needs to manage header animation
 export const CaseDashboard = () => {
   const [layout, setLayout] = useAtom(userLayoutAtom);
   const [isEditMode, setIsEditMode] = useAtom(isEditModeAtom);
@@ -117,7 +116,7 @@ export const CaseDashboard = () => {
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <CaseHeader data={mockCaseData} />
+      {/* CaseHeader is now rendered in App.tsx */}
       <div className={styles.dashboardContainer}>
         <EditModeOverlay isEditMode={isEditMode} onExitEditMode={() => setIsEditMode(false)} />
         

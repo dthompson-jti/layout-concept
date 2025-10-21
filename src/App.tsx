@@ -1,50 +1,73 @@
 // src/App.tsx
-import { useRef } from 'react';
-import { useAtom } from 'jotai';
-import { useScroll, useMotionValueEvent } from 'framer-motion';
+import { useRef, useState, useLayoutEffect } from 'react';
+import { useScroll, useMotionValueEvent, useMotionValue } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { CaseDashboard } from './features/caseDashboard/CaseDashboard';
 import styles from './App.module.css';
 import { ToastContainer } from './components/ToastContainer';
 import { AppHeader } from './features/appHeader/AppHeader';
-import { headerVisibilityAtom } from './features/caseDashboard/dashboardState';
+// NEW: Import CaseHeader here to create the single unit
+import { CaseHeader } from './features/caseHeader/CaseHeader';
+import { mockCaseData } from './data/caseData';
+
+// NEW: Define total header height for clamping logic
+const TOTAL_HEADER_HEIGHT = 64 + 310; // AppHeader + estimated CaseHeader height
+
+const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
 function App() {
-  const [isHeaderVisible, setHeaderVisible] = useAtom(headerVisibilityAtom);
-  // DEBUGGING: Create a ref for the scrollable container.
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  
-  // DEBUGGING: Pass the container ref to the useScroll hook to ensure it's
-  // listening to the correct element, not the window.
   const { scrollY } = useScroll({ container: scrollContainerRef });
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    // DEBUGGING: This log is the most critical piece of evidence.
-    // If it appears in the console, we know the hook is correctly detecting scroll events.
-    console.log('Scroll event fired. Value:', latest);
+  const headerY = useMotionValue(0);
 
+  // NEW: Add a ref and state to dynamically measure the header unit's height
+  const headerUnitRef = useRef<HTMLDivElement>(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
+
+  // This effect measures the combined header height and sets it on the spacer
+  useLayoutEffect(() => {
+    const measureHeight = () => {
+      if (headerUnitRef.current) {
+        setHeaderHeight(headerUnitRef.current.offsetHeight);
+      }
+    };
+    measureHeight();
+    // Re-measure on window resize
+    window.addEventListener('resize', measureHeight);
+    return () => window.removeEventListener('resize', measureHeight);
+  }, []);
+
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
     const diff = latest - previous;
+    const currentY = headerY.get();
 
-    // In a "safe zone" at the top, always show the header.
-    if (latest < 100) {
-      if (!isHeaderVisible) setHeaderVisible(true);
-      return;
-    }
+    let newY = currentY - diff;
+    
+    // Clamp the value based on the measured height
+    const finalY = clamp(newY, -headerHeight, 0);
 
-    // When scrolling down, if the header is visible, hide it.
-    if (diff > 0 && isHeaderVisible) {
-      setHeaderVisible(false);
-    } 
-    // When scrolling up, if the header is hidden, show it.
-    else if (diff < 0 && !isHeaderVisible) {
-      setHeaderVisible(true);
-    }
+    headerY.set(finalY);
   });
 
   return (
-    // DEBUGGING: Attach the ref to the div that has `overflow-y: auto`.
     <div ref={scrollContainerRef} className={styles.appContainer}>
-      <AppHeader />
+      
+      {/* NEW: This is the single animated unit, positioned fixed */}
+      <motion.header
+        ref={headerUnitRef}
+        className={styles.fixedHeaderUnit}
+        style={{ y: headerY }}
+      >
+        <AppHeader />
+        <CaseHeader data={mockCaseData} />
+      </motion.header>
+
+      {/* NEW: This spacer div pushes the content down by the correct amount */}
+      <div className={styles.headerSpacer} style={{ height: headerHeight }} />
+
       <main className={styles.appMain}>
         <CaseDashboard />
       </main>

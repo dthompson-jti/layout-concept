@@ -2,21 +2,16 @@
 .headerContainer {
   background-color: var(--surface-bg-primary);
   box-shadow: var(--surface-shadow-md);
-  /* CHANGE: Make header sticky and position it below the AppHeader */
-  position: sticky;
-  top: 64px;
-  z-index: 10;
   padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
 }
 
-/* --- Row 1: Core ID, Title, and Actions --- */
 .row1 {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap; /* Allows items to wrap into rows */
+  align-items: center;
+  flex-wrap: wrap;
   gap: var(--spacing-3);
 }
 
@@ -25,7 +20,6 @@
   align-items: baseline;
   gap: var(--spacing-3);
   min-width: 0;
-  /* Allow title group to grow and fill space */
   flex: 1 1 auto;
 }
 
@@ -37,9 +31,14 @@
   flex-shrink: 0;
 }
 
+/* NEW: A wrapper for the responsive tags inside the status bar */
+.responsiveTagsWrapper {
+  display: contents; /* Behaves like a fragment, not affecting flex layout */
+}
+
 .caseIdentifiers {
   display: flex;
-  flex-direction: row; /* Default to row for desktop */
+  flex-direction: row;
   align-items: baseline;
   gap: 0;
   min-width: 0;
@@ -66,16 +65,13 @@
   flex-shrink: 0;
 }
 
-/* --- Row Spacing Control --- */
 .row1, .row2, .row3 {
   width: 100%;
 }
 .row1 { margin-bottom: var(--spacing-1); }
 .row2 { margin-bottom: var(--spacing-6); }
-/* CHANGE: row3 margin is now consistent with row2 */
 .row3 { margin-bottom: var(--spacing-6); }
 
-/* --- Info Grids --- */
 .row3, .row2 {
   display: flex;
   flex-wrap: wrap;
@@ -92,23 +88,21 @@
   display: none;
 }
 
-/* --- Row 4: Tags (REMOVED) --- */
-/* .row4 styles are no longer needed */
-
-
-/* --- Responsive Tag Visibility (REMOVED) --- */
-/* .mobileOnlyTag, .tabletOnlyTag, .hideOnMobile, .hideOnTablet are no longer needed */
-
-/* NEW: Style for the separator between status badges and tags on small screens */
 .badgeSeparator {
-  display: none; /* Hidden by default on desktop */
+  display: none;
   width: 1px;
-  align-self: stretch; /* Make it the full height of the flex container */
+  align-self: stretch;
   background-color: var(--surface-border-secondary);
-  margin: 0 var(--spacing-1); /* Give it some breathing room */
+  margin: 0 var(--spacing-1);
 }
 
-/* --- Desktop Layout (> 1200px) --- */
+.tagsRow {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 @media (min-width: 1200px) {
   .row3 {
     grid-template-columns: repeat(4, 1fr);
@@ -116,7 +110,6 @@
   .row3 > div:nth-child(n+3) {
     display: flex;
   }
-
   .caseNumber::after {
     content: '';
     display: inline-block;
@@ -126,75 +119,35 @@
     margin: 0 var(--spacing-3);
     transform: translateY(3px);
   }
+
+  /* CHANGE: On desktop, hide the responsive tags from the top bar */
+  .responsiveTagsWrapper {
+    display: none;
+  }
 }
 
-/* --- Tablet Layout (768px - 1199px) --- */
 @media (min-width: 768px) and (max-width: 1199px) {
-  .statusBadges {
-    flex-basis: 100%;
-    order: 1;
-  }
-  .titleGroup {
-    order: 2;
-  }
-  .actionsGroup {
-    order: 3;
-  }
-
-  /* Show the separator on tablet */
-  .badgeSeparator {
-    display: block;
-  }
+  .statusBadges { flex-basis: 100%; order: 1; }
+  .titleGroup { order: 2; }
+  .actionsGroup { order: 3; }
+  .badgeSeparator { display: block; }
+  /* CHANGE: On tablet, hide the bottom tags row */
+  .tagsRow { display: none; }
 }
 
-/* --- Mobile Layout (< 768px) --- */
 @media (max-width: 767px) {
-  .headerContainer {
-    padding: var(--spacing-3) var(--spacing-3) var(--spacing-2);
-  }
-
-  .row1 {
-    margin-bottom: var(--spacing-4);
-  }
-
-  .statusBadges {
-    flex-basis: 100%;
-    order: 1;
-  }
-  .titleGroup {
-    flex-basis: 100%;
-    order: 2;
-  }
-  .actionsGroup {
-    flex-basis: 100%;
-    justify-content: space-between;
-    order: 3;
-  }
-
-  .caseIdentifiers {
-    flex-direction: column;
-    gap: var(--spacing-0p5);
-  }
-  
-  .caseName {
-    white-space: normal;
-  }
-
-  .row2 {
-    margin-bottom: var(--spacing-4);
-  }
-
+  .headerContainer { padding: var(--spacing-3) var(--spacing-3) var(--spacing-2); }
+  .row1 { margin-bottom: var(--spacing-4); }
+  .statusBadges { flex-basis: 100%; order: 1; }
+  .titleGroup { flex-basis: 100%; order: 2; }
+  .actionsGroup { flex-basis: 100%; justify-content: space-between; order: 3; }
+  .caseIdentifiers { flex-direction: column; gap: var(--spacing-0p5); }
+  .caseName { white-space: normal; }
+  .row2 { margin-bottom: var(--spacing-4); }
   .row2 > div:nth-child(2),
-  .row2 > div:nth-child(3) {
-    display: none;
-  }
-  
-  .row3 > div:nth-child(1) {
-    display: none;
-  }
-
-  /* Show the separator on mobile */
-  .badgeSeparator {
-    display: block;
-  }
+  .row2 > div:nth-child(3) { display: none; }
+  .row3 > div:nth-child(1) { display: none; }
+  .badgeSeparator { display: block; }
+  /* CHANGE: On mobile, hide the bottom tags row */
+  .tagsRow { display: none; }
 }

@@ -9,10 +9,7 @@
   color: var(--control-fg-on-solid);
   flex-shrink: 0;
   gap: var(--spacing-4);
-  /* CHANGE: Make header sticky and give it a high z-index */
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  /* CHANGE: This component no longer needs positioning. It's just a content block. */
   width: 100%;
 }
 
