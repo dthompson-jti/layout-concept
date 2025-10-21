@@ -22,9 +22,9 @@ export const CaseHeader: React.FC<CaseHeaderProps> = ({ data }) => {
       <div className={styles.row1}>
         <div className={styles.titleGroup}>
           <div className={styles.statusBadges}>
-            <Badge variant="success">{data.status}</Badge>
-            {data.isSealed && <Badge variant="warning">Case Sealed</Badge>}
-            {/* CHANGE: Render high-visibility tags here for mobile view, controlled by CSS */}
+            <Badge variant="success" showStatusDot>{data.status}</Badge>
+            {/* CHANGE: Changed variant from "warning" to "error" to match new styles */
+            data.isSealed && <Badge variant="error">Case Sealed</Badge>}
             {data.tags.map(tag => tag.visibility === 'mobile' && (
               <Tag key={`${tag.label}-mobile`} {...tag} inverted className={styles.mobileOnlyTag} />
             ))}
@@ -38,9 +38,9 @@ export const CaseHeader: React.FC<CaseHeaderProps> = ({ data }) => {
         </div>
         <div className={styles.actionsGroup}>
           {data.amountDueCents && (
-            <Badge variant="neutral" size="large">
+            <button className="btn btn-secondary">
               Amount Due: {formatCurrency(data.amountDueCents)}
-            </Badge>
+            </button>
           )}
           <div className={styles.iconActions}>
             <Tooltip content="Bookmark"><button className="btn btn-tertiary icon-only"><span className="material-symbols-rounded">bookmark</span></button></Tooltip>
@@ -67,19 +67,20 @@ export const CaseHeader: React.FC<CaseHeaderProps> = ({ data }) => {
       {/* Row 3: Tertiary Info */}
       <div className={styles.row3}>
         <InfoBlock label="Presiding Officer">
-          <p>{data.presidingOfficer}</p>
+          <span>{data.presidingOfficer}</span>
         </InfoBlock>
         {data.nextHearing && (
           <InfoBlock label="Next Hearing">
-            <p>
+            <span>
               {new Date(data.nextHearing.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} - {data.nextHearing.time}
-            </p>
-            <p>{data.nextHearing.type}</p>
+            </span>
+            <br/>
+            <span>{data.nextHearing.type}</span>
           </InfoBlock>
         )}
         {data.testColumns.map((col, index) => (
             <InfoBlock key={index} label={col.title}>
-                <p>{col.text}</p>
+                <span>{col.text}</span>
             </InfoBlock>
         ))}
       </div>
@@ -90,7 +91,6 @@ export const CaseHeader: React.FC<CaseHeaderProps> = ({ data }) => {
           <Tag 
             key={tag.label} 
             {...tag}
-            // Conditionally apply inverted style and mobile visibility class
             inverted={tag.visibility !== 'desktop'}
             className={tag.visibility === 'mobile' ? styles.hideOnMobile : ''}
           />

@@ -6,14 +6,16 @@
 
 .inline {
   align-items: center;
-  gap: var(--spacing-2);
+  /* CHANGE: Reduced gap for tighter icon-to-text spacing */
+  gap: var(--spacing-1p5);
   color: var(--surface-fg-quaternary);
   font-size: 0.9em;
 }
 
 .inline .material-symbols-rounded {
-  /* CHANGE: Icon size decreased */
-  font-size: 18px;
+  /* CHANGE: Set specific font-size and optical size for icons */
+  font-size: 16px;
+  font-variation-settings: 'opsz' 16;
   flex-shrink: 0;
 }
 
@@ -26,7 +28,6 @@
 
 .stacked {
   flex-direction: column;
-  /* CHANGE: Reduced gap for tighter vertical grouping */
   gap: var(--spacing-0p5);
   font-size: 0.9em;
 }
@@ -41,5 +42,5 @@
 
 .stacked div {
   color: var(--surface-fg-primary);
-  line-height: 1.5;
+  line-height: 1.4;
 }

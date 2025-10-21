@@ -4,14 +4,17 @@ import styles from './Badge.module.css';
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant: 'success' | 'warning' | 'neutral';
+  // FIX: Replaced 'warning' with 'error' to match the new CSS variant.
+  variant: 'success' | 'error' | 'neutral';
   size?: 'small' | 'large';
   className?: string;
+  showStatusDot?: boolean;
 }
 
-export const Badge: React.FC<BadgeProps> = ({ children, variant, size = 'small', className = '' }) => {
+export const Badge: React.FC<BadgeProps> = ({ children, variant, size = 'small', className = '', showStatusDot = false }) => {
   return (
     <span className={`${styles.badge} ${styles[variant]} ${styles[size]} ${className}`}>
+      {showStatusDot && <span className={styles.statusDot}></span>}
       {children}
     </span>
   );
