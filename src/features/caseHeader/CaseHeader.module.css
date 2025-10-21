@@ -1,7 +1,11 @@
 /* src/features/caseHeader/CaseHeader.module.css */
 .headerContainer {
   background-color: var(--surface-bg-primary);
-  border-bottom: 1px solid var(--surface-border-secondary);
+  box-shadow: var(--surface-shadow-md);
+  /* CHANGE: Make header sticky and position it below the AppHeader */
+  position: sticky;
+  top: 64px;
+  z-index: 10;
   padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
@@ -12,15 +16,17 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--spacing-4);
+  flex-wrap: wrap; /* Allows items to wrap into rows */
+  gap: var(--spacing-3);
 }
 
 .titleGroup {
   display: flex;
-  /* CHANGE: Use baseline alignment for better typographic harmony */
   align-items: baseline;
   gap: var(--spacing-3);
   min-width: 0;
+  /* Allow title group to grow and fill space */
+  flex: 1 1 auto;
 }
 
 .statusBadges {
@@ -33,8 +39,9 @@
 
 .caseIdentifiers {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-0p5);
+  flex-direction: row; /* Default to row for desktop */
+  align-items: baseline;
+  gap: 0;
   min-width: 0;
 }
 
@@ -59,27 +66,17 @@
   flex-shrink: 0;
 }
 
-.iconActions {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-1);
-}
-
 /* --- Row Spacing Control --- */
-.row1, .row2, .row3, .row4 {
+.row1, .row2, .row3 {
   width: 100%;
 }
 .row1 { margin-bottom: var(--spacing-1); }
 .row2 { margin-bottom: var(--spacing-6); }
+/* CHANGE: row3 margin is now consistent with row2 */
 .row3 { margin-bottom: var(--spacing-6); }
 
 /* --- Info Grids --- */
-.row3 {
-  display: grid;
-  gap: var(--spacing-6);
-}
-
-.row2 {
+.row3, .row2 {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -87,6 +84,7 @@
 }
 
 .row3 {
+  display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
@@ -94,17 +92,21 @@
   display: none;
 }
 
-/* --- Row 4: Tags --- */
-.row4 {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-2);
+/* --- Row 4: Tags (REMOVED) --- */
+/* .row4 styles are no longer needed */
+
+
+/* --- Responsive Tag Visibility (REMOVED) --- */
+/* .mobileOnlyTag, .tabletOnlyTag, .hideOnMobile, .hideOnTablet are no longer needed */
+
+/* NEW: Style for the separator between status badges and tags on small screens */
+.badgeSeparator {
+  display: none; /* Hidden by default on desktop */
+  width: 1px;
+  align-self: stretch; /* Make it the full height of the flex container */
+  background-color: var(--surface-border-secondary);
+  margin: 0 var(--spacing-1); /* Give it some breathing room */
 }
-
-/* --- Responsive Tag Visibility --- */
-.mobileOnlyTag { display: none; }
-.hideOnMobile { display: inline-flex; }
-
 
 /* --- Desktop Layout (> 1200px) --- */
 @media (min-width: 1200px) {
@@ -113,12 +115,6 @@
   }
   .row3 > div:nth-child(n+3) {
     display: flex;
-  }
-
-  .caseIdentifiers {
-    flex-direction: row;
-    align-items: baseline;
-    gap: 0;
   }
 
   .caseNumber::after {
@@ -134,43 +130,54 @@
 
 /* --- Tablet Layout (768px - 1199px) --- */
 @media (min-width: 768px) and (max-width: 1199px) {
-  /* CHANGE: Stack status badges vertically */
   .statusBadges {
-    flex-direction: column;
-    align-items: flex-start; /* Align to the left */
+    flex-basis: 100%;
+    order: 1;
+  }
+  .titleGroup {
+    order: 2;
+  }
+  .actionsGroup {
+    order: 3;
+  }
+
+  /* Show the separator on tablet */
+  .badgeSeparator {
+    display: block;
   }
 }
 
 /* --- Mobile Layout (< 768px) --- */
 @media (max-width: 767px) {
   .headerContainer {
-    /* CHANGE: Reduced bottom padding */
     padding: var(--spacing-3) var(--spacing-3) var(--spacing-2);
   }
 
   .row1 {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--spacing-3);
-    /* CHANGE: Increased space between row 1 and 2 */
     margin-bottom: var(--spacing-4);
   }
 
+  .statusBadges {
+    flex-basis: 100%;
+    order: 1;
+  }
   .titleGroup {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-basis: 100%;
+    order: 2;
+  }
+  .actionsGroup {
+    flex-basis: 100%;
+    justify-content: space-between;
+    order: 3;
   }
 
   .caseIdentifiers {
-    padding-left: 0;
+    flex-direction: column;
+    gap: var(--spacing-0p5);
   }
   
   .caseName {
     white-space: normal;
-  }
-
-  .actionsGroup {
-    justify-content: space-between;
   }
 
   .row2 {
@@ -186,20 +193,8 @@
     display: none;
   }
 
-  .mobileOnlyTag {
-    display: inline-flex;
-  }
-
-  .mobileOnlyTag::before {
-    content: '';
-    display: inline-block;
-    width: 1px;
-    height: 16px;
-    background-color: var(--surface-border-secondary);
-    margin-right: var(--spacing-2);
-  }
-
-  .hideOnMobile {
-    display: none;
+  /* Show the separator on mobile */
+  .badgeSeparator {
+    display: block;
   }
 }

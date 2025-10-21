@@ -9,6 +9,11 @@
   color: var(--control-fg-on-solid);
   flex-shrink: 0;
   gap: var(--spacing-4);
+  /* CHANGE: Make header sticky and give it a high z-index */
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  width: 100%;
 }
 
 .leftGroup, .rightGroup {
@@ -124,7 +129,6 @@
 
 /* --- Responsive Breakpoints --- */
 
-/* FIX: Use CSS variable for breakpoint to prevent syntax issues and maintain consistency. */
 @media (min-width: var(--breakpoint-mobile)) {
   .header {
     padding: var(--spacing-2) var(--spacing-6);

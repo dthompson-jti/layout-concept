@@ -1,4 +1,6 @@
-Of course. Here is the fully updated `README.md`. It incorporates the new `CaseHeader` feature, the architectural lessons learned regarding TypeScript configuration and file structure, and refines the project overview to reflect the completed scope.
+Excellent point. The documentation should be a living document that reflects the project's evolution and the critical lessons learned during its development. The recent iterations on the `CaseHeader` and the debugging of the TypeScript environment have highlighted important architectural decisions that should be captured.
+
+Here is the fully updated `README.md` with the proposed changes integrated.
 
 ---
 # eSeries Hackathon Project: Next-Generation UI Proof of Concept
@@ -23,8 +25,9 @@ This project embodies clarity, flexibility, and craft. Every element — layout,
 
 The Case Header provides critical, at-a-glance context for the entire case. It is designed with a "progressive disclosure" strategy, ensuring clarity and utility on any device.
 
-*   **Mobile-First Clarity**: On the smallest screens, only the most essential identifiers and the next upcoming action are displayed to reduce cognitive load.
-*   **Graceful Enhancement**: As screen real estate increases, secondary and tertiary details (filing dates, related personnel, supplemental tags) are gracefully introduced in a clean, multi-column grid.
+*   **Multi-Breakpoint Layout**: The header utilizes three distinct layouts for mobile, tablet, and desktop, ensuring optimal information hierarchy and spacing for each context.
+*   **Graceful Enhancement**: On the smallest screens, only essential identifiers are shown. As screen real estate increases, secondary and tertiary details (filing dates, personnel, tags) are gracefully introduced.
+*   **Adaptive Badge Grouping**: On tablets and mobile, status badges are given their own dedicated row at the top, creating a clean separation between high-level status and specific case identifiers.
 *   **Data-Driven**: The entire header is driven by a single data object, making it a self-contained and reusable feature.
 
 ### 2. The Case Dashboard
@@ -86,7 +89,7 @@ The project uses a flat, feature-centric architecture. Global, reusable code is 
 ├── public/                          # Static assets
 └── src/
     ├── components/                  # Global, reusable UI components (Tooltip, Modal, Select, etc.)
-    ├── data/                        # Global state (Jotai atoms), custom hooks, and type definitions (.ts, .d.ts)
+    ├── data/                        # Global state (Jotai atoms), hooks, and type definitions (.ts, .d.ts)
     ├── features/
     │   ├── caseHeader/              # The responsive header feature
     │   └── caseDashboard/           # The modular dashboard feature
@@ -96,7 +99,7 @@ The project uses a flat, feature-centric architecture. Global, reusable code is 
     │       ├── DocumentsTile.tsx    # Example of a specific tile component
     │       ├── ... (other tile components)
     │       ├── dashboardState.ts    # Jotai atoms for layout state and persistence
-    │       └── TileRegistry.ts      # Maps tile keys to their components for rendering
+    │       └── TileRegistry.ts      # Maps tile keys to components for dynamic rendering
     │
     ├── App.tsx                      # Main application component
     ├── main.tsx                     # Application entry point
@@ -106,12 +109,12 @@ The project uses a flat, feature-centric architecture. Global, reusable code is 
 ### Architectural Notes
 
 *   **Flat Structure**: Type definition files (`.d.ts`) and data models (`.ts`) live alongside hooks and state atoms in the `src/data` directory. There is no separate `src/types` directory, promoting a flatter, more discoverable structure.
-*   **TypeScript Module Augmentation**: The file `src/data/tanstack-table.d.ts` is critical. It extends the types of the `@tanstack/react-table` library to include custom metadata (`priority`, `cardRole`), making the Data Card feature type-safe.
-*   **File Naming**: Use `.tsx` only for files containing JSX. Files that only export types, constants, or logic should use `.ts` (e.g., `TileRegistry.ts`). Be mindful of file name casing, as inconsistencies can cause hard-to-debug issues between case-insensitive file systems (Windows) and case-sensitive tools (Git, TypeScript).
+*   **TypeScript Module Augmentation**: The file `src/data/tanstack-table.d.ts` is critical. It uses TypeScript's declaration merging to extend the types of the `@tanstack/react-table` library. This makes it possible to add custom metadata (like `priority` and `cardRole`) to column definitions in a fully type-safe way.
+*   **File Naming and Casing**: Use `.tsx` only for files containing JSX. Files that only export types, constants, or logic should use `.ts` (e.g., `TileRegistry.ts`). **Crucially, be mindful of file name casing.** Git's default behavior on case-insensitive file systems (like Windows) can ignore casing changes, leading to hard-to-debug errors where the TypeScript server sees two different paths to the same file. Always use `git mv` for renaming files to ensure changes are tracked correctly.
 
 ### Key Files
 
-*   **`src/features/caseHeader/CaseHeader.tsx`** – The responsive, data-driven header that provides top-level case context.
+*   **`src/features/caseHeader/CaseHeader.tsx`** – The responsive, data-driven header that provides top-level case context and adapts its layout across three breakpoints.
 *   **`src/features/caseDashboard/CaseDashboard.tsx`** – Core layout orchestrator: manages the masonry grid, DnD context, and maximized tile transitions.
 *   **`src/features/caseDashboard/dashboardState.ts`** – Defines the `TileConfig` type and the Jotai atom for persisting the layout state via `atomWithStorage`.
 *   **`src/features/caseDashboard/VirtualizedTable.tsx`** – High-performance data table combining TanStack Table and TanStack Virtual for smooth scrolling with large datasets.

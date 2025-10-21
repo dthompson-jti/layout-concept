@@ -1,11 +1,16 @@
 // src/features/caseHeader/CaseHeader.tsx
 import React from 'react';
+import { useAtomValue } from 'jotai';
+import { motion } from 'framer-motion';
+// FIX: Removed the unused 'CaseTag as CaseTagType' alias.
 import { CaseData } from '../../data/caseData';
 import { Badge } from '../../components/Badge';
 import { Tooltip } from '../../components/Tooltip';
 import { InfoBlock } from './InfoBlock';
 import { Tag } from './Tag';
 import styles from './CaseHeader.module.css';
+import { headerVisibilityAtom } from '../caseDashboard/dashboardState';
+
 
 interface CaseHeaderProps {
   data: CaseData;
@@ -16,19 +21,37 @@ const formatCurrency = (cents: number) => {
 };
 
 export const CaseHeader: React.FC<CaseHeaderProps> = ({ data }) => {
+  const isHeaderVisible = useAtomValue(headerVisibilityAtom);
+
+  const allTags = data.tags;
+  const hasVisibleResponsiveTags = allTags.some(tag => tag.visibility !== 'desktop');
+
+  const headerVariants = {
+    visible: { y: 0 },
+    hidden: { y: '-100%' },
+  };
+
   return (
-    <div className={styles.headerContainer}>
+    <motion.div
+      className={styles.headerContainer}
+      variants={headerVariants}
+      animate={isHeaderVisible ? 'visible' : 'hidden'}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+    >
       {/* Row 1: Core ID, Title, and Actions */}
       <div className={styles.row1}>
+        <div className={styles.statusBadges}>
+          <Badge variant="success" showStatusDot>{data.status}</Badge>
+          {data.isSealed && <Badge variant="error">Case Sealed</Badge>}
+          
+          {hasVisibleResponsiveTags && <div className={styles.badgeSeparator} />}
+
+          {allTags.map(tag => (
+            <Tag key={`${tag.label}-${tag.visibility}`} {...tag} inverted={tag.visibility !== 'desktop'} />
+          ))}
+        </div>
+
         <div className={styles.titleGroup}>
-          <div className={styles.statusBadges}>
-            <Badge variant="success" showStatusDot>{data.status}</Badge>
-            {/* CHANGE: Changed variant from "warning" to "error" to match new styles */
-            data.isSealed && <Badge variant="error">Case Sealed</Badge>}
-            {data.tags.map(tag => tag.visibility === 'mobile' && (
-              <Tag key={`${tag.label}-mobile`} {...tag} inverted className={styles.mobileOnlyTag} />
-            ))}
-          </div>
           <div className={styles.caseIdentifiers}>
             <span className={styles.caseNumber}>{data.caseNumber}</span>
             <Tooltip content={data.caseName}>
@@ -36,6 +59,7 @@ export const CaseHeader: React.FC<CaseHeaderProps> = ({ data }) => {
             </Tooltip>
           </div>
         </div>
+
         <div className={styles.actionsGroup}>
           {data.amountDueCents && (
             <button className="btn btn-secondary">
@@ -84,18 +108,6 @@ export const CaseHeader: React.FC<CaseHeaderProps> = ({ data }) => {
             </InfoBlock>
         ))}
       </div>
-
-      {/* Row 4: Tags */}
-      <div className={styles.row4}>
-        {data.tags.map((tag) => (
-          <Tag 
-            key={tag.label} 
-            {...tag}
-            inverted={tag.visibility !== 'desktop'}
-            className={tag.visibility === 'mobile' ? styles.hideOnMobile : ''}
-          />
-        ))}
-      </div>
-    </div>
+    </motion.div>
   );
 };

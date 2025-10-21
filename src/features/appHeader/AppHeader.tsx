@@ -1,9 +1,12 @@
 // src/features/appHeader/AppHeader.tsx
 import { useState, useEffect } from 'react';
+import { useAtomValue } from 'jotai';
+import { motion } from 'framer-motion';
 import { Tooltip } from '../../components/Tooltip';
 import { Select, SelectItem } from '../../components/Select';
-// FIX: Updated the import path to reflect the file's new location in src/data.
 import { mockUser, mockCaseList, mockLanguages, CaseInfo, Language } from '../../data/appHeaderData';
+// NEW: Import the shared state atom for header visibility.
+import { headerVisibilityAtom } from '../caseDashboard/dashboardState';
 import styles from './AppHeader.module.css';
 
 // A simple hook to detect screen size, kept within this file to adhere to project structure constraints.
@@ -34,6 +37,9 @@ export const AppHeader = () => {
   const [currentCaseId, setCurrentCaseId] = useState(mockCaseList[0].id);
   const [currentLanguage, setCurrentLanguage] = useState(mockLanguages[0].value);
 
+  // NEW: Read the visibility state from the shared atom.
+  const isHeaderVisible = useAtomValue(headerVisibilityAtom);
+
   const currentCase = mockCaseList.find((c: CaseInfo) => c.id === currentCaseId) || mockCaseList[0];
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'short',
@@ -42,9 +48,20 @@ export const AppHeader = () => {
     day: 'numeric',
   });
 
+  // CHANGE: Wrap the header in a motion component to animate its visibility.
+  const headerVariants = {
+    visible: { y: 0 },
+    hidden: { y: '-100%' },
+  };
+
   if (isMobile) {
     return (
-      <header className={styles.header}>
+      <motion.header 
+        className={styles.header}
+        variants={headerVariants}
+        animate={isHeaderVisible ? 'visible' : 'hidden'}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+      >
         <div className={styles.leftGroup}>
           <button className={styles.actionButton} aria-label="Open menu">
             <span className="material-symbols-rounded">menu</span>
@@ -57,12 +74,17 @@ export const AppHeader = () => {
             <span className="material-symbols-rounded">more_vert</span>
           </button>
         </div>
-      </header>
+      </motion.header>
     );
   }
 
   return (
-    <header className={styles.header}>
+    <motion.header
+      className={styles.header}
+      variants={headerVariants}
+      animate={isHeaderVisible ? 'visible' : 'hidden'}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+    >
       <div className={styles.leftGroup}>
         <ActionButton icon="apps" label="Logo" />
         <ActionButton icon="calendar_today" label="Calendar" />
@@ -100,6 +122,6 @@ export const AppHeader = () => {
           <span>{currentCase.department}</span>
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 };
