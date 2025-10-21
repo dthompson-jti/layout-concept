@@ -1,0 +1,52 @@
+/* src/features/caseDashboard/Tile.module.css */
+.tileWrapper {
+  background-color: var(--surface-bg-primary);
+  border: 1px solid var(--surface-border-primary);
+  border-radius: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--surface-shadow-sm);
+  overflow: hidden; /* Important for child animations */
+}
+
+.tileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-bottom: 1px solid var(--surface-border-secondary);
+  flex-shrink: 0;
+}
+
+.tileHeader h3 {
+  margin: 0;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.dragHandle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--surface-fg-secondary);
+  cursor: grab;
+}
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+.tileActions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.tileBodyWrapper {
+  overflow: hidden;
+}
+
+.tileBody {
+  /* This inner div prevents margin collapse and provides padding */
+  padding: var(--spacing-1) 0 0;
+}

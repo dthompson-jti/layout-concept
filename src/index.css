@@ -1,0 +1,22 @@
+/* src/index.css */
+/* This file is the single entry point for all global stylesheets.
+   It defines the cascade layers and imports styles in the correct order. */
+
+@layer base, components;
+
+/* 1. Foundational Design Tokens (not in a layer, available to all) */
+@import './styles/design-tokens.css';
+
+/* 2. Base layer: Resets, global element styles, and utilities */
+@import './styles/base.css' layer(base);
+@import './styles/animations.css' layer(base);
+@import './styles/scrollbars.css' layer(base);
+@import './styles/forms.css' layer(base);
+
+/* 3. Components layer: Reusable component classes and patterns */
+@import './styles/buttons.css' layer(components);
+@import './styles/menu.css' layer(components);
+@import './styles/tabs.css' layer(components);
+/* REMOVED: The following line was causing the build error. */
+/* @import './styles/navigator.css' layer(components); */
+@import './styles/appearance.css' layer(components);

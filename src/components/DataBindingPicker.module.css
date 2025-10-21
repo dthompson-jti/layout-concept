@@ -1,0 +1,43 @@
+/* src/components/DataBindingPicker.module.css */
+.dataBindingPicker {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pickerControl {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-1p5) var(--spacing-2) var(--spacing-1p5) var(--spacing-3);
+  border: 1px solid var(--surface-border-primary);
+  border-radius: 6px;
+  background-color: var(--surface-bg-primary);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.pickerControl:hover {
+  border-color: var(--surface-border-theme);
+}
+
+.pickerControl.unbound {
+  background-color: var(--surface-bg-secondary);
+}
+
+.pickerLabel {
+  font-size: 0.9em;
+  color: var(--surface-fg-secondary);
+}
+
+.pickerLabel.bound {
+  color: var(--surface-fg-primary);
+  font-weight: 500;
+}
+
+.pickerHelperText {
+  font-size: 0.8em;
+  color: var(--surface-fg-secondary);
+  padding-left: var(--spacing-1);
+}

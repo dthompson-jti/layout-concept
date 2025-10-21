@@ -1,0 +1,33 @@
+// src/components/DataBindingPicker.tsx
+// CORRECTED: The import path for BoundData is now correct.
+import { BoundData } from '../types';
+import { Tooltip } from './Tooltip';
+import styles from './DataBindingPicker.module.css';
+
+interface DataBindingPickerProps {
+  binding: BoundData | null | undefined;
+  onOpen: () => void;
+}
+
+export const DataBindingPicker = ({ binding, onOpen }: DataBindingPickerProps) => {
+  const isBound = !!binding;
+
+  const controlClasses = `${styles.pickerControl} ${isBound ? '' : styles.unbound}`;
+  const labelClasses = `${styles.pickerLabel} ${isBound ? styles.bound : ''}`;
+
+  return (
+    <div className={styles.dataBindingPicker}>
+      <div className={controlClasses} onClick={onOpen}>
+        <span className={labelClasses}>
+          {isBound ? binding.fieldName : 'No data binding'}
+        </span>
+        <Tooltip content="Select data binding">
+          <button className="btn btn-quaternary icon-only" aria-label="Select data binding" tabIndex={-1} style={{pointerEvents: 'none'}}>
+            <span className="material-symbols-rounded">more_horiz</span>
+          </button>
+        </Tooltip>
+      </div>
+      {isBound && <span className={styles.pickerHelperText}>{binding.path}</span>}
+    </div>
+  );
+};
