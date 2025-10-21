@@ -1,6 +1,6 @@
 // src/features/caseDashboard/CaseDashboard.tsx
 import { useAtom } from 'jotai';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Masonry from 'react-masonry-css';
 import {
   DndContext,
@@ -17,31 +17,47 @@ import { CSS } from '@dnd-kit/utilities';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { TILE_COMPONENT_MAP } from './tileRegistry';
-import { userLayoutAtom, isEditModeAtom, TileConfig, maximizedTileAtom, activeDragIdAtom } from './dashboardState';
+import { userLayoutAtom, isEditModeAtom, TileConfig, maximizedTileAtom, activeDragIdAtom, dashboardViewModeAtom, DashboardViewMode } from './dashboardState';
 import { Tile } from './Tile';
 import { EditModeOverlay } from './EditModeOverlay';
 import { HiddenTilesTray } from './HiddenTilesTray';
+import { IconToggleGroup } from '../../components/IconToggleGroup';
+import { Tooltip } from '../../components/Tooltip';
 import styles from './CaseDashboard.module.css';
 
 interface SortableTileProps {
   tile: TileConfig;
-  tileId: string;
-  isCollapsed: boolean;
+  isEditMode: boolean;
+  viewMode: DashboardViewMode;
   onToggleCollapse: (id: string) => void;
   onMaximize: (tile: TileConfig) => void;
-  isEditMode: boolean;
 }
 
-const SortableTile = ({ tile, ...props }: SortableTileProps) => {
+const SortableTile = ({ tile, isEditMode, viewMode, onToggleCollapse, onMaximize }: SortableTileProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: tile.id });
-  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1, zIndex: isDragging ? 100 : 'auto' };
   const TileContent = TILE_COMPONENT_MAP[tile.componentKey] || TILE_COMPONENT_MAP.Default;
   const title = tile.componentKey.replace(/([A-Z])/g, ' $1').trim();
+  
+  const [headerControls, setHeaderControls] = useState<React.ReactNode>(null);
+
+  const isCollapsed = viewMode === 'list' ? false : tile.isCollapsed;
 
   return (
     <motion.div layoutId={`tile-container-${tile.id}`} ref={setNodeRef} style={style} {...attributes}>
-      <Tile {...props} title={title} onMaximize={() => props.onMaximize(tile)} dragHandleProps={listeners}>
-        <TileContent />
+      {/* FIX: Removed the conflicting props spread. Props are passed down explicitly. */}
+      <Tile
+        tileId={tile.id}
+        title={title}
+        isCollapsed={isCollapsed}
+        onMaximize={() => onMaximize(tile)}
+        dragHandleProps={listeners}
+        headerControls={headerControls}
+        isEditMode={isEditMode}
+        viewMode={viewMode}
+        onToggleCollapse={onToggleCollapse}
+      >
+        <TileContent tileId={tile.id} setHeaderControls={setHeaderControls} />
       </Tile>
     </motion.div>
   );
@@ -52,8 +68,9 @@ export const CaseDashboard = () => {
   const [isEditMode, setIsEditMode] = useAtom(isEditModeAtom);
   const [activeId, setActiveId] = useAtom(activeDragIdAtom);
   const [maximizedTile, setMaximizedTile] = useAtom(maximizedTileAtom);
+  const [viewMode, setViewMode] = useAtom(dashboardViewModeAtom);
 
-  const sensors = useSensors(useSensor(PointerSensor));
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
   const visibleTiles = useMemo(() => layout.filter((t: TileConfig) => !t.isHidden), [layout]);
   const hiddenTiles = useMemo(() => layout.filter((t: TileConfig) => t.isHidden), [layout]);
@@ -80,21 +97,62 @@ export const CaseDashboard = () => {
   const masonryBreakpoints = { default: 3, 1280: 2, 768: 1 };
   const MaximizedContent = maximizedTile ? TILE_COMPONENT_MAP[maximizedTile.componentKey] : null;
 
+  const viewToggleOptions = [
+    { value: 'grid', label: 'Grid View', icon: 'grid_view' },
+    { value: 'list', label: 'List View', icon: 'view_list' },
+  ];
+
+  const tilesToRender = visibleTiles.map(tile => (
+    <SortableTile
+      key={tile.id}
+      tile={tile}
+      isEditMode={isEditMode}
+      viewMode={viewMode}
+      onToggleCollapse={handleToggleCollapse}
+      onMaximize={setMaximizedTile}
+    />
+  ));
+
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className={styles.dashboardContainer}>
         <EditModeOverlay isEditMode={isEditMode} onExitEditMode={() => setIsEditMode(false)} />
         <div className={styles.header}>
           <h1>Case Dashboard</h1>
-          {!isEditMode && <button className="btn btn-secondary" onClick={() => setIsEditMode(true)}>Personalize View</button>}
+        </div>
+
+        <div className={styles.controlsHeader}>
+          <div className={styles.viewToggle}>
+            <IconToggleGroup
+              options={viewToggleOptions}
+              value={viewMode}
+              onValueChange={(value) => setViewMode(value as DashboardViewMode)}
+            />
+          </div>
+          <div className={styles.personalizeActions}>
+            <Tooltip content="Personalize Layout">
+              <button className="btn btn-secondary icon-only" onClick={() => setIsEditMode(p => !p)} data-state={isEditMode ? 'active' : 'inactive'}>
+                <span className="material-symbols-rounded">edit</span>
+              </button>
+            </Tooltip>
+            <Tooltip content="More Options">
+              <button className="btn btn-secondary icon-only">
+                <span className="material-symbols-rounded">more_horiz</span>
+              </button>
+            </Tooltip>
+          </div>
         </div>
 
         <SortableContext items={visibleTiles.map(t => t.id)} strategy={verticalListSortingStrategy}>
-          <Masonry breakpointCols={masonryBreakpoints} className={styles.masonryGrid} columnClassName={styles.masonryGridColumn}>
-            {visibleTiles.map(tile => (
-              <SortableTile key={tile.id} tile={tile} tileId={tile.id} isCollapsed={tile.isCollapsed} onToggleCollapse={handleToggleCollapse} onMaximize={setMaximizedTile} isEditMode={isEditMode} />
-            ))}
-          </Masonry>
+          {viewMode === 'grid' ? (
+            <Masonry breakpointCols={masonryBreakpoints} className={styles.masonryGrid} columnClassName={styles.masonryGridColumn}>
+              {tilesToRender}
+            </Masonry>
+          ) : (
+            <div className={styles.listViewContainer}>
+              {tilesToRender}
+            </div>
+          )}
         </SortableContext>
         
         <DragOverlay dropAnimation={null}>
@@ -119,7 +177,7 @@ export const CaseDashboard = () => {
                 </button>
               </div>
               <div className={styles.modalBody}>
-                <MaximizedContent />
+                <MaximizedContent tileId={maximizedTile.id} setHeaderControls={() => {}} />
               </div>
             </motion.div>
           </motion.div>

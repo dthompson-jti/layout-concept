@@ -1,3 +1,5 @@
 // src/features/caseDashboard/TilePartyInformation.tsx
 import { TilePlaceholder } from './TilePlaceholder';
-export const TilePartyInformation = () => <TilePlaceholder title="Party Information" />;
+import { TileComponentProps } from './dashboardState';
+
+export const TilePartyInformation = (props: TileComponentProps) => <TilePlaceholder {...props} title="Party Information" />;

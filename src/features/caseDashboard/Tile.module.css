@@ -17,12 +17,24 @@
   padding: var(--spacing-3) var(--spacing-4);
   border-bottom: 1px solid var(--surface-border-secondary);
   flex-shrink: 0;
+  gap: var(--spacing-3);
+}
+
+/* NEW: Left section of the header for controls + title */
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  min-width: 0; /* Allow title to truncate */
 }
 
 .tileHeader h3 {
   margin: 0;
   font-size: 1.1em;
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .dragHandle {
@@ -35,11 +47,15 @@
 .dragHandle:active {
   cursor: grabbing;
 }
+.dragHandle h3 {
+  color: var(--surface-fg-primary);
+}
 
 .tileActions {
   display: flex;
   align-items: center;
   gap: var(--spacing-1);
+  flex-shrink: 0;
 }
 
 .tileBodyWrapper {
@@ -48,5 +64,5 @@
 
 .tileBody {
   /* This inner div prevents margin collapse and provides padding */
-  padding: var(--spacing-1) 0 0;
+  padding: 0; /* Let child components control padding */
 }

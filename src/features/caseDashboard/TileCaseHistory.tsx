@@ -1,26 +1,11 @@
 // src/features/caseDashboard/TileCaseHistory.tsx
-import { useMemo } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
-import { VirtualizedTable } from './VirtualizedTable';
-import { caseHistoryData, HistoryEvent } from '../../data/fakeData';
-import { TableCheckbox } from '../../components/TableCheckbox'; // CORRECTED: Import shared component
+import { TilePlaceholder } from './TilePlaceholder';
+import { TileComponentProps } from './dashboardState';
 
-export const TileCaseHistory = () => {
-  const columns = useMemo<ColumnDef<HistoryEvent>[]>(
-    () => [
-      {
-        id: 'select',
-        header: ({ table }) => <TableCheckbox {...{ checked: table.getIsAllRowsSelected(), indeterminate: table.getIsSomeRowsSelected(), onChange: table.getToggleAllRowsSelectedHandler() }} />,
-        cell: ({ row }) => <TableCheckbox {...{ checked: row.getIsSelected(), disabled: !row.getCanSelect(), indeterminate: row.getIsSomeSelected(), onChange: row.getToggleSelectedHandler() }} />,
-        size: 60,
-      },
-      { accessorKey: 'date', header: 'Date', size: 120 },
-      { accessorKey: 'event', header: 'Event Description', size: 300 },
-      { accessorKey: 'filedBy', header: 'Filed By', size: 150 },
-      { accessorKey: 'docket', header: 'Docket #', size: 150 },
-    ],
-    []
-  );
-
-  return <VirtualizedTable data={caseHistoryData} columns={columns} />;
+// This is a placeholder for the real Case History tile.
+// It also needs to accept the standard props.
+// FIX: Pass props explicitly instead of spreading.
+export const TileCaseHistory = (props: TileComponentProps) => {
+  // In a real implementation, this would contain the same logic as TileDocuments.
+  return <TilePlaceholder tileId={props.tileId} setHeaderControls={props.setHeaderControls} title="Case History" />;
 };

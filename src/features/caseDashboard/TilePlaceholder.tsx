@@ -1,5 +1,6 @@
 // src/features/caseDashboard/TilePlaceholder.tsx
 import React from 'react';
+import { TileComponentProps } from './dashboardState';
 
 const placeholderStyle: React.CSSProperties = {
   display: 'flex',
@@ -13,6 +14,10 @@ const placeholderStyle: React.CSSProperties = {
   border: '1px dashed var(--surface-border-secondary)',
 };
 
-export const TilePlaceholder = ({ title }: { title: string }) => {
+interface TilePlaceholderProps extends TileComponentProps {
+  title: string;
+}
+
+export const TilePlaceholder = ({ title }: TilePlaceholderProps) => {
   return <div style={placeholderStyle}>{title} - Coming Soon</div>;
 };

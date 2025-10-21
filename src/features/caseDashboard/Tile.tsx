@@ -1,9 +1,9 @@
 // src/features/caseDashboard/Tile.tsx
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-// FIX: Import the correct type from dnd-kit
 import { DraggableSyntheticListeners } from '@dnd-kit/core';
 import { Tooltip } from '../../components/Tooltip';
+import { DashboardViewMode } from './dashboardState';
 import styles from './Tile.module.css';
 
 interface TileProps {
@@ -14,8 +14,9 @@ interface TileProps {
   onToggleCollapse: (id: string) => void;
   onMaximize: () => void;
   isEditMode: boolean;
-  // FIX: Replace 'any' with the specific type
   dragHandleProps?: DraggableSyntheticListeners;
+  viewMode?: DashboardViewMode;
+  headerControls?: React.ReactNode; // NEW: Slot for view toggles, etc.
 }
 
 export const Tile = ({
@@ -27,6 +28,8 @@ export const Tile = ({
   onMaximize,
   isEditMode,
   dragHandleProps,
+  viewMode = 'grid',
+  headerControls, // NEW
 }: TileProps) => {
   const contentVariants = {
     collapsed: { height: 0, opacity: 0, y: -10 },
@@ -34,16 +37,21 @@ export const Tile = ({
   };
 
   return (
-    <div className={styles.tileWrapper}>
+    <div className={styles.tileWrapper} data-view-mode={viewMode}>
       <div className={styles.tileHeader}>
-        {isEditMode ? (
-          <div {...dragHandleProps} className={styles.dragHandle}>
-            <span className="material-symbols-rounded">drag_indicator</span>
-            <h3>{title}</h3>
-          </div>
-        ) : (
-          <h3>{title}</h3>
-        )}
+        <div className={styles.headerLeft}>
+          {isEditMode ? (
+            <div {...dragHandleProps} className={styles.dragHandle}>
+              <span className="material-symbols-rounded">drag_indicator</span>
+              <h3>{title}</h3>
+            </div>
+          ) : (
+            <>
+              {headerControls}
+              <h3>{title}</h3>
+            </>
+          )}
+        </div>
 
         <div className={styles.tileActions}>
           <Tooltip content={isCollapsed ? 'Expand' : 'Collapse'}>

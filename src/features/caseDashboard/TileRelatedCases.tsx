@@ -1,3 +1,5 @@
 // src/features/caseDashboard/TileRelatedCases.tsx
 import { TilePlaceholder } from './TilePlaceholder';
-export const TileRelatedCases = () => <TilePlaceholder title="Related Cases" />;
+import { TileComponentProps } from './dashboardState';
+
+export const TileRelatedCases = (props: TileComponentProps) => <TilePlaceholder {...props} title="Related Cases" />;

@@ -2,6 +2,15 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
+export type DashboardViewMode = 'grid' | 'list';
+export type TileContentViewMode = 'table' | 'cards';
+
+// A common interface for props passed to ALL tile content components.
+export interface TileComponentProps {
+  tileId: string;
+  setHeaderControls: (controls: React.ReactNode) => void;
+}
+
 export interface TileConfig {
   id: string;
   componentKey: string;
@@ -22,6 +31,9 @@ const defaultLayout: TileConfig[] = [
 export const userLayoutAtom = atomWithStorage<TileConfig[]>('user-case-layout-v2', defaultLayout);
 export const isEditModeAtom = atom(false);
 
-// ADDED: Atoms required by CaseDashboard.tsx
 export const maximizedTileAtom = atom<TileConfig | null>(null);
 export const activeDragIdAtom = atom<string | null>(null);
+
+export const dashboardViewModeAtom = atomWithStorage<DashboardViewMode>('dashboard-view-mode', 'grid');
+
+export const tileViewModesAtom = atomWithStorage<Record<string, TileContentViewMode>>('tile-content-view-modes', {});

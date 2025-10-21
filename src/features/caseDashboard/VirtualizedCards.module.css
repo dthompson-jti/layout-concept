@@ -1,0 +1,8 @@
+/* src/features/caseDashboard/VirtualizedCards.module.css */
+.scrollContainer {
+  height: 100%;
+  min-height: 400px;
+  max-height: 600px;
+  overflow-y: auto;
+  padding-top: var(--spacing-4);
+}

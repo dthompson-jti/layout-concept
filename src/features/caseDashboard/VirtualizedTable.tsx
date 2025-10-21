@@ -1,41 +1,22 @@
 // src/features/caseDashboard/VirtualizedTable.tsx
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
   flexRender,
-  SortingState,
-  ColumnDef,
+  Table,
 } from '@tanstack/react-table';
 import { useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
 import { AnimatePresence, motion } from 'framer-motion';
-import { SearchInput } from '../../components/SearchInput'; // CORRECTED: Path is now valid
+import { SearchInput } from '../../components/SearchInput';
 import styles from './VirtualizedTable.module.css';
 
-// ... rest of the file is unchanged
 interface VirtualizedTableProps<T extends object> {
-  data: T[];
-  columns: ColumnDef<T>[];
+  tableInstance: Table<T>;
 }
 
-export const VirtualizedTable = <T extends object>({ data, columns }: VirtualizedTableProps<T>) => {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [rowSelection, setRowSelection] = useState({});
-  const [globalFilter, setGlobalFilter] = useState('');
-
-  const table = useReactTable({
-    data,
-    columns,
-    state: { sorting, rowSelection, globalFilter },
-    onSortingChange: setSorting,
-    onRowSelectionChange: setRowSelection,
-    onGlobalFilterChange: setGlobalFilter,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-  });
+export const VirtualizedTable = <T extends object>({ tableInstance: table }: VirtualizedTableProps<T>) => {
+  const globalFilter = table.getState().globalFilter;
+  const setGlobalFilter = table.setGlobalFilter;
+  const rowSelection = table.getState().rowSelection;
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const { rows } = table.getRowModel();
@@ -58,7 +39,7 @@ export const VirtualizedTable = <T extends object>({ data, columns }: Virtualize
     <div className={styles.tableContainer}>
       <div className={styles.toolbar}>
         <div className={styles.searchWrapper}>
-          <SearchInput value={globalFilter} onChange={setGlobalFilter} placeholder="Filter items..." variant="integrated" />
+          <SearchInput value={globalFilter ?? ''} onChange={setGlobalFilter} placeholder="Filter items..." variant="integrated" />
         </div>
         <AnimatePresence>
           {numSelected > 0 && (
@@ -87,7 +68,7 @@ export const VirtualizedTable = <T extends object>({ data, columns }: Virtualize
             ))}
           </thead>
           <tbody>
-            {paddingTop > 0 && <tr><td style={{ height: `${paddingTop}px` }} /></tr>}
+            {paddingTop > 0 && <tr><td colSpan={table.getAllColumns().length} style={{ height: `${paddingTop}px` }} /></tr>}
             {virtualRows.map((virtualRow: VirtualItem) => {
               const row = rows[virtualRow.index];
               return (
@@ -100,7 +81,7 @@ export const VirtualizedTable = <T extends object>({ data, columns }: Virtualize
                 </tr>
               );
             })}
-            {paddingBottom > 0 && <tr><td style={{ height: `${paddingBottom}px` }} /></tr>}
+            {paddingBottom > 0 && <tr><td colSpan={table.getAllColumns().length} style={{ height: `${paddingBottom}px` }} /></tr>}
           </tbody>
         </table>
       </div>

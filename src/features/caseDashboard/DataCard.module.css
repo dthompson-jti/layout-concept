@@ -1,0 +1,87 @@
+/* src/features/caseDashboard/DataCard.module.css */
+.card {
+  background-color: var(--surface-bg-secondary);
+  border: 1px solid var(--surface-border-secondary);
+  border-radius: var(--spacing-2);
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  box-shadow: var(--surface-shadow-xs);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  border-color: var(--surface-border-secondary-hover);
+  box-shadow: var(--surface-shadow-sm);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+}
+
+.title {
+  margin: 0;
+  font-size: 1em;
+  font-weight: 600;
+  line-height: 1.4;
+  /* Allow title to break words to prevent overflow */
+  word-break: break-word;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 0.9em;
+  color: var(--surface-fg-secondary);
+  line-height: 1.5;
+}
+
+.badge {
+  background-color: var(--surface-bg-tertiary);
+  color: var(--surface-fg-secondary);
+  font-size: 0.8em;
+  font-weight: 500;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--spacing-1);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.metaGrid {
+  display: grid;
+  gap: var(--spacing-3) var(--spacing-4);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  padding-top: var(--spacing-2);
+  border-top: 1px solid var(--surface-border-secondary);
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-0p5);
+  font-size: 0.9em;
+  overflow: hidden;
+}
+
+.metaKey {
+  font-size: 0.85em;
+  color: var(--surface-fg-secondary);
+  font-weight: 500;
+}
+
+.metaValue {
+  color: var(--surface-fg-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardActions {
+  display: flex;
+  justify-content: flex-end;
+  min-height: 38px; /* Reserve space for future buttons */
+  align-items: center;
+}

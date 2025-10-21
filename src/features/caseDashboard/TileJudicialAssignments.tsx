@@ -1,3 +1,5 @@
 // src/features/caseDashboard/TileJudicialAssignments.tsx
 import { TilePlaceholder } from './TilePlaceholder';
-export const TileJudicialAssignments = () => <TilePlaceholder title="Judicial Assignments" />;
+import { TileComponentProps } from './dashboardState';
+
+export const TileJudicialAssignments = (props: TileComponentProps) => <TilePlaceholder {...props} title="Judicial Assignments" />;

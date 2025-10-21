@@ -8,13 +8,41 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--spacing-6);
+  margin-bottom: var(--spacing-4);
   padding: 0 var(--spacing-2);
 }
 
 .header h1 {
   margin: 0;
 }
+
+/* NEW: Styles for the view mode and personalization controls */
+.controlsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-6);
+  padding: 0 var(--spacing-2);
+  gap: var(--spacing-4);
+}
+
+.viewToggle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.viewToggle > div { /* Target the IconToggleGroup wrapper */
+  width: 120px;
+}
+
+.personalizeActions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+/* --- Layout Containers --- */
 
 .masonryGrid {
   display: flex;
@@ -29,7 +57,28 @@
   background-clip: padding-box;
 }
 
-/* Modal Styles for Shared Layout Animation */
+/* NEW: Styles for the List View container */
+.listViewContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* The tile itself will provide separation */
+}
+
+/* NEW: Style override for tiles when in List View to create a "seamless" feed */
+.listViewContainer [data-view-mode="list"] {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid var(--surface-border-secondary);
+  border-radius: 0;
+  box-shadow: none;
+  margin-bottom: 0;
+}
+.listViewContainer [data-view-mode="list"]:last-child {
+  border-bottom: none;
+}
+
+
+/* --- Modal Styles for Shared Layout Animation --- */
 .modalBackdrop {
   position: fixed;
   top: 0;

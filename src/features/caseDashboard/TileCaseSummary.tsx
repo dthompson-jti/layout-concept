@@ -1,3 +1,5 @@
 // src/features/caseDashboard/TileCaseSummary.tsx
 import { TilePlaceholder } from './TilePlaceholder';
-export const TileCaseSummary = () => <TilePlaceholder title="Case Summary" />;
+import { TileComponentProps } from './dashboardState';
+
+export const TileCaseSummary = (props: TileComponentProps) => <TilePlaceholder {...props} title="Case Summary" />;
