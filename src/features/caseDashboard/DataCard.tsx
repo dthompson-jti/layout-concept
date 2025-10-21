@@ -14,7 +14,8 @@ export const DataCard = <T extends object>({ row, visiblePriority }: DataCardPro
 
   const visibleColumns = instantiatedColumns.filter(col => {
     const meta = getMeta(col);
-    // FIX: Ensure meta and priority exist before checking.
+    // FIX: This check is now type-safe because of our new declaration file.
+    // TypeScript knows `priority` is a valid (and optional) number property.
     return meta?.priority && meta.priority <= visiblePriority;
   });
 
@@ -24,6 +25,7 @@ export const DataCard = <T extends object>({ row, visiblePriority }: DataCardPro
     return flexRender(cell.column.columnDef.cell, cell.getContext());
   };
 
+  // FIX: All accesses to `meta.cardRole` are now type-safe.
   const titleCol = visibleColumns.find(c => getMeta(c)?.cardRole === 'title');
   const subtitleCol = visibleColumns.find(c => getMeta(c)?.cardRole === 'subtitle');
   const badgeCol = visibleColumns.find(c => getMeta(c)?.cardRole === 'badge');

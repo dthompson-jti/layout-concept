@@ -1,0 +1,41 @@
+/* src/components/Badge.module.css */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 500;
+  border-radius: var(--spacing-1);
+  white-space: nowrap;
+}
+
+.small {
+  padding: var(--spacing-0p5) var(--spacing-2);
+  font-size: 0.8em;
+  gap: var(--spacing-1);
+}
+
+.large {
+  padding: var(--spacing-1) var(--spacing-2p5);
+  font-size: 0.9em;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* Variants */
+.success {
+  color: var(--utility-success-700, #067647);
+  background-color: var(--utility-success-50, #ECFDF3);
+  /* Use box-shadow for crisp, non-layout-shifting borders */
+  box-shadow: inset 0 0 0 1.5px var(--utility-success-700, #067647);
+}
+
+.warning {
+  color: var(--utility-warning-700, #B54708);
+  background-color: var(--utility-warning-50, #FFFAEB);
+  box-shadow: inset 0 0 0 1px var(--utility-warning-300, #FEC84B);
+}
+
+.neutral {
+  color: var(--surface-fg-secondary);
+  background-color: var(--surface-bg-secondary);
+  box-shadow: inset 0 0 0 1px var(--surface-border-secondary);
+}

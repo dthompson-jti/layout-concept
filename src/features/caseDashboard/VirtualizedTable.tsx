@@ -3,6 +3,7 @@ import { useRef } from 'react';
 import {
   flexRender,
   Table,
+  SortDirection,
 } from '@tanstack/react-table';
 import { useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -14,7 +15,8 @@ interface VirtualizedTableProps<T extends object> {
 }
 
 export const VirtualizedTable = <T extends object>({ tableInstance: table }: VirtualizedTableProps<T>) => {
-  const globalFilter = table.getState().globalFilter;
+  // FIX: Provide an explicit type for globalFilter to prevent unsafe assignment.
+  const globalFilter: string = table.getState().globalFilter ?? '';
   const setGlobalFilter = table.setGlobalFilter;
   const rowSelection = table.getState().rowSelection;
 
@@ -39,7 +41,7 @@ export const VirtualizedTable = <T extends object>({ tableInstance: table }: Vir
     <div className={styles.tableContainer}>
       <div className={styles.toolbar}>
         <div className={styles.searchWrapper}>
-          <SearchInput value={globalFilter ?? ''} onChange={setGlobalFilter} placeholder="Filter items..." variant="integrated" />
+          <SearchInput value={globalFilter} onChange={setGlobalFilter} placeholder="Filter items..." variant="integrated" />
         </div>
         <AnimatePresence>
           {numSelected > 0 && (
@@ -60,7 +62,8 @@ export const VirtualizedTable = <T extends object>({ tableInstance: table }: Vir
                   <th key={header.id} onClick={header.column.getToggleSortingHandler()} style={{ width: header.getSize() }}>
                     {flexRender(header.column.columnDef.header, header.getContext())}
                     <span className={styles.sortIndicator}>
-                      {{ asc: <span className="material-symbols-rounded">arrow_upward</span>, desc: <span className="material-symbols-rounded">arrow_downward</span> }[header.column.getIsSorted() as string] ?? null}
+                      {/* FIX: Use a type-safe object lookup without the `as string` cast. */}
+                      {{ asc: <span className="material-symbols-rounded">arrow_upward</span>, desc: <span className="material-symbols-rounded">arrow_downward</span> }[header.column.getIsSorted() as SortDirection] ?? null}
                     </span>
                   </th>
                 ))}

@@ -16,13 +16,16 @@ import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } 
 import { CSS } from '@dnd-kit/utilities';
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { TILE_COMPONENT_MAP } from './tileRegistry';
+// FIX: Import from the renamed 'TileRegistry.tsx' file.
+import { TILE_COMPONENT_MAP } from './TileRegistry';
 import { userLayoutAtom, isEditModeAtom, TileConfig, maximizedTileAtom, activeDragIdAtom, dashboardViewModeAtom, DashboardViewMode } from './dashboardState';
 import { Tile } from './Tile';
 import { EditModeOverlay } from './EditModeOverlay';
 import { HiddenTilesTray } from './HiddenTilesTray';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import { Tooltip } from '../../components/Tooltip';
+import { CaseHeader } from '../caseHeader/CaseHeader';
+import { mockCaseData } from '../../data/caseData';
 import styles from './CaseDashboard.module.css';
 
 interface SortableTileProps {
@@ -45,7 +48,6 @@ const SortableTile = ({ tile, isEditMode, viewMode, onToggleCollapse, onMaximize
 
   return (
     <motion.div layoutId={`tile-container-${tile.id}`} ref={setNodeRef} style={style} {...attributes}>
-      {/* FIX: Removed the conflicting props spread. Props are passed down explicitly. */}
       <Tile
         tileId={tile.id}
         title={title}
@@ -115,12 +117,10 @@ export const CaseDashboard = () => {
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <CaseHeader data={mockCaseData} />
       <div className={styles.dashboardContainer}>
         <EditModeOverlay isEditMode={isEditMode} onExitEditMode={() => setIsEditMode(false)} />
-        <div className={styles.header}>
-          <h1>Case Dashboard</h1>
-        </div>
-
+        
         <div className={styles.controlsHeader}>
           <div className={styles.viewToggle}>
             <IconToggleGroup

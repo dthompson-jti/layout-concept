@@ -1,0 +1,42 @@
+/* src/features/caseHeader/Tag.module.css */
+.tag {
+  display: none; /* Hidden by default, shown via visibility classes */
+  padding: var(--spacing-1) var(--spacing-2p5);
+  border-radius: 6px;
+  font-size: 0.85em;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Color Variants */
+.orange {
+  background-color: var(--utility-orange-50, #FFF4ED);
+  color: var(--utility-orange-dark-400, #FF692E);
+}
+
+.blue {
+  background-color: var(--utility-primary-50, #EEF4FF);
+  color: var(--gray-blue-500, #4E5BA6);
+}
+
+.gray {
+  background-color: var(--primitives-grey-100, #F2F4F7);
+  color: var(--primitives-grey-500, #717680);
+}
+
+/* Visibility Control */
+.mobile {
+  display: inline-flex;
+}
+
+@media (min-width: 768px) {
+  .tablet {
+    display: inline-flex;
+  }
+}
+
+@media (min-width: 1200px) {
+  .desktop {
+    display: inline-flex;
+  }
+}

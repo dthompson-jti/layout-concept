@@ -8,6 +8,7 @@ function App() {
   return (
     <div className={styles.appContainer}>
       <main className={styles.appMain}>
+        {/* CaseDashboard now provides its own header, so it's a direct child of main */}
         <CaseDashboard />
       </main>
       <ToastContainer />

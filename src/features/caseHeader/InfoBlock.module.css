@@ -1,0 +1,43 @@
+/* src/features/caseHeader/InfoBlock.module.css */
+.infoBlock {
+  display: flex;
+  min-width: 0; /* Prevents flex items from overflowing their container */
+}
+
+.inline {
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--surface-fg-quaternary);
+  font-size: 0.9em;
+}
+
+.inline .material-symbols-rounded {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.inline p {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stacked {
+  flex-direction: column;
+  gap: var(--spacing-1);
+  font-size: 0.9em;
+}
+
+.stacked label {
+  font-weight: 600;
+  color: var(--surface-fg-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stacked div {
+  color: var(--surface-fg-primary);
+  line-height: 1.5;
+}

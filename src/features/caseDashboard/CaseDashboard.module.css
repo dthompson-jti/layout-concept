@@ -4,17 +4,7 @@
   width: 100%;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-4);
-  padding: 0 var(--spacing-2);
-}
-
-.header h1 {
-  margin: 0;
-}
+/* REMOVED .header styles, as this is now handled by the CaseHeader component */
 
 /* NEW: Styles for the view mode and personalization controls */
 .controlsHeader {

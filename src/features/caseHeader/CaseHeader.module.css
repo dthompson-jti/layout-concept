@@ -1,0 +1,149 @@
+/* src/features/caseHeader/CaseHeader.module.css */
+.headerContainer {
+  background-color: var(--surface-bg-primary);
+  border-bottom: 1px solid var(--surface-border-secondary);
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+/* --- Row 1: Core ID, Title, and Actions --- */
+.row1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+}
+
+.titleGroup {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  min-width: 0; /* Important for child truncation */
+}
+
+.statusBadges {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-shrink: 0;
+  padding-top: var(--spacing-1);
+}
+
+.caseIdentifiers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-0p5);
+  min-width: 0;
+}
+
+.caseNumber {
+  font-size: 1.25em;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.caseName {
+  margin: 0;
+  font-size: 1.25em;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--surface-fg-secondary);
+}
+
+.actionsGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  flex-shrink: 0;
+}
+
+.iconActions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+/* --- Row 2 & 3: Info Grids --- */
+.row2, .row3 {
+  display: grid;
+  gap: var(--spacing-6);
+}
+
+.row2 {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  padding-bottom: var(--spacing-4);
+  border-bottom: 1px solid var(--surface-border-secondary);
+}
+
+.row3 {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* Hide the placeholder columns by default */
+.row3 > div:nth-child(n+3) {
+  display: none;
+}
+
+/* --- Row 4: Tags --- */
+.row4 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+/* --- Tablet and Desktop Layout --- */
+@media (min-width: 1200px) {
+  .row3 {
+    /* Show all 4 columns on desktop */
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .row3 > div:nth-child(n+3) {
+    display: flex;
+  }
+}
+
+/* --- Mobile Layout --- */
+@media (max-width: 767px) {
+  .headerContainer {
+    padding: var(--spacing-3);
+    gap: var(--spacing-3);
+  }
+
+  .row1 {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-3);
+  }
+
+  .titleGroup {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .caseIdentifiers {
+    /* Vertical separator for mobile */
+    border-left: 2px solid var(--surface-border-secondary);
+    padding-left: var(--spacing-3);
+  }
+  
+  .caseName {
+    /* Allow wrapping on mobile */
+    white-space: normal;
+  }
+
+  .actionsGroup {
+    justify-content: space-between;
+  }
+
+  /* Hide secondary info on mobile */
+  .row2 > div:nth-child(2),
+  .row2 > div:nth-child(3) {
+    display: none;
+  }
+  
+  /* Hide tertiary info on mobile */
+  .row3 > div:nth-child(1) {
+    display: none;
+  }
+}

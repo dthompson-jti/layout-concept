@@ -1,7 +1,7 @@
 // src/features/caseDashboard/TileDocuments.tsx
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react'; // FIX: Removed unused 'useMemo' import.
 import { useAtom } from 'jotai';
-import { SortingState, getCoreRowModel, getSortedRowModel, useReactTable, createColumnHelper } from '@tanstack/react-table';
+import { SortingState, getCoreRowModel, getSortedRowModel, useReactTable, createColumnHelper, getFilteredRowModel } from '@tanstack/react-table';
 import { tileViewModesAtom, TileContentViewMode } from './dashboardState';
 import { Document, documentsData } from '../../data/fakeData';
 import { VirtualizedTable } from './VirtualizedTable';
@@ -24,7 +24,6 @@ const documentColumns = [
   columnHelper.accessor('by', { header: 'Uploaded By', size: 150, meta: { priority: 3, cardRole: 'meta' } }),
 ];
 
-// FIX: This component now receives layout props from CaseDashboard.
 interface TileDocumentsProps {
   tileId: string;
   setHeaderControls: (controls: React.ReactNode) => void;
@@ -34,14 +33,17 @@ export const TileDocuments = ({ tileId, setHeaderControls }: TileDocumentsProps)
   const [viewModes, setViewModes] = useAtom(tileViewModesAtom);
   const viewMode = viewModes[tileId] || 'table';
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = useState(''); // State for search/filter
 
   const table = useReactTable({
     data: documentsData,
     columns: documentColumns,
-    state: { sorting },
+    state: { sorting, globalFilter },
     onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   const { rows } = table.getRowModel();
@@ -49,9 +51,8 @@ export const TileDocuments = ({ tileId, setHeaderControls }: TileDocumentsProps)
   const setViewMode = (mode: TileContentViewMode) => {
     setViewModes(prev => ({ ...prev, [tileId]: mode }));
   };
-
-  // This logic now lives inside the component that owns the data.
-  useMemo(() => {
+  
+  useEffect(() => {
     const viewToggleOptions = [
       { value: 'table', label: 'Table View', icon: 'table_rows' },
       { value: 'cards', label: 'Card View', icon: 'view_agenda' },
@@ -81,7 +82,7 @@ export const TileDocuments = ({ tileId, setHeaderControls }: TileDocumentsProps)
       </div>
     );
     setHeaderControls(controls);
-  }, [viewMode, sorting, setHeaderControls]);
+  }, [viewMode, sorting, setHeaderControls, setViewMode]);
 
 
   return (
