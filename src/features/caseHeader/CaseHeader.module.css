@@ -13,12 +13,12 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--spacing-4);
-  margin-bottom: var(--spacing-1); /* 4px */
 }
 
 .titleGroup {
   display: flex;
-  align-items: flex-start;
+  /* CHANGE: Use baseline alignment for better typographic harmony */
+  align-items: baseline;
   gap: var(--spacing-3);
   min-width: 0;
 }
@@ -26,9 +26,9 @@
 .statusBadges {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--spacing-2);
   flex-shrink: 0;
-  padding-top: var(--spacing-1);
 }
 
 .caseIdentifiers {
@@ -42,11 +42,6 @@
   font-size: 1.25em;
   font-weight: 600;
   line-height: 1.2;
-}
-
-/* CHANGE: Hide divider by default */
-.caseNumber::after {
-  display: none;
 }
 
 .caseName {
@@ -70,11 +65,18 @@
   gap: var(--spacing-1);
 }
 
-/* --- Row 2 & 3: Info Grids --- */
+/* --- Row Spacing Control --- */
+.row1, .row2, .row3, .row4 {
+  width: 100%;
+}
+.row1 { margin-bottom: var(--spacing-1); }
+.row2 { margin-bottom: var(--spacing-6); }
+.row3 { margin-bottom: var(--spacing-6); }
+
+/* --- Info Grids --- */
 .row3 {
   display: grid;
   gap: var(--spacing-6);
-  margin-bottom: var(--spacing-6); /* 24px */
 }
 
 .row2 {
@@ -82,7 +84,6 @@
   flex-wrap: wrap;
   align-items: flex-start;
   gap: var(--spacing-6);
-  margin-bottom: var(--spacing-6); /* 24px */
 }
 
 .row3 {
@@ -101,15 +102,11 @@
 }
 
 /* --- Responsive Tag Visibility --- */
-.mobileOnlyTag {
-  display: none;
-}
-.hideOnMobile {
-  display: inline-flex;
-}
+.mobileOnlyTag { display: none; }
+.hideOnMobile { display: inline-flex; }
 
 
-/* --- Tablet and Desktop Layout --- */
+/* --- Desktop Layout (> 1200px) --- */
 @media (min-width: 1200px) {
   .row3 {
     grid-template-columns: repeat(4, 1fr);
@@ -124,7 +121,6 @@
     gap: 0;
   }
 
-  /* CHANGE: Show divider only on desktop */
   .caseNumber::after {
     content: '';
     display: inline-block;
@@ -136,17 +132,28 @@
   }
 }
 
-/* --- Mobile Layout --- */
+/* --- Tablet Layout (768px - 1199px) --- */
+@media (min-width: 768px) and (max-width: 1199px) {
+  /* CHANGE: Stack status badges vertically */
+  .statusBadges {
+    flex-direction: column;
+    align-items: flex-start; /* Align to the left */
+  }
+}
+
+/* --- Mobile Layout (< 768px) --- */
 @media (max-width: 767px) {
   .headerContainer {
-    padding: var(--spacing-3);
-    gap: var(--spacing-3);
+    /* CHANGE: Reduced bottom padding */
+    padding: var(--spacing-3) var(--spacing-3) var(--spacing-2);
   }
 
   .row1 {
     flex-direction: column;
     align-items: stretch;
     gap: var(--spacing-3);
+    /* CHANGE: Increased space between row 1 and 2 */
+    margin-bottom: var(--spacing-4);
   }
 
   .titleGroup {
@@ -155,8 +162,7 @@
   }
 
   .caseIdentifiers {
-    border-left: 2px solid var(--surface-border-secondary);
-    padding-left: var(--spacing-3);
+    padding-left: 0;
   }
   
   .caseName {
@@ -167,8 +173,12 @@
     justify-content: space-between;
   }
 
+  .row2 {
+    margin-bottom: var(--spacing-4);
+  }
+
   .row2 > div:nth-child(2),
-  .row2 > div:child(3) {
+  .row2 > div:nth-child(3) {
     display: none;
   }
   
@@ -179,6 +189,16 @@
   .mobileOnlyTag {
     display: inline-flex;
   }
+
+  .mobileOnlyTag::before {
+    content: '';
+    display: inline-block;
+    width: 1px;
+    height: 16px;
+    background-color: var(--surface-border-secondary);
+    margin-right: var(--spacing-2);
+  }
+
   .hideOnMobile {
     display: none;
   }

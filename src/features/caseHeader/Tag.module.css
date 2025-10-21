@@ -1,13 +1,15 @@
 /* src/features/caseHeader/Tag.module.css */
 .tag {
-  display: none; /* Hidden by default, shown via visibility classes */
-  /* CHANGE: Increased padding for more breathing room */
-  padding: var(--spacing-1p5) var(--spacing-3);
+  display: none;
+  /* CHANGE: Unify height and padding with Badge component */
+  height: 22px;
+  padding: 0 10px;
   border-radius: 6px;
-  font-size: 0.85em;
+  font-size: 0.8em;
   font-weight: 500;
   white-space: nowrap;
   transition: background-color 0.2s, color 0.2s;
+  align-items: center;
 }
 
 /* Color Variants */
@@ -26,7 +28,6 @@
   color: var(--primitives-grey-500, #717680);
 }
 
-/* CHANGE: Added inverted styles for high/med-vis tags */
 .orange[data-inverted="true"] {
   background-color: var(--utility-orange-dark-400, #FF692E);
   color: var(--surface-fg-white);

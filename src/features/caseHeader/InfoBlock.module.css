@@ -1,21 +1,20 @@
 /* src/features/caseHeader/InfoBlock.module.css */
 .infoBlock {
   display: flex;
-  min-width: 0; /* Prevents flex items from overflowing their container */
+  min-width: 0;
 }
 
 .inline {
   align-items: center;
-  /* CHANGE: Reduced gap for tighter icon-to-text spacing */
   gap: var(--spacing-1p5);
   color: var(--surface-fg-quaternary);
   font-size: 0.9em;
 }
 
 .inline .material-symbols-rounded {
-  /* CHANGE: Set specific font-size and optical size for icons */
-  font-size: 16px;
-  font-variation-settings: 'opsz' 16;
+  /* CHANGE: Icon size decreased one more step */
+  font-size: 13px;
+  font-variation-settings: 'opsz' 13;
   flex-shrink: 0;
 }
 
@@ -28,7 +27,8 @@
 
 .stacked {
   flex-direction: column;
-  gap: var(--spacing-0p5);
+  /* CHANGE: Tighter gap within stacked blocks */
+  gap: 2px;
   font-size: 0.9em;
 }
 
