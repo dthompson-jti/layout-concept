@@ -6,17 +6,18 @@ interface TagProps {
   label: string;
   visibility: 'mobile' | 'tablet' | 'desktop';
   color: 'orange' | 'blue' | 'gray';
-  // CHANGE: Added optional props for new styles
-  inverted?: boolean;
+  // CHANGE: Replace 'inverted' with a more semantic 'variant' prop.
+  variant?: 'default' | 'solid';
   className?: string;
 }
 
-export const Tag: React.FC<TagProps> = ({ label, visibility, color, inverted = false, className = '' }) => {
+export const Tag: React.FC<TagProps> = ({ label, visibility, color, variant = 'default', className = '' }) => {
   return (
     <span 
-      className={`${styles.tag} ${styles[visibility]} ${styles[color]} ${className}`}
-      // CHANGE: Use a data attribute to apply inverted styles conditionally
-      data-inverted={inverted}
+      className={`${styles.tag} ${styles[visibility]} ${className}`}
+      // CHANGE: Use data attributes for both color and variant for clean CSS targeting.
+      data-color={color}
+      data-variant={variant}
     >
       {label}
     </span>

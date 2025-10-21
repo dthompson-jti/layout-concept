@@ -11,49 +11,44 @@
   align-items: center;
 }
 
-/* Color Variants */
-.orange {
+/* --- NEW: Variant-based Styling --- */
+
+/* Default Variant (light background) */
+.tag[data-color="orange"][data-variant="default"] {
   background-color: var(--utility-orange-50, #FFF4ED);
   color: var(--utility-orange-dark-400, #FF692E);
 }
-.blue {
+.tag[data-color="blue"][data-variant="default"] {
   background-color: var(--utility-primary-50, #EEF4FF);
   color: var(--gray-blue-500, #4E5BA6);
 }
-.gray {
+.tag[data-color="gray"][data-variant="default"] {
   background-color: var(--primitives-grey-100, #F2F4F7);
   color: var(--primitives-grey-500, #717680);
 }
-.orange[data-inverted="true"] {
+
+/* Solid Variant (dark background, formerly "inverted") */
+.tag[data-color="orange"][data-variant="solid"] {
   background-color: var(--utility-orange-dark-400, #FF692E);
   color: var(--surface-fg-white);
 }
-.blue[data-inverted="true"] {
+.tag[data-color="blue"][data-variant="solid"] {
   background-color: var(--gray-blue-500, #4E5BA6);
+  color: var(--surface-fg-white);
+}
+.tag[data-color="gray"][data-variant="solid"] {
+  background-color: var(--primitives-grey-500, #717680);
   color: var(--surface-fg-white);
 }
 
 
 /* --- CUMULATIVE VISIBILITY CONTROL --- */
-
-/* Rule for Mobile Screens */
 @media (max-width: 767px) {
-  .mobile {
-    display: inline-flex;
-  }
+  .mobile { display: inline-flex; }
 }
-
-/* Rule for Tablet Screens */
 @media (min-width: 768px) and (max-width: 1199px) {
-  .mobile, .tablet {
-    display: inline-flex;
-  }
+  .mobile, .tablet { display: inline-flex; }
 }
-
-/* Rule for Desktop Screens */
 @media (min-width: 1200px) {
-  /* CHANGE: On desktop, ALL tags are potentially visible */
-  .mobile, .tablet, .desktop {
-    display: inline-flex;
-  }
+  .mobile, .tablet, .desktop { display: inline-flex; }
 }
