@@ -24,10 +24,6 @@
 .tableScrollWrapper {
   flex-grow: 1;
   overflow: auto;
-  border: 1px solid var(--surface-border-secondary);
-  border-radius: var(--spacing-2);
-  /* FIX: Use margin to create consistent spacing around the table. */
-  margin: 0 var(--spacing-4) var(--spacing-4);
 }
 
 .tableScrollWrapper[data-context='masonry'][data-is-limited='true'] {
@@ -39,14 +35,21 @@
 }
 .tableScrollWrapper[data-context='maximized'] {
   height: 100%;
-  margin: var(--spacing-4);
+  padding: var(--spacing-4);
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
-  min-width: 800px;
+  table-layout: auto;
+  border: 1px solid var(--surface-border-secondary);
+  border-radius: var(--spacing-2);
+  margin: 0 var(--spacing-4) var(--spacing-4);
+}
+
+.tableScrollWrapper[data-context='maximized'] .table {
+    margin: 0;
+    height: 100%;
 }
 
 .tableHeader {
@@ -67,7 +70,29 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  width: 1%;
 }
+
+/* DEFINITIVE FIX: Target the list view container from the parent component. */
+/* This higher specificity ensures the styles are applied correctly. */
+.listViewContainer .table {
+  table-layout: fixed; /* Revert to fixed layout for precise control */
+}
+.listViewContainer .tableHeader th:first-child {
+  /* Give the first column a generous fixed width */
+  width: 250px;
+}
+.listViewContainer .tableHeader th {
+  /* Allow other columns to be flexible */
+  width: auto;
+}
+.listViewContainer .table th:first-child,
+.listViewContainer .table td:first-child {
+  /* Disable sticky positioning which was causing the scrollbar */
+  position: static;
+  border-right: none;
+}
+
 
 .tableHeader th:hover {
   background-color: var(--surface-bg-tertiary);

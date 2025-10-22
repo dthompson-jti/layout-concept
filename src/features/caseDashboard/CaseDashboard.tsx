@@ -25,7 +25,6 @@ import { HiddenTilesTray } from './HiddenTilesTray';
 import { DashboardCommandBar } from './DashboardCommandBar';
 import { EditModeActions } from './EditModeActions';
 import { ViewContext } from './ViewContext';
-// FIX: Correct the import paths for Menu and Tooltip components.
 import { MenuRoot, MenuTrigger, MenuContent, MenuItem } from '../../components/Menu';
 import { Tooltip } from '../../components/Tooltip';
 import styles from './CaseDashboard.module.css';
@@ -79,7 +78,7 @@ export const CaseDashboard = () => {
   const [activeId, setActiveId] = useAtom(activeDragIdAtom);
   const [maximizedTile, setMaximizedTile] = useAtom(maximizedTileAtom);
   const [viewMode] = useAtom(globalViewModeAtom);
-
+  
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
   const visibleTiles = useMemo(() => layout.filter((t: TileConfig) => !t.isHidden), [layout]);
@@ -167,15 +166,24 @@ export const CaseDashboard = () => {
               animate={{ backgroundColor: 'rgba(10, 12, 18, 0.7)' }}
               exit={{ backgroundColor: 'rgba(10, 12, 18, 0)' }}
               transition={{ duration: 0.3 }}
+              // DEFINITIVE FIX: Add a click handler to the backdrop to close the modal.
+              // This prevents clicks from propagating to elements underneath.
+              onClick={() => setMaximizedTile(null)}
             >
-              <motion.div className={styles.modalContentWrapper} layoutId={`tile-container-${maximizedTile.id}`}>
+              {/* DEFINITIVE FIX: Stop click propagation on the content wrapper itself. */}
+              <motion.div className={styles.modalContentWrapper} layoutId={`tile-container-${maximizedTile.id}`} onClick={(e) => e.stopPropagation()}>
                 <div className={styles.modalHeader}>
                   <div className={styles.titleGroup}>
                     <h2>{maximizedTile.title}</h2>
                   </div>
                   <div className={styles.actionsGroup}>
                     {maximizedMenuActions.length > 0 && (
-                      <MenuRoot>
+                      // DEFINITIVE FIX: Add the `modal={false}` prop to the MenuRoot.
+                      // This tells Radix to render the menu content relative to the trigger,
+                      // NOT in a separate portal. This is essential when the trigger itself
+                      // is inside a transformed element (like our animating modal),
+                      // preventing positioning conflicts and ensuring the menu is clickable.
+                      <MenuRoot modal={false}>
                         <Tooltip content="More Options">
                           <MenuTrigger asChild>
                             <button className="btn btn-tertiary icon-only">

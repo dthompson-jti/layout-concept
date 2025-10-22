@@ -4,7 +4,6 @@ import { createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable, 
 import { Table as TableData, TableRow, MenuAction } from '../../data/caseDetailData';
 import { TileContentViewMode } from './dashboardState';
 import { VirtualizedTable } from './VirtualizedTable';
-// FIX: Import the renamed CardListDisplay component.
 import { CardListDisplay } from './CardListDisplay';
 import styles from './DataTableDisplay.module.css';
 
@@ -30,6 +29,7 @@ export const DataTableDisplay = ({ tableData, viewMode, rowLimit, searchValue, m
     [tableData.columns, columnHelper]
   );
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: tableData.visible_rows,
     columns,
@@ -48,7 +48,6 @@ export const DataTableDisplay = ({ tableData, viewMode, rowLimit, searchValue, m
       {viewMode === 'table' ? (
         <VirtualizedTable tableInstance={table} rowLimit={rowLimit} />
       ) : (
-        // FIX: Use the new CardListDisplay component.
         <CardListDisplay rows={rows} rowLimit={rowLimit} menuActions={menuActions} />
       )}
     </div>
