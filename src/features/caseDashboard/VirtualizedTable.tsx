@@ -23,6 +23,7 @@ export const VirtualizedTable = <T extends object>({ tableInstance: table, rowLi
   const rowsToRender = rowLimit ? allRows.slice(0, rowLimit) : allRows;
   const firstColumnId = table.getAllColumns()[0]?.id;
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const rowVirtualizer = useVirtualizer({
     count: rowsToRender.length,
     getScrollElement: () => tableContainerRef.current,
@@ -78,7 +79,6 @@ export const VirtualizedTable = <T extends object>({ tableInstance: table, rowLi
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </span>
                       ) : (
-                        // FIX: Corrected typo from 'column_def' to 'columnDef'
                         flexRender(cell.column.columnDef.cell, cell.getContext())
                       )}
                     </td>

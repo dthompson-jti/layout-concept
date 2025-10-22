@@ -25,10 +25,12 @@ export const DataTableDisplay = ({ tableData, viewMode, rowLimit, searchValue, m
         cell: info => info.getValue(),
         meta: colSchema.meta,
       })
-    ) as ColumnDef<TableRow, any>[],
+    // FIX: Replace 'any' with the specific union type for full type safety.
+    ) as ColumnDef<TableRow, string | number | boolean | null>[],
     [tableData.columns, columnHelper]
   );
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: tableData.visible_rows,
     columns,

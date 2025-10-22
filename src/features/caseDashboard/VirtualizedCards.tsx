@@ -17,6 +17,7 @@ export const VirtualizedCards = <T extends object>({ rows, rowLimit, menuActions
 
   const rowsToRender = rowLimit ? rows.slice(0, rowLimit) : rows;
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const rowVirtualizer = useVirtualizer({
     count: rowsToRender.length,
     getScrollElement: () => containerRef.current,

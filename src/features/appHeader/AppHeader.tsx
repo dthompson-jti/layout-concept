@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { Tooltip } from '../../components/Tooltip';
 import { Select, SelectItem } from '../../components/Select';
-// FIX: Removed unused CaseInfo import
 import { mockUser, mockCaseList, mockLanguages, Language } from '../../data/appHeaderData';
 import styles from './AppHeader.module.css';
 
@@ -13,6 +12,33 @@ const ActionButton = ({ icon, label }: { icon: string; label: string }) => (
     </button>
   </Tooltip>
 );
+
+// A simple hook to detect screen size, kept within this file.
+// FIX: Refactored to align with React best practices and resolve the set-state-in-effect error.
+const useMediaQuery = (query: string) => {
+  // Initialize state directly from the media query, running only once.
+  const [matches, setMatches] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia(query).matches;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    
+    // The listener updates the state when the media query match status changes.
+    const listener = () => setMatches(media.matches);
+
+    // Add the event listener.
+    media.addEventListener('change', listener);
+    
+    // Clean up the listener on component unmount.
+    return () => media.removeEventListener('change', listener);
+  }, [query]); // Re-run the effect only if the query string changes.
+
+  return matches;
+};
 
 export const AppHeader = () => {
   const isMobile = useMediaQuery('(max-width: 767px)');
@@ -91,19 +117,4 @@ export const AppHeader = () => {
       {headerContent}
     </header>
   );
-};
-
-// A simple hook to detect screen size, kept within this file.
-const useMediaQuery = (query: string) => {
-  const [matches, setMatches] = useState(false);
-  useEffect(() => {
-    const media = window.matchMedia(query);
-    if (media.matches !== matches) {
-      setMatches(media.matches);
-    }
-    const listener = () => setMatches(media.matches);
-    window.addEventListener('resize', listener);
-    return () => window.removeEventListener('resize', listener);
-  }, [matches, query]);
-  return matches;
 };
