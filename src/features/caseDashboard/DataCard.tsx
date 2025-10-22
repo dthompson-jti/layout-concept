@@ -1,16 +1,20 @@
 // src/features/caseDashboard/DataCard.tsx
 import { flexRender, Row, Column, ColumnDef } from '@tanstack/react-table';
+import { MenuAction } from '../../data/caseDetailData';
+import { MenuRoot, MenuTrigger, MenuContent, MenuItem } from '../../components/Menu';
+import { useViewContext } from './ViewContext';
 import styles from './DataCard.module.css';
 
 interface DataCardProps<T extends object> {
   row: Row<T>;
+  menuActions: (string | MenuAction)[];
 }
 
-// Helper to safely get meta from a column definition
 const getMeta = <T extends object>(colDef: ColumnDef<T>) => colDef.meta as { cardRole?: string } | undefined;
 
-export const DataCard = <T extends object>({ row }: DataCardProps<T>) => {
+export const DataCard = <T extends object>({ row, menuActions }: DataCardProps<T>) => {
   const visibleCells = row.getVisibleCells();
+  const viewContext = useViewContext();
 
   const renderField = (col: Column<T>) => {
     const cell = visibleCells.find(c => c.column.id === col.id);
@@ -18,7 +22,6 @@ export const DataCard = <T extends object>({ row }: DataCardProps<T>) => {
     return flexRender(cell.column.columnDef.cell, cell.getContext());
   };
 
-  // Find columns based on the meta property in their definitions
   const titleCol = visibleCells.map(c => c.column).find(c => getMeta(c.columnDef)?.cardRole === 'title');
   const subtitleCol = visibleCells.map(c => c.column).find(c => getMeta(c.columnDef)?.cardRole === 'subtitle');
   const badgeCol = visibleCells.map(c => c.column).find(c => getMeta(c.columnDef)?.cardRole === 'badge');
@@ -30,7 +33,7 @@ export const DataCard = <T extends object>({ row }: DataCardProps<T>) => {
   return (
     <div className={styles.card}>
       <div className={styles.cardHeader}>
-        {titleCol && <h4 className={styles.title}>{renderField(titleCol)}</h4>}
+        {titleCol && <h4 className={`${styles.title} text-as-link`}>{renderField(titleCol)}</h4>}
         {badgeCol && <div className={styles.badge}>{renderField(badgeCol)}</div>}
       </div>
 
@@ -48,7 +51,28 @@ export const DataCard = <T extends object>({ row }: DataCardProps<T>) => {
       )}
       
       <div className={styles.cardActions}>
-        {/* Inline action buttons will go here */}
+        {/* NEW: Conditionally render menu in maximized view */}
+        {viewContext === 'maximized' && (
+          <MenuRoot>
+            <MenuTrigger asChild>
+              <button className="btn btn-tertiary icon-only">
+                <span className="material-symbols-rounded">more_horiz</span>
+              </button>
+            </MenuTrigger>
+            <MenuContent>
+              {menuActions.map((action, index) => {
+                const label = typeof action === 'string' ? action : action.label;
+                const hasSubmenu = typeof action !== 'string' && action.submenu;
+                return (
+                  <MenuItem key={`${label}-${index}`} className="menu-item">
+                    {label}
+                    {hasSubmenu && <span className="material-symbols-rounded" style={{ marginLeft: 'auto' }}>chevron_right</span>}
+                  </MenuItem>
+                );
+              })}
+            </MenuContent>
+          </MenuRoot>
+        )}
       </div>
     </div>
   );

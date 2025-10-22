@@ -2,7 +2,6 @@
 .scrollContainer {
   height: 100%;
   min-height: 400px;
-  max-height: 600px;
   overflow-y: auto;
   padding-top: var(--spacing-4);
 }
@@ -12,4 +11,10 @@
   height: auto;
   min-height: 0;
   max-height: none;
+}
+
+/* NEW: Add scrolling portal behavior when not limited */
+.scrollContainer[data-is-limited='false'] {
+  max-height: 450px; /* Fixed height scrolling portal */
+  overflow-y: auto;
 }

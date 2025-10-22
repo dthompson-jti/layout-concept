@@ -74,15 +74,7 @@
   align-items: center;
 }
 
-.collapseButton .material-symbols-rounded {
-  transition: transform 0.25s ease-in-out;
-}
-
-/* FIX: Rotate the chevron when the tile is EXPANDED (not collapsed). */
-.tileWrapper[data-collapsed='false'] .collapseButton .material-symbols-rounded {
-  transform: rotate(180deg);
-}
-
+/* FIX: Remove the empty ruleset that was causing a warning. */
 
 .tileBodyWrapper {
   overflow: hidden;

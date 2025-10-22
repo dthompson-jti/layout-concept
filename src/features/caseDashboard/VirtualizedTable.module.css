@@ -23,38 +23,38 @@
 
 .tableScrollWrapper {
   flex-grow: 1;
+  /* NEW: Enable horizontal scrolling on overflow */
   overflow: auto;
   border: 1px solid var(--surface-border-secondary);
   border-radius: var(--spacing-2);
   margin: 0 var(--spacing-4) var(--spacing-4);
 }
 
-/* NEW: Table height contexts */
 .tableScrollWrapper[data-context='masonry'][data-is-limited='true'] {
-  overflow: hidden; /* Prevent scrolling when row count is limited */
+  overflow-y: hidden; 
   height: auto;
 }
 .tableScrollWrapper[data-context='masonry'][data-is-limited='false'] {
-  /* Default height for single-table tiles in masonry view */
-  height: 392px; /* 7 rows * 49px + header */
+  height: 392px;
 }
 .tableScrollWrapper[data-context='maximized'] {
   height: 100%;
   margin: var(--spacing-4);
 }
 
-
 .table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
+  /* NEW: Ensure table can grow to trigger horizontal scroll */
+  min-width: 800px;
 }
 
 .tableHeader {
   position: sticky;
   top: 0;
   background-color: var(--surface-bg-secondary);
-  z-index: 1;
+  z-index: 10; /* NEW: Ensure header is above sticky cells */
   box-shadow: inset 0 -1px 0 var(--surface-border-secondary);
 }
 
@@ -92,7 +92,6 @@
   border-bottom: none;
 }
 
-
 .table tbody tr:hover {
   background-color: var(--surface-bg-secondary);
 }
@@ -107,4 +106,29 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  background-color: var(--surface-bg-primary); /* Default background for all cells */
+}
+
+/* --- NEW: Sticky Column Styles --- */
+.table th:first-child,
+.table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  /* Add a border to visually separate from scrolling content */
+  border-right: 1px solid var(--surface-border-secondary);
+}
+
+.table th:first-child {
+  z-index: 15; /* Must be higher than body cells and thead */
+  background-color: var(--surface-bg-secondary);
+}
+
+/* Ensure sticky cell background matches row state */
+.table tbody tr:hover td {
+  background-color: var(--surface-bg-secondary);
+}
+
+.table tbody tr[data-state='selected'] td {
+  background-color: var(--surface-bg-theme-subtle);
 }

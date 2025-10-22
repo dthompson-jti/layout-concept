@@ -1,13 +1,15 @@
 // src/features/caseDashboard/dashboardState.ts
 import { atom } from 'jotai';
 import { atomWithStorage, atomFamily } from 'jotai/utils';
-import { caseDetailDataMap } from '../../data/caseDetailData';
+import { caseDetailDataMap, MenuAction } from '../../data/caseDetailData';
 
 export type DashboardViewMode = 'grid' | 'list';
 export type TileContentViewMode = 'table' | 'cards';
 
 export interface TileComponentProps {
   tileId: string;
+  // NEW: Prop for passing menu actions to tile content
+  menuActions: (string | MenuAction)[];
 }
 
 export interface TileConfig {

@@ -1,16 +1,17 @@
 // src/features/caseDashboard/GenericDataView.tsx
 import { useState, useCallback } from 'react';
 import { useAtom } from 'jotai';
-import { Table as TableData } from '../../data/caseDetailData';
+import { Table as TableData, MenuAction } from '../../data/caseDetailData';
 import { tileViewModesAtom, TileContentViewMode } from './dashboardState';
 import { useViewContext } from './ViewContext';
 import { TileContentToolbar } from './TileContentToolbar';
-import { DataTableDisplay } from './DataTableDisplay'; // NEW
+import { DataTableDisplay } from './DataTableDisplay';
 import styles from './GenericDataView.module.css';
 
 interface GenericDataViewProps {
   tileId: string;
   tables: TableData[];
+  menuActions: (string | MenuAction)[];
 }
 
 const getRowLimit = (tableCount: number, viewContext: 'masonry' | 'maximized'): number | undefined => {
@@ -23,7 +24,7 @@ const getRowLimit = (tableCount: number, viewContext: 'masonry' | 'maximized'): 
   return undefined;
 };
 
-export const GenericDataView = ({ tileId, tables }: GenericDataViewProps) => {
+export const GenericDataView = ({ tileId, tables, menuActions }: GenericDataViewProps) => {
   const [viewModes, setViewModes] = useAtom(tileViewModesAtom);
   const viewMode = viewModes[tileId] || 'table';
   const viewContext = useViewContext();
@@ -39,9 +40,6 @@ export const GenericDataView = ({ tileId, tables }: GenericDataViewProps) => {
     setSearchTerms(prev => ({ ...prev, [tableTitle]: value }));
   };
 
-  // FIX: This is the critical change. Instead of incorrectly calling a hook in a loop,
-  // we map over the data and render a dedicated component for each table.
-  // This new component, `DataTableDisplay`, will correctly call `useReactTable` at its top level.
   return (
     <div className={styles.container}>
       {tables.length === 1 && (
@@ -68,6 +66,7 @@ export const GenericDataView = ({ tileId, tables }: GenericDataViewProps) => {
                     viewMode={viewMode}
                     rowLimit={rowLimit}
                     searchValue={searchTerms[tableData.title] || ''}
+                    menuActions={menuActions}
                 />
             </section>
         ))}

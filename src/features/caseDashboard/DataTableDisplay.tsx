@@ -1,7 +1,7 @@
 // src/features/caseDashboard/DataTableDisplay.tsx
 import { useMemo } from 'react';
 import { createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable, getFilteredRowModel, ColumnDef } from '@tanstack/react-table';
-import { Table as TableData, TableRow } from '../../data/caseDetailData';
+import { Table as TableData, TableRow, MenuAction } from '../../data/caseDetailData';
 import { TileContentViewMode } from './dashboardState';
 import { VirtualizedTable } from './VirtualizedTable';
 import { VirtualizedCards } from './VirtualizedCards';
@@ -12,10 +12,10 @@ interface DataTableDisplayProps {
   viewMode: TileContentViewMode;
   rowLimit?: number;
   searchValue: string;
+  menuActions: (string | MenuAction)[];
 }
 
-export const DataTableDisplay = ({ tableData, viewMode, rowLimit, searchValue }: DataTableDisplayProps) => {
-  // `useReactTable` is now correctly called at the top level of a component.
+export const DataTableDisplay = ({ tableData, viewMode, rowLimit, searchValue, menuActions }: DataTableDisplayProps) => {
   const columnHelper = createColumnHelper<TableRow>();
 
   const columns = useMemo(() =>
@@ -25,7 +25,7 @@ export const DataTableDisplay = ({ tableData, viewMode, rowLimit, searchValue }:
         cell: info => info.getValue(),
         meta: colSchema.meta,
       })
-    ) as ColumnDef<TableRow, any>[], // Use 'any' for cell value type for flexibility
+    ) as ColumnDef<TableRow, any>[],
     [tableData.columns, columnHelper]
   );
 
@@ -47,7 +47,7 @@ export const DataTableDisplay = ({ tableData, viewMode, rowLimit, searchValue }:
       {viewMode === 'table' ? (
         <VirtualizedTable tableInstance={table} rowLimit={rowLimit} />
       ) : (
-        <VirtualizedCards rows={rows} rowLimit={rowLimit} />
+        <VirtualizedCards rows={rows} rowLimit={rowLimit} menuActions={menuActions} />
       )}
     </div>
   );

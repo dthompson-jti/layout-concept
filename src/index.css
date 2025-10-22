@@ -20,3 +20,17 @@
 /* REMOVED: The following line was causing the build error. */
 /* @import './styles/navigator.css' layer(components); */
 @import './styles/appearance.css' layer(components);
+
+@layer components {
+  /* NEW: Add utility class for hyperlink styling */
+  .text-as-link {
+    color: var(--surface-fg-theme-strong);
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .text-as-link:hover {
+    color: var(--surface-fg-theme-strong-hover);
+    text-decoration: underline;
+  }
+}

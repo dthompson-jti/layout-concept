@@ -21,6 +21,7 @@ export const VirtualizedTable = <T extends object>({ tableInstance: table, rowLi
   
   const allRows = table.getRowModel().rows;
   const rowsToRender = rowLimit ? allRows.slice(0, rowLimit) : allRows;
+  const firstColumnId = table.getAllColumns()[0]?.id;
 
   const rowVirtualizer = useVirtualizer({
     count: rowsToRender.length,
@@ -71,7 +72,15 @@ export const VirtualizedTable = <T extends object>({ tableInstance: table, rowLi
                 <tr key={row.id} data-state={row.getIsSelected() ? 'selected' : 'default'}>
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} style={{ width: cell.column.getSize() || 'auto' }}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {/* NEW: Apply link style to first column */}
+                      {cell.column.id === firstColumnId ? (
+                        <span className="text-as-link">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </span>
+                      ) : (
+                        // FIX: Corrected typo from 'column_def' to 'columnDef'
+                        flexRender(cell.column.columnDef.cell, cell.getContext())
+                      )}
                     </td>
                   ))}
                 </tr>

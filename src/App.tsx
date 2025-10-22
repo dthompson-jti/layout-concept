@@ -1,5 +1,5 @@
 // src/App.tsx
-import { useRef, useState, useLayoutEffect } from 'react';
+import { useRef, useState, useLayoutEffect, useEffect } from 'react';
 import { useScroll, useMotionValueEvent, useMotionValue } from 'framer-motion';
 import { motion } from 'framer-motion';
 import { CaseDashboard } from './features/caseDashboard/CaseDashboard';
@@ -44,6 +44,28 @@ function App() {
     headerY.set(finalY);
   });
 
+  // FIX: Implement direct wheel event handling on the header to enable scroll-through.
+  useEffect(() => {
+    const headerElement = headerUnitRef.current;
+    const scrollContainer = scrollContainerRef.current;
+
+    if (!headerElement || !scrollContainer) return;
+
+    const handleWheel = (event: WheelEvent) => {
+      // Don't interfere with horizontal scrolling or other special scroll events
+      if (event.deltaX !== 0) return;
+
+      // Programmatically scroll the main container
+      scrollContainer.scrollTop += event.deltaY;
+    };
+
+    headerElement.addEventListener('wheel', handleWheel, { passive: true });
+
+    return () => {
+      headerElement.removeEventListener('wheel', handleWheel);
+    };
+  }, []); // Run only once on mount
+
   return (
     <div ref={scrollContainerRef} className={styles.appContainer}>
       
@@ -52,8 +74,6 @@ function App() {
         className={styles.fixedHeaderUnit}
         style={{ y: headerY }}
       >
-        {/* FIX: Add a wrapper div to re-enable pointer events on the content,
-            while the parent container lets scroll events pass through. */}
         <div className={styles.headerContentWrapper}>
           <AppHeader />
           <CaseHeader data={mockCaseData} />

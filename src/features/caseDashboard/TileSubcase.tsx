@@ -5,7 +5,7 @@ import { TileComponentProps, tileMetaFamily } from './dashboardState';
 import { caseDetailDataMap, Table } from '../../data/caseDetailData';
 import { GenericDataView } from './GenericDataView';
 
-export const TileSubcase = ({ tileId }: TileComponentProps) => {
+export const TileSubcase = ({ tileId, menuActions }: TileComponentProps) => {
   const setTileMeta = useSetAtom(tileMetaFamily(tileId));
   const tileData = caseDetailDataMap.get(tileId);
 
@@ -18,5 +18,5 @@ export const TileSubcase = ({ tileId }: TileComponentProps) => {
 
   if (!tileData) return <div>Error: Subcase data not found.</div>;
 
-  return <GenericDataView tileId={tileId} tables={tileData.page.tables} />;
+  return <GenericDataView tileId={tileId} tables={tileData.page.tables} menuActions={menuActions} />;
 };

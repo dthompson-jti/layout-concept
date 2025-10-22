@@ -35,8 +35,6 @@ export const Tile = ({
   viewMode = 'grid',
   menuActions,
 }: TileProps) => {
-  // FIX: Removed the `y` animation to prevent the "bouncing" effect.
-  // The animation will now be a simple, clean vertical expansion.
   const contentVariants = {
     collapsed: { height: 0, opacity: 0 },
     expanded: { height: 'auto', opacity: 1 },
@@ -100,29 +98,42 @@ export const Tile = ({
               aria-expanded={!isCollapsed}
               disabled={isEditMode}
             >
-              <span className="material-symbols-rounded">expand_more</span>
+              {/* FIX: Use AnimatePresence for a clean cross-fade between icons */}
+              <AnimatePresence initial={false} mode="wait">
+                <motion.span
+                  key={isCollapsed ? 'expand' : 'collapse'}
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 5 }}
+                  transition={{ duration: 0.15 }}
+                  className="material-symbols-rounded"
+                  style={{ display: 'block' }} // Prevent layout shift
+                >
+                  {isCollapsed ? 'expand_more' : 'expand_less'}
+                </motion.span>
+              </AnimatePresence>
             </button>
           </Tooltip>
         </div>
       </div>
       <AnimatePresence initial={false}>
-        {!isCollapsed ? (
+        {!isCollapsed && (
           <motion.div
             key="content"
             initial="collapsed"
             animate="expanded"
             exit="collapsed"
             variants={contentVariants}
-            // FIX: Use a gentler, non-springy easing curve for a more natural feel.
             transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
             className={styles.tileBodyWrapper}
           >
             <div className={styles.tileBody}>{children}</div>
           </motion.div>
-        ) : (
-          <div className={styles.collapsedSummary}>{summaryText}</div>
         )}
       </AnimatePresence>
+       {isCollapsed && summaryText && (
+          <div className={styles.collapsedSummary}>{summaryText}</div>
+        )}
     </div>
   );
 };
