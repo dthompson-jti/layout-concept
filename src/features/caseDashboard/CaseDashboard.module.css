@@ -30,10 +30,31 @@
   gap: var(--spacing-2);
 }
 
+/*
+  FIX: A new wrapper to provide a robust centering context for the actions bar.
+  This avoids the fragility of the transform: translateX(-50%) technique.
+*/
+.editModeActionsWrapper {
+  position: fixed;
+  bottom: var(--spacing-6);
+  left: 0;
+  right: 0;
+  z-index: 500;
+  display: flex;
+  justify-content: center;
+  /* Make the wrapper non-interactive so clicks pass through to content below. */
+  pointer-events: none;
+}
+/* Re-enable pointer events for the actual actions bar component. */
+.editModeActionsWrapper > * {
+  pointer-events: auto;
+}
+
 .modalBackdrop {
   position: fixed;
   inset: 0;
   background-color: hsla(var(--surface-fg-primary-hsl), 0.7);
+  /* FIX: Increased z-index to ensure it appears above the sticky app header (z-index: 20). */
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -70,7 +91,6 @@
 .modalBody {
   flex-grow: 1;
   overflow-y: auto;
-  /* NEW: Ensure the body is a flex container for children to fill height */
   display: flex;
   flex-direction: column;
 }

@@ -7,7 +7,7 @@
   border: 1px solid var(--control-border-secondary);
   border-radius: 6px;
   overflow: hidden;
-  width: 100%;
+  /* FIX: Removed width: 100% to allow the group to size to its content. */
 }
 
 .toggleButton {

@@ -32,6 +32,14 @@
   min-width: 0; /* Allow title to truncate */
 }
 
+/* NEW: A wrapper for the title and badge to position them together. */
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  min-width: 0;
+}
+
 .tileHeader h3 {
   margin: 0;
   font-size: 1.1em;
@@ -62,28 +70,11 @@
   flex-shrink: 0;
 }
 
-/* NEW: Secondary actions for hover-reveal */
 .secondaryActions {
   display: flex;
   align-items: center;
 }
 
-/* NEW: Hover-reveal logic */
-@media (hover: hover) {
-  .secondaryActions {
-    opacity: 0;
-    transform: translateX(8px);
-    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
-  }
-
-  .tileWrapper:hover .secondaryActions,
-  .tileWrapper:focus-within .secondaryActions {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* NEW: Collapse button with rotation */
 .collapseButton .material-symbols-rounded {
   transition: transform 0.25s ease-in-out;
 }
@@ -100,21 +91,8 @@
   padding: 0; /* Let child components control padding */
 }
 
-/* NEW: Collapsed summary styles */
 .collapsedSummary {
   padding: var(--spacing-2) var(--spacing-4) var(--spacing-4);
   font-size: 0.9em;
   color: var(--surface-fg-secondary);
-}
-
-/* NEW: Updated badge */
-.updatedBadge {
-  font-size: 0.75em;
-  font-weight: 600;
-  padding: var(--spacing-0p5) var(--spacing-2);
-  border-radius: 999px;
-  background-color: var(--surface-bg-theme-subtle);
-  color: var(--surface-fg-theme);
-  border: 1px solid var(--surface-border-theme-subtle);
-  white-space: nowrap;
 }

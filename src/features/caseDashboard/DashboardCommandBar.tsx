@@ -11,7 +11,7 @@ export const DashboardCommandBar = () => {
   const [promptText, setPromptText] = useState('');
   const [viewMode, setViewMode] = useAtom(dashboardViewModeAtom);
   const [isEditMode, setIsEditMode] = useAtom(isEditModeAtom);
-  // FIX: State to control the menu's visibility
+  // FIX: State to control the menu's visibility, making it a controlled component.
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const viewToggleOptions = [
@@ -19,7 +19,7 @@ export const DashboardCommandBar = () => {
     { value: 'list', label: 'List View', icon: 'view_headline' },
   ];
 
-  // FIX: Wrapper function to ensure menu closes on action
+  // FIX: Wrapper function ensures the menu closes after any action is selected.
   const handleMenuSelect = (action: () => void) => {
     action();
     setIsMenuOpen(false);
@@ -74,7 +74,7 @@ export const DashboardCommandBar = () => {
             onValueChange={(value) => setViewMode(value as DashboardViewMode)}
           />
         </div>
-        {/* FIX: Implement fully controlled menu */}
+        {/* FIX: Implement fully controlled menu for robust open/close behavior. */}
         <MenuRoot open={isMenuOpen} onOpenChange={setIsMenuOpen}>
           <Tooltip content="More Options">
             <MenuTrigger asChild>

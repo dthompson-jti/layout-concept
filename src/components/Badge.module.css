@@ -36,6 +36,14 @@
   border-radius: 999px;
 }
 
+/* NEW: Added info variant for 'Updated' status and other informational states. */
+.info {
+  color: var(--utility-info-700, #026AA2);
+  background-color: var(--utility-info-50, #F0F9FF);
+  box-shadow: inset 0 0 0 1.5px var(--utility-info-700, #026AA2);
+  border-radius: 999px;
+}
+
 .error {
   color: var(--utility-error-700, #B42318);
   background-color: var(--utility-error-50, #FEF3F2);

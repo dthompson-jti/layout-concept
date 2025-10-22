@@ -4,8 +4,8 @@ import styles from './Badge.module.css';
 
 interface BadgeProps {
   children: React.ReactNode;
-  // FIX: Replaced 'warning' with 'error' to match the new CSS variant.
-  variant: 'success' | 'error' | 'neutral';
+  // FIX: Added 'info' variant to support new UI requirements.
+  variant: 'success' | 'error' | 'neutral' | 'info';
   size?: 'small' | 'large';
   className?: string;
   showStatusDot?: boolean;

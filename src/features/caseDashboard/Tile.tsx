@@ -3,8 +3,10 @@ import React from 'react';
 import { useAtomValue } from 'jotai';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DraggableSyntheticListeners } from '@dnd-kit/core';
+import { Badge } from '../../components/Badge';
 import { Tooltip } from '../../components/Tooltip';
 import { DashboardViewMode, tileMetaFamily } from './dashboardState';
+import { MenuRoot, MenuTrigger, MenuContent, MenuItem } from '../../components/Menu';
 import styles from './Tile.module.css';
 
 interface TileProps {
@@ -17,6 +19,7 @@ interface TileProps {
   isEditMode: boolean;
   dragHandleProps?: DraggableSyntheticListeners;
   viewMode?: DashboardViewMode;
+  // FIX: Removed headerControls, which was causing TS errors.
 }
 
 export const Tile = ({
@@ -50,30 +53,37 @@ export const Tile = ({
               <h3>{title}</h3>
             </div>
           ) : (
-            <>
-              {tileMeta.isUpdated && <div className={styles.updatedBadge}>Updated</div>}
+            // FIX: Group title and badge to control their layout together.
+            <div className={styles.titleGroup}>
               <h3>{title}</h3>
-            </>
+              {/* FIX: Badge is now positioned after the title. */}
+              {tileMeta.isUpdated && <Badge variant="info">Updated</Badge>}
+            </div>
           )}
         </div>
 
         <div className={styles.tileActions}>
           <div className={styles.secondaryActions}>
-            <Tooltip content="AI Action (Coming Soon)">
-              <button className="btn btn-quaternary icon-only" disabled={isEditMode}>
-                <span className="material-symbols-rounded">auto_awesome</span>
-              </button>
-            </Tooltip>
-            <Tooltip content="More Options">
-              <button className="btn btn-quaternary icon-only" disabled={isEditMode}>
-                <span className="material-symbols-rounded">more_vert</span>
-              </button>
-            </Tooltip>
             <Tooltip content="Maximize">
               <button className="btn btn-quaternary icon-only" onClick={onMaximize} disabled={isEditMode}>
                 <span className="material-symbols-rounded">fullscreen</span>
               </button>
             </Tooltip>
+            <MenuRoot>
+              <Tooltip content="More Options">
+                <MenuTrigger asChild>
+                  <button className="btn btn-quaternary icon-only" disabled={isEditMode}>
+                    <span className="material-symbols-rounded">more_horiz</span>
+                  </button>
+                </MenuTrigger>
+              </Tooltip>
+              <MenuContent>
+                <MenuItem className="menu-item">
+                  <span className="material-symbols-rounded">auto_awesome</span>
+                  Run AI Prompt
+                </MenuItem>
+              </MenuContent>
+            </MenuRoot>
           </div>
           <Tooltip content={isCollapsed ? 'Expand' : 'Collapse'}>
             <button

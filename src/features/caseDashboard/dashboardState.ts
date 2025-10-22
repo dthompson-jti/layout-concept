@@ -6,6 +6,8 @@ export type DashboardViewMode = 'grid' | 'list';
 export type TileContentViewMode = 'table' | 'cards';
 
 // A common interface for props passed to ALL tile content components.
+// FIX: Removed setHeaderControls as it was part of a brittle pattern causing TS errors.
+// Child components should be self-contained and not modify their parent's layout.
 export interface TileComponentProps {
   tileId: string;
 }

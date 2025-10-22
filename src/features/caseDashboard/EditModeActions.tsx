@@ -23,11 +23,11 @@ export const EditModeActions = ({ onSave }: EditModeActionsProps) => {
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
       <div className={styles.infoText}>
-        {/* FIX: Text updated as requested */}
-        <span>Drag tiles to reorder</span>
+        {/* FIX: Text updated for clarity. */}
+        <span>Drag tiles to reorder.</span>
       </div>
-      {/* FIX: Button connects to onSave prop, icon removed */}
-      <button className="btn btn-primary" onClick={onSave}>
+      {/* FIX: Button connects to onSave prop and uses on-solid class for text contrast. */}
+      <button className="btn btn-primary on-solid" onClick={onSave}>
         Save My Layout
       </button>
     </motion.div>

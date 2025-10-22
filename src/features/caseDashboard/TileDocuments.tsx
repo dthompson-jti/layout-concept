@@ -66,7 +66,8 @@ export const TileDocuments = ({ tileId }: TileComponentProps) => {
     <div className={styles.contentWrapper}>
       <div className={styles.contentToolbar}>
         <div className={styles.searchWrapper}>
-           <SearchInput value={globalFilter} onChange={setGlobalFilter} placeholder="Filter documents..." />
+           {/* FIX: Added the required 'variant' prop to resolve the TypeScript error. */}
+           <SearchInput value={globalFilter} onChange={setGlobalFilter} placeholder="Filter documents..." variant="integrated" />
         </div>
         <IconToggleGroup
           options={viewToggleOptions}

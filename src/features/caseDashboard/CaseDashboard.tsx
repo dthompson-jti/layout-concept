@@ -1,6 +1,7 @@
 // src/features/caseDashboard/CaseDashboard.tsx
 import { useAtom } from 'jotai';
 import { useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Masonry from 'react-masonry-css';
 import {
   DndContext,
@@ -38,8 +39,7 @@ const SortableTile = ({ tile, isEditMode, viewMode, onToggleCollapse, onMaximize
   const TileContent = TILE_COMPONENT_MAP[tile.componentKey] || TILE_COMPONENT_MAP.Default;
   const title = tile.componentKey.replace(/([A-Z])/g, ' $1').trim();
   
-  const [headerControls, setHeaderControls] = useState<React.ReactNode>(null);
-
+  // FIX: Removed the complex and error-prone headerControls state logic.
   const isCollapsed = viewMode === 'list' ? false : tile.isCollapsed;
 
   return (
@@ -50,12 +50,12 @@ const SortableTile = ({ tile, isEditMode, viewMode, onToggleCollapse, onMaximize
         isCollapsed={isCollapsed}
         onMaximize={() => onMaximize(tile)}
         dragHandleProps={listeners}
-        headerControls={headerControls}
         isEditMode={isEditMode}
         viewMode={viewMode}
         onToggleCollapse={onToggleCollapse}
       >
-        <TileContent tileId={tile.id} setHeaderControls={setHeaderControls} />
+        {/* FIX: Removed setHeaderControls prop to resolve TS error. */}
+        <TileContent tileId={tile.id} />
       </Tile>
     </motion.div>
   );
@@ -110,8 +110,12 @@ export const CaseDashboard = () => {
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className={styles.dashboardContainer}>
         <AnimatePresence>
-          {/* FIX: Pass the onSave handler to the component to allow it to close itself */}
-          {isEditMode && <EditModeActions onSave={() => setIsEditMode(false)} />}
+          {/* FIX: Use a robust wrapper for centering the actions bar. */}
+          {isEditMode && (
+            <div className={styles.editModeActionsWrapper}>
+              <EditModeActions onSave={() => setIsEditMode(false)} />
+            </div>
+          )}
         </AnimatePresence>
         
         <DashboardCommandBar />
@@ -141,23 +145,27 @@ export const CaseDashboard = () => {
         <HiddenTilesTray hiddenTiles={hiddenTiles} onUnhide={(id: string) => setLayout(prev => prev.map(t => t.id === id ? { ...t, isHidden: false } : t))} />
       </div>
 
-      <AnimatePresence>
-        {maximizedTile && MaximizedContent && (
-          <motion.div className={styles.modalBackdrop}>
-            <motion.div className={styles.modalContentWrapper} layoutId={`tile-container-${maximizedTile.id}`}>
-              <div className={styles.modalHeader}>
-                <h2>{maximizedTile.componentKey.replace(/([A-Z])/g, ' $1').trim()}</h2>
-                <button className="btn btn-tertiary icon-only" onClick={() => setMaximizedTile(null)}>
-                  <span className="material-symbols-rounded">close</span>
-                </button>
-              </div>
-              <div className={styles.modalBody}>
-                <MaximizedContent tileId={maximizedTile.id} setHeaderControls={() => {}} />
-              </div>
+      {/* FIX: Use a React Portal to render the modal at the body level, escaping parent stacking contexts. */}
+      {createPortal(
+        <AnimatePresence>
+          {maximizedTile && MaximizedContent && (
+            <motion.div className={styles.modalBackdrop}>
+              <motion.div className={styles.modalContentWrapper} layoutId={`tile-container-${maximizedTile.id}`}>
+                <div className={styles.modalHeader}>
+                  <h2>{maximizedTile.componentKey.replace(/([A-Z])/g, ' $1').trim()}</h2>
+                  <button className="btn btn-tertiary icon-only" onClick={() => setMaximizedTile(null)}>
+                    <span className="material-symbols-rounded">close</span>
+                  </button>
+                </div>
+                <div className={styles.modalBody}>
+                  <MaximizedContent tileId={maximizedTile.id} />
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </DndContext>
   );
 };
