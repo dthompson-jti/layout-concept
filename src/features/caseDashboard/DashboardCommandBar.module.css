@@ -1,9 +1,8 @@
 /* src/features/caseDashboard/DashboardCommandBar.module.css */
 .commandBar {
-  position: relative;
+  position: relative; /* Acts as a positioning context for the centered prompt on desktop */
   display: flex;
   align-items: center;
-  /* FIX: Use gap for consistent spacing between prompt and controls on mobile. */
   gap: var(--spacing-4);
   padding: calc(var(--spacing-3) + 8px) var(--spacing-4) var(--spacing-3);
   background-color: var(--surface-bg-primary);
@@ -14,11 +13,6 @@
 }
 
 .aiPromptWrapper {
-  /* Let this wrapper grow and shrink */
-  /* FIX: Allow the prompt to grow to fill space on larger screens. */
-  flex: 1 1 auto;
-  min-width: 0;
-  
   display: flex;
   align-items: center;
   height: 42px;
@@ -27,8 +21,6 @@
   padding: 0 var(--spacing-1);
   border: 1px solid var(--surface-border-secondary);
   transition: border-color 0.2s, box-shadow 0.2s;
-  /* FIX: Constrain width on desktop to keep it from looking stretched. */
-  max-width: 768px;
 }
 
 .aiPromptWrapper:focus-within {
@@ -91,23 +83,39 @@
   align-items: center;
   gap: var(--spacing-2);
   flex-shrink: 0;
-  /* FIX: Automatically push to the right on larger screens. */
-  margin-left: auto;
 }
 
 .toggleWrapper {
   display: flex;
 }
 
-/* FIX: The absolute positioning media query is removed in favor of a more robust,
-   pure-flexbox layout that adapts gracefully at all screen sizes. */
+/* --- RESPONSIVE LAYOUT LOGIC --- */
+
+/* Mobile-first: Default to a simple, robust flex layout. */
+.aiPromptWrapper {
+  flex: 1 1 auto;
+  min-width: 0;
+}
 
 @media (max-width: 767px) {
   .toggleWrapper {
     display: none;
   }
+}
+
+/* Desktop: On wider screens, switch to absolute centering for perfect aesthetics. */
+@media (min-width: 1024px) {
+  .aiPromptWrapper {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 768px;
+    /* Remove flex-grow so it doesn't compete for space. */
+    flex: 0 1 auto;
+  }
   .viewControls {
-    /* On mobile, don't push to the right; let the flex gap handle spacing. */
-    margin-left: 0;
+    /* Push the controls to the far right. */
+    margin-left: auto;
   }
 }

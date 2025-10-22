@@ -11,7 +11,6 @@ export const DashboardCommandBar = () => {
   const [promptText, setPromptText] = useState('');
   const [viewMode, setViewMode] = useAtom(dashboardViewModeAtom);
   const [isEditMode, setIsEditMode] = useAtom(isEditModeAtom);
-  // FIX: State to control the menu's visibility, making it a controlled component.
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const viewToggleOptions = [
@@ -19,10 +18,16 @@ export const DashboardCommandBar = () => {
     { value: 'list', label: 'List View', icon: 'view_headline' },
   ];
 
-  // FIX: Wrapper function ensures the menu closes after any action is selected.
   const handleMenuSelect = (action: () => void) => {
     action();
     setIsMenuOpen(false);
+  };
+
+  // FIX: Added a console.log for debugging menu state changes.
+  // This helps verify if Radix is firing the event to close the menu.
+  const handleOpenChange = (open: boolean) => {
+    console.log(`[DEBUG] Menu onOpenChange triggered. New state should be: ${open}`);
+    setIsMenuOpen(open);
   };
 
   const moreMenu = (
@@ -54,7 +59,6 @@ export const DashboardCommandBar = () => {
           placeholder="Start typing a prompt"
           value={promptText}
           onChange={(e) => setPromptText(e.target.value)}
-          // size={1} helps hint to browser it can be small, but flexbox is the real fix
           size={1} 
         />
         <button
@@ -74,8 +78,7 @@ export const DashboardCommandBar = () => {
             onValueChange={(value) => setViewMode(value as DashboardViewMode)}
           />
         </div>
-        {/* FIX: Implement fully controlled menu for robust open/close behavior. */}
-        <MenuRoot open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+        <MenuRoot open={isMenuOpen} onOpenChange={handleOpenChange}>
           <Tooltip content="More Options">
             <MenuTrigger asChild>
               <button className="btn btn-secondary icon-only">

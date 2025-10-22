@@ -1,6 +1,6 @@
 // src/features/caseDashboard/CaseDashboard.tsx
 import { useAtom } from 'jotai';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import Masonry from 'react-masonry-css';
 import {
@@ -39,7 +39,6 @@ const SortableTile = ({ tile, isEditMode, viewMode, onToggleCollapse, onMaximize
   const TileContent = TILE_COMPONENT_MAP[tile.componentKey] || TILE_COMPONENT_MAP.Default;
   const title = tile.componentKey.replace(/([A-Z])/g, ' $1').trim();
   
-  // FIX: Removed the complex and error-prone headerControls state logic.
   const isCollapsed = viewMode === 'list' ? false : tile.isCollapsed;
 
   return (
@@ -54,7 +53,6 @@ const SortableTile = ({ tile, isEditMode, viewMode, onToggleCollapse, onMaximize
         viewMode={viewMode}
         onToggleCollapse={onToggleCollapse}
       >
-        {/* FIX: Removed setHeaderControls prop to resolve TS error. */}
         <TileContent tileId={tile.id} />
       </Tile>
     </motion.div>
@@ -110,7 +108,6 @@ export const CaseDashboard = () => {
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className={styles.dashboardContainer}>
         <AnimatePresence>
-          {/* FIX: Use a robust wrapper for centering the actions bar. */}
           {isEditMode && (
             <div className={styles.editModeActionsWrapper}>
               <EditModeActions onSave={() => setIsEditMode(false)} />
@@ -145,11 +142,17 @@ export const CaseDashboard = () => {
         <HiddenTilesTray hiddenTiles={hiddenTiles} onUnhide={(id: string) => setLayout(prev => prev.map(t => t.id === id ? { ...t, isHidden: false } : t))} />
       </div>
 
-      {/* FIX: Use a React Portal to render the modal at the body level, escaping parent stacking contexts. */}
       {createPortal(
         <AnimatePresence>
           {maximizedTile && MaximizedContent && (
-            <motion.div className={styles.modalBackdrop}>
+            // FIX: Added explicit animation props to the backdrop for a smooth fade-in.
+            <motion.div
+              className={styles.modalBackdrop}
+              initial={{ backgroundColor: 'rgba(10, 12, 18, 0)' }}
+              animate={{ backgroundColor: 'rgba(10, 12, 18, 0.7)' }}
+              exit={{ backgroundColor: 'rgba(10, 12, 18, 0)' }}
+              transition={{ duration: 0.3 }}
+            >
               <motion.div className={styles.modalContentWrapper} layoutId={`tile-container-${maximizedTile.id}`}>
                 <div className={styles.modalHeader}>
                   <h2>{maximizedTile.componentKey.replace(/([A-Z])/g, ' $1').trim()}</h2>

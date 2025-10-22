@@ -30,10 +30,6 @@
   gap: var(--spacing-2);
 }
 
-/*
-  FIX: A new wrapper to provide a robust centering context for the actions bar.
-  This avoids the fragility of the transform: translateX(-50%) technique.
-*/
 .editModeActionsWrapper {
   position: fixed;
   bottom: var(--spacing-6);
@@ -42,10 +38,8 @@
   z-index: 500;
   display: flex;
   justify-content: center;
-  /* Make the wrapper non-interactive so clicks pass through to content below. */
   pointer-events: none;
 }
-/* Re-enable pointer events for the actual actions bar component. */
 .editModeActionsWrapper > * {
   pointer-events: auto;
 }
@@ -53,21 +47,21 @@
 .modalBackdrop {
   position: fixed;
   inset: 0;
-  background-color: hsla(var(--surface-fg-primary-hsl), 0.7);
-  /* FIX: Increased z-index to ensure it appears above the sticky app header (z-index: 20). */
+  /* The background color is now controlled by Framer Motion for smooth transitions */
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-8);
+  /* Padding is removed to allow the content wrapper to define the margins */
 }
 
 .modalContentWrapper {
   background-color: var(--surface-bg-primary);
   border-radius: var(--spacing-4);
-  max-width: 1200px;
-  width: 100%;
-  height: 90vh;
+  max-width: 1600px;
+  /* FIX: Set width and height to 95% of viewport for the "floating" effect. */
+  width: 95vw;
+  height: 95vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
