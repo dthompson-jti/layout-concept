@@ -23,7 +23,8 @@ function App() {
   useLayoutEffect(() => {
     const measureHeight = () => {
       if (headerUnitRef.current) {
-        setHeaderHeight(headerUnitRef.current.offsetHeight);
+        const newHeight = headerUnitRef.current.offsetHeight;
+        setHeaderHeight(newHeight);
       }
     };
     measureHeight();
@@ -83,7 +84,7 @@ function App() {
       <div className={styles.headerSpacer} style={{ height: headerHeight }} />
 
       <main className={styles.appMain}>
-        <CaseDashboard />
+        <CaseDashboard scrollContainerRef={scrollContainerRef} headerHeight={headerHeight} />
       </main>
       <ToastContainer />
     </div>

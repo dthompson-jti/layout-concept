@@ -1,0 +1,85 @@
+/* src/features/caseDashboard/DashboardListViewNav.module.css */
+.navContainer {
+  width: 240px;
+  flex-shrink: 0;
+
+  /* --- DEFINITIVE STICKY FIX --- */
+  /* The nav container ITSELF must be sticky, not the list inside it. */
+  /* This makes it stick relative to its scrolling parent (the main app container). */
+  position: sticky;
+  /* This value determines the distance from the top where the element will stick. */
+  /* It is set to match the content's top padding for perfect alignment. */
+  top: var(--spacing-4);
+  
+  /* The padding-top is now on the list to provide internal spacing */
+  /* once the container sticks. */
+}
+
+@media (max-width: 1279px) {
+  .navContainer {
+    display: none;
+  }
+}
+
+.navList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  /* The list no longer needs to be sticky. */
+}
+
+.navList a {
+  /* Base Layout & Typography */
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--surface-fg-secondary);
+  cursor: pointer;
+
+  /* Sizing & Spacing */
+  height: 44px;
+  padding: 0 var(--spacing-3);
+  border-radius: 6px;
+  
+  outline: 1px solid transparent;
+  outline-offset: -1px;
+
+  transition: background-color 0.2s, color 0.2s, outline-color 0.2s;
+}
+
+.navList a:hover:not(.active) {
+  background-color: var(--control-bg-quaternary-hover);
+  color: var(--surface-fg-primary);
+  outline-color: var(--quaternary-border-color-on-hover, transparent);
+}
+
+.navList a.active {
+  background-color: var(--control-bg-selected);
+  color: var(--control-fg-selected);
+  font-weight: 600;
+  outline-color: transparent; 
+}
+
+.navList a.active:hover {
+  background-color: var(--control-bg-selected-hover);
+}
+
+.updateDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--surface-fg-theme-primary);
+  flex-shrink: 0;
+}
+
+.navLabel {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

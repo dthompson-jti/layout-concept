@@ -63,9 +63,8 @@ export const activeDragIdAtom = atom<string | null>(null);
 // FIX: Create a new atom for the global view mode and set the default to 'list'.
 export const globalViewModeAtom = atomWithStorage<GlobalViewMode>('dashboard-global-view-mode-v1', 'list');
 
-// REMOVED: The old, separate view mode atoms are no longer needed.
-// export const dashboardViewModeAtom = atomWithStorage<DashboardViewMode>('dashboard-view-mode', 'list');
-// export const tileViewModesAtom = atomWithStorage<Record<string, TileContentViewMode>>('tile-content-view-modes', {});
+// NEW: Atom to track the active tile for the scroll spy in list view.
+export const activeListViewTileIdAtom = atom<string | null>(null);
 
 export const tileMetaFamily = atomFamily(
   () => atom<TileMeta>({ count: undefined, isUpdated: false }),

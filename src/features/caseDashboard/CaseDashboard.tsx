@@ -1,6 +1,6 @@
 // src/features/caseDashboard/CaseDashboard.tsx
-import { useAtom } from 'jotai';
-import { useMemo, useRef } from 'react';
+import { useAtom, useSetAtom, useAtomValue } from 'jotai';
+import { useMemo, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Masonry from 'react-masonry-css';
 import {
@@ -18,7 +18,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { TILE_COMPONENT_MAP } from './TileRegistry';
-import { userLayoutAtom, isEditModeAtom, TileConfig, maximizedTileAtom, activeDragIdAtom, globalViewModeAtom } from './dashboardState';
+import { userLayoutAtom, isEditModeAtom, TileConfig, maximizedTileAtom, activeDragIdAtom, globalViewModeAtom, activeListViewTileIdAtom } from './dashboardState';
 import { caseDetailDataMap, MenuAction } from '../../data/caseDetailData';
 import { Tile } from './Tile';
 import { HiddenTilesTray } from './HiddenTilesTray';
@@ -27,16 +27,19 @@ import { EditModeActions } from './EditModeActions';
 import { ViewContext } from './ViewContext';
 import { MenuRoot, MenuTrigger, MenuContent, MenuItem } from '../../components/Menu';
 import { Tooltip } from '../../components/Tooltip';
+import { useScrollSpy } from './hooks/useScrollSpy';
+import { DashboardListViewNav } from './DashboardListViewNav';
 import styles from './CaseDashboard.module.css';
 
 interface SortableTileProps {
+  id: string;
   tile: TileConfig;
   isEditMode: boolean;
   onToggleCollapse: (id: string) => void;
   onMaximize: (tile: TileConfig) => void;
 }
 
-const SortableTile = ({ tile, isEditMode, onToggleCollapse, onMaximize }: SortableTileProps) => {
+const SortableTile = ({ id, tile, isEditMode, onToggleCollapse, onMaximize }: SortableTileProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: tile.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1, zIndex: isDragging ? 100 : 'auto' };
   const TileContent = TILE_COMPONENT_MAP[tile.componentKey];
@@ -50,6 +53,7 @@ const SortableTile = ({ tile, isEditMode, onToggleCollapse, onMaximize }: Sortab
 
   return (
     <motion.div
+      id={id}
       layout="position"
       layoutId={`tile-container-${tile.id}`}
       ref={setNodeRef}
@@ -72,13 +76,20 @@ const SortableTile = ({ tile, isEditMode, onToggleCollapse, onMaximize }: Sortab
   );
 };
 
-export const CaseDashboard = () => {
+interface CaseDashboardProps {
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>;
+  headerHeight: number;
+}
+
+export const CaseDashboard = ({ scrollContainerRef, headerHeight }: CaseDashboardProps) => {
   const [layout, setLayout] = useAtom(userLayoutAtom);
   const [isEditMode, setIsEditMode] = useAtom(isEditModeAtom);
   const [activeId, setActiveId] = useAtom(activeDragIdAtom);
   const [maximizedTile, setMaximizedTile] = useAtom(maximizedTileAtom);
   const [viewMode] = useAtom(globalViewModeAtom);
   
+  const setActiveListViewId = useSetAtom(activeListViewTileIdAtom);
+  const activeListViewId = useAtomValue(activeListViewTileIdAtom);
   const modalContentRef = useRef<HTMLDivElement>(null);
   
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
@@ -86,6 +97,26 @@ export const CaseDashboard = () => {
   const visibleTiles = useMemo(() => layout.filter((t: TileConfig) => !t.isHidden), [layout]);
   const hiddenTiles = useMemo(() => layout.filter((t: TileConfig) => t.isHidden), [layout]);
   const activeTile = useMemo(() => layout.find((t: TileConfig) => t.id === activeId), [activeId, layout]);
+
+  // For Scroll Spy
+  const visibleTileIds = useMemo(() => visibleTiles.map(t => t.id), [visibleTiles]);
+  
+  const scrollSpyOptions = useMemo(() => ({ rootMargin: '-20% 0px -75% 0px' }), []);
+  
+  const activeScrollSpyId = useScrollSpy(
+    visibleTileIds,
+    scrollSpyOptions,
+    scrollContainerRef
+  );
+
+  useEffect(() => {
+    if (viewMode === 'list') {
+      setActiveListViewId(activeScrollSpyId);
+    } else {
+      setActiveListViewId(null);
+    }
+  }, [activeScrollSpyId, setActiveListViewId, viewMode]);
+
 
   const handleToggleCollapse = (id: string) => {
     if (isEditMode) return;
@@ -109,11 +140,12 @@ export const CaseDashboard = () => {
   const MaximizedContent = maximizedTile ? TILE_COMPONENT_MAP[maximizedTile.componentKey] : null;
   const maximizedMenuActions: (string | MenuAction)[] = maximizedTile ? caseDetailDataMap.get(maximizedTile.id)?.menu.actions || [] : [];
   
-  const isMasonryView = viewMode.startsWith('masonry');
+  const isListView = viewMode === 'list';
 
   const tilesToRender = visibleTiles.map(tile => (
     <SortableTile
       key={tile.id}
+      id={tile.id}
       tile={tile}
       isEditMode={isEditMode}
       onToggleCollapse={handleToggleCollapse}
@@ -133,20 +165,28 @@ export const CaseDashboard = () => {
         </AnimatePresence>
         
         <DashboardCommandBar />
-
-        <div className={styles.contentArea}>
-          <SortableContext items={visibleTiles.map(t => t.id)} strategy={verticalListSortingStrategy}>
-            {isMasonryView ? (
+        
+        <SortableContext items={visibleTiles.map(t => t.id)} strategy={verticalListSortingStrategy}>
+          {isListView ? (
+            <div className={styles.listViewWrapper}>
+              <DashboardListViewNav
+                tiles={visibleTiles}
+                activeTileId={activeListViewId ?? ''}
+                scrollContainerRef={scrollContainerRef}
+                headerHeight={headerHeight}
+              />
+              <div className={styles.listContentContainer}>
+                {tilesToRender}
+              </div>
+            </div>
+          ) : (
+            <div className={styles.contentArea}>
               <Masonry breakpointCols={masonryBreakpoints} className={styles.masonryGrid} columnClassName={styles.masonryGridColumn}>
                 {tilesToRender}
               </Masonry>
-            ) : (
-              <div className={styles.listViewContainer}>
-                {tilesToRender}
-              </div>
-            )}
-          </SortableContext>
-        </div>
+            </div>
+          )}
+        </SortableContext>
         
         <DragOverlay dropAnimation={null}>
           {activeTile && (
@@ -184,8 +224,6 @@ export const CaseDashboard = () => {
                             </button>
                           </MenuTrigger>
                         </Tooltip>
-                        {/* DEFINITIVE FIX: The `container` prop is not valid for this component. */}
-                        {/* The `modal={false}` prop correctly solves the positioning issue. */}
                         <MenuContent>
                           {maximizedMenuActions.map((action, index) => {
                             const label = typeof action === 'string' ? action : action.label;
