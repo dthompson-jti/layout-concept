@@ -2,6 +2,7 @@
 .actionsContainer {
   position: fixed;
   bottom: var(--spacing-6);
+  /* FIX: Ensure centering is correct */
   left: 50%;
   transform: translateX(-50%);
   z-index: 500;
@@ -12,7 +13,8 @@
   
   background-color: var(--surface-bg-primary-solid);
   color: var(--control-fg-on-solid);
-  padding: var(--spacing-3) var(--spacing-4);
+  /* FIX: Add horizontal padding for better balance */
+  padding: var(--spacing-3) var(--spacing-6);
   border-radius: 9999px;
   box-shadow: var(--surface-shadow-xl);
   border: 1px solid var(--surface-border-primary);
@@ -25,8 +27,4 @@
   font-size: 0.9em;
   font-weight: 500;
   color: var(--surface-fg-secondary_on_brand);
-}
-
-.actionsContainer button .material-symbols-rounded {
-  margin-right: var(--spacing-2);
 }

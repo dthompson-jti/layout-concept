@@ -11,6 +11,7 @@ export const DashboardCommandBar = () => {
   const [promptText, setPromptText] = useState('');
   const [viewMode, setViewMode] = useAtom(dashboardViewModeAtom);
   const [isEditMode, setIsEditMode] = useAtom(isEditModeAtom);
+  // FIX: State to control the menu's visibility
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const viewToggleOptions = [
@@ -18,9 +19,10 @@ export const DashboardCommandBar = () => {
     { value: 'list', label: 'List View', icon: 'view_headline' },
   ];
 
+  // FIX: Wrapper function to ensure menu closes on action
   const handleMenuSelect = (action: () => void) => {
     action();
-    setIsMenuOpen(false); // Force close on select
+    setIsMenuOpen(false);
   };
 
   const moreMenu = (
@@ -52,7 +54,8 @@ export const DashboardCommandBar = () => {
           placeholder="Start typing a prompt"
           value={promptText}
           onChange={(e) => setPromptText(e.target.value)}
-          size={1}
+          // size={1} helps hint to browser it can be small, but flexbox is the real fix
+          size={1} 
         />
         <button
           className={`btn btn-secondary ${styles.submitButton}`}
@@ -71,6 +74,7 @@ export const DashboardCommandBar = () => {
             onValueChange={(value) => setViewMode(value as DashboardViewMode)}
           />
         </div>
+        {/* FIX: Implement fully controlled menu */}
         <MenuRoot open={isMenuOpen} onOpenChange={setIsMenuOpen}>
           <Tooltip content="More Options">
             <MenuTrigger asChild>

@@ -36,7 +36,6 @@
 .promptInput {
   all: unset;
   box-sizing: border-box;
-  /* THE DEFINITIVE FIX: Use flex shorthand to control growth and shrinkage from a zero basis. */
   flex: 1 1 0;
   width: 100%;
   height: 100%;
@@ -50,7 +49,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* Prevent buttons from shrinking */
   flex-shrink: 0;
   cursor: pointer;
   border-radius: 9999px;
@@ -97,16 +95,25 @@
   display: flex;
 }
 
+/* THE DEFINITIVE FIX: Switch to a stacked column layout on mobile */
 @media (max-width: var(--breakpoint-mobile)) {
   .commandBar {
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: stretch; /* Make children full-width by default */
+    gap: var(--spacing-3);
+    padding: var(--spacing-4); /* Adjust padding for stacked layout */
   }
+
   .aiPromptWrapper {
     position: static;
     transform: none;
-    flex-grow: 1;
-    min-width: 0;
-    width: auto;
+    width: 100%; /* Take full width in its row */
+    max-width: none;
+  }
+
+  .viewControls {
+    margin-left: 0; /* Reset margin */
+    align-self: flex-end; /* Align controls to the right on their own row */
   }
 
   .toggleWrapper {

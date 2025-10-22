@@ -110,6 +110,7 @@ export const CaseDashboard = () => {
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className={styles.dashboardContainer}>
         <AnimatePresence>
+          {/* FIX: Pass the onSave handler to the component to allow it to close itself */}
           {isEditMode && <EditModeActions onSave={() => setIsEditMode(false)} />}
         </AnimatePresence>
         
