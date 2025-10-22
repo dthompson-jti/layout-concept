@@ -13,8 +13,6 @@ export interface ColumnSchema {
   meta?: ColumnMetadata;
 }
 
-// FIX: Corrected the type for visible_rows to avoid `no-explicit-any`.
-// It's a record where values can be of various primitive types.
 export type TableRow = Record<string, string | number | boolean | null>;
 
 export interface Table {
@@ -50,12 +48,9 @@ export interface CaseDetails {
 
 // --- DATA ADAPTER & OPTIMIZATION ---
 
-// This function transforms the raw data into a more performant and usable structure.
-// Using a Map provides O(1) lookup time for tile data, which is more efficient than Array.find().
 const processData = (data: CaseDetails): Map<string, CaseEntry> => {
   const entryMap = new Map<string, CaseEntry>();
   data.entries.forEach(entry => {
-    // Sanitize the menu title to use as a stable, simple key.
     const key = entry.menu.title.replace(' (menu)', '').toLowerCase();
     entryMap.set(key, entry);
   });
@@ -64,7 +59,7 @@ const processData = (data: CaseDetails): Map<string, CaseEntry> => {
 
 
 // --- RAW JSON DATA ---
-// In a real application, this would be fetched from an API.
+// FIX: Added more data to several tables to better simulate a real-world scenario.
 const rawData: CaseDetails = {
   "case": {
     "title": "25STLC00161 HANNAH SETH vs EILEEN BRADLEY"
@@ -86,7 +81,18 @@ const rawData: CaseDetails = {
               { "key": "Start", "label": "Start" },
               { "key": "End", "label": "End" }
             ],
-            "visible_rows": [ { "Expires": "06/17/2025", "Status": "Expired", "Name": "Play Plan Insert Test", "Record": "Case", "Category": "", "Start": "06/10/2025", "End": "06/18/2025" } ]
+            "visible_rows": [
+              { "Expires": "06/17/2025", "Status": "Expired", "Name": "Play Plan Insert Test", "Record": "Case", "Category": "", "Start": "06/10/2025", "End": "06/18/2025" },
+              { "Expires": "07/22/2025", "Status": "Active", "Name": "Discovery Cutoff", "Record": "Case", "Category": "Civil", "Start": "01/21/2025", "End": "07/22/2025" },
+              { "Expires": "08/15/2025", "Status": "Pending", "Name": "Statute of Limitations", "Record": "Case", "Category": "General", "Start": "08/15/2023", "End": "08/15/2025" },
+              { "Expires": "09/01/2025", "Status": "Active", "Name": "Case Management Conference", "Record": "Event", "Category": "Civil", "Start": "09/01/2025", "End": "09/01/2025" },
+              { "Expires": "11/10/2025", "Status": "Tolled", "Name": "Service of Process", "Record": "Party", "Category": "Procedural", "Start": "01/21/2025", "End": "11/10/2025" },
+              { "Expires": "12/31/2025", "Status": "Active", "Name": "Expert Witness Disclosure", "Record": "Case", "Category": "Civil", "Start": "06/01/2025", "End": "12/31/2025" },
+              { "Expires": "01/15/2026", "Status": "Pending", "Name": "Motion to Compel Deadline", "Record": "Motion", "Category": "Discovery", "Start": "12/15/2025", "End": "01/15/2026" },
+              { "Expires": "03/01/2026", "Status": "Active", "Name": "Final Status Conference", "Record": "Event", "Category": "Trial", "Start": "03/01/2026", "End": "03/01/2026" },
+              { "Expires": "04/20/2026", "Status": "Expired", "Name": "ADR Completion Deadline", "Record": "Case", "Category": "ADR", "Start": "10/20/2025", "End": "04/20/2026" },
+              { "Expires": "05/19/2026", "Status": "Active", "Name": "Trial Readiness Review", "Record": "Case", "Category": "Trial", "Start": "05/19/2026", "End": "05/19/2026" }
+            ]
           },
           {
             "title": "CASE ASSIGNMENTS",
@@ -98,7 +104,7 @@ const rawData: CaseDetails = {
               { "key": "Reason", "label": "Reason" },
               { "key": "End Date", "label": "End Date" }
             ],
-            "visible_rows": [ { "Effective Date": "01/21/2025", "Courthouse": "Stanley Mosk Courthouse", "Department": "Department 94", "Judge": "Jon R. Takasugi", "Reason": "", "End Date": "" } ]
+            "visible_rows": [ { "Effective Date": "01/21/2025", "Courthouse": "Stanley Mosk Courthouse", "Department": "Department 94", "Judge": "Jon R. Takasugi", "Reason": "Initial Assignment", "End Date": "" } ]
           },
           {
             "title": "FUTURE HEARINGS",
@@ -158,11 +164,17 @@ const rawData: CaseDetails = {
               { "key": "View", "label": "View" }
             ],
             "visible_rows": [
-              { "Filed / Status Date": "01/21/2025", "Name": "First Amended Standing Order", "Status": "Filed", "Result": "", "Result Date": "", "Filed By": "", "As To": "", "View": "icons" },
-              { "Filed / Status Date": "01/21/2025", "Name": "Notice of Case Assignment - Limited Civil Case", "Status": "Filed", "Result": "", "Result Date": "", "Filed By": "", "As To": "", "View": "icons" },
+              { "Filed / Status Date": "01/21/2025", "Name": "First Amended Standing Order", "Status": "Filed", "Result": "", "Result Date": "", "Filed By": "Court", "As To": "All Parties", "View": "icons" },
+              { "Filed / Status Date": "01/21/2025", "Name": "Notice of Case Assignment - Limited Civil Case", "Status": "Filed", "Result": "", "Result Date": "", "Filed By": "Court", "As To": "All Parties", "View": "icons" },
               { "Filed / Status Date": "01/21/2025", "Name": "Summons on Complaint(s)", "Status": "Issued and Filed", "Result": "", "Result Date": "", "Filed By": "Clerk", "As To": "", "View": "icons" },
               { "Filed / Status Date": "01/21/2025", "Name": "Civil Case Cover Sheet", "Status": "Filed", "Result": "", "Result Date": "", "Filed By": "Hannah Seth (Plaintiff)", "As To": "", "View": "icons" },
-              { "Filed / Status Date": "01/21/2025", "Name": "Complaint", "Status": "Filed", "Result": "", "Result Date": "", "Filed By": "Hannah Seth (Plaintiff)", "As To": "Eileen Bradley (Defendant)", "View": "icons" }
+              { "Filed / Status Date": "01/21/2025", "Name": "Complaint", "Status": "Filed", "Result": "", "Result Date": "", "Filed By": "Hannah Seth (Plaintiff)", "As To": "Eileen Bradley (Defendant)", "View": "icons" },
+              { "Filed / Status Date": "02/15/2025", "Name": "Proof of Service of Summons", "Status": "Filed", "Result": "", "Result Date": "", "Filed By": "Hannah Seth (Plaintiff)", "As To": "Eileen Bradley (Defendant)", "View": "icons" },
+              { "Filed / Status Date": "03/10/2025", "Name": "Answer to Complaint", "Status": "Filed", "Result": "", "Result Date": "", "Filed By": "Eileen Bradley (Defendant)", "As To": "", "View": "icons" },
+              { "Filed / Status Date": "04/01/2025", "Name": "Notice of Deposition", "Status": "Filed", "Result": "", "Result Date": "", "Filed By": "Hannah Seth (Plaintiff)", "As To": "Eileen Bradley (Defendant)", "View": "icons" },
+              { "Filed / Status Date": "04/20/2025", "Name": "Motion to Compel Discovery", "Status": "Received", "Result": "Granted", "Result Date": "05/05/2025", "Filed By": "Hannah Seth (Plaintiff)", "As To": "Eileen Bradley (Defendant)", "View": "icons" },
+              { "Filed / Status Date": "05/10/2025", "Name": "Stipulation and Protective Order", "Status": "Filed", "Result": "", "Result Date": "", "Filed By": "All Parties", "As To": "", "View": "icons" },
+              { "Filed / Status Date": "06/01/2025", "Name": "First Set of Interrogatories", "Status": "Served", "Result": "", "Result Date": "", "Filed By": "Eileen Bradley (Defendant)", "As To": "Hannah Seth (Plaintiff)", "View": "icons" }
             ]
           }
         ]
@@ -211,9 +223,13 @@ const rawData: CaseDetails = {
               { "key": "Representation", "label": "Representation" }
             ],
             "visible_rows": [
-              { "Name": "Complaint filed by Hannah Seth on 01/21/2025", "Party-Type": "", "Fee Status": "", "Party Status": "", "Representation": "" },
-              { "Name": "Hannah Seth (Plaintiff)", "Party-Type": "Plaintiff", "Fee Status": "Paid", "Party Status": "", "Representation": "Kayson King" },
-              { "Name": "Eileen Bradley (Defendant)", "Party-Type": "Defendant", "Fee Status": "", "Party Status": "Named", "Representation": "" }
+              { "Name": "Complaint filed by Hannah Seth on 01/21/2025", "Party-Type": "", "Fee Status": "", "Party Status": "Active", "Representation": "" },
+              { "Name": "Hannah Seth (Plaintiff)", "Party-Type": "Plaintiff", "Fee Status": "Paid", "Party Status": "Active", "Representation": "Kayson King" },
+              { "Name": "Eileen Bradley (Defendant)", "Party-Type": "Defendant", "Fee Status": "Due", "Party Status": "Named", "Representation": "Pro Se" },
+              { "Name": "ACME Corporation (Cross-Defendant)", "Party-Type": "Cross-Defendant", "Fee Status": "Waived", "Party Status": "Active", "Representation": "Law Firm of Dewey, Cheatem & Howe" },
+              { "Name": "John Doe (Witness)", "Party-Type": "Witness", "Fee Status": "N/A", "Party Status": "Subpoenaed", "Representation": "" },
+              { "Name": "Jane Smith (Expert Witness)", "Party-Type": "Expert Witness", "Fee Status": "N/A", "Party Status": "Retained", "Representation": "" },
+              { "Name": "Big Insurance Co. (Intervener)", "Party-Type": "Intervener", "Fee Status": "Paid", "Party Status": "Active", "Representation": "Global Legal LLP" }
             ]
           },
           {
@@ -225,7 +241,11 @@ const rawData: CaseDetails = {
               { "key": "Formerly Representing", "label": "Formerly Representing" },
               { "key": "Subcase Name", "label": "Subcase Name" }
             ],
-            "visible_rows": [ { "Name": "Kayson King", "Firm Name": "", "Representing Party": "Hannah Seth (Plaintiff)", "Formerly Representing": "", "Subcase Name": "Complaint filed by Hannah Seth on 01/21/2025" } ]
+            "visible_rows": [
+              { "Name": "Kayson King", "Firm Name": "King & Associates", "Representing Party": "Hannah Seth (Plaintiff)", "Formerly Representing": "", "Subcase Name": "Complaint filed by Hannah Seth on 01/21/2025" },
+              { "Name": "Eleanor Vance", "Firm Name": "Law Firm of Dewey, Cheatem & Howe", "Representing Party": "ACME Corporation (Cross-Defendant)", "Formerly Representing": "", "Subcase Name": "Cross-Complaint" },
+              { "Name": "Marcus Thorne", "Firm Name": "Global Legal LLP", "Representing Party": "Big Insurance Co. (Intervener)", "Formerly Representing": "", "Subcase Name": "Complaint in Intervention" }
+            ]
           }
         ]
       },
@@ -247,11 +267,16 @@ const rawData: CaseDetails = {
               { "key": "Paid", "label": "Paid" }
             ],
             "visible_rows": [
-              { "Date": "01/21/2025", "Fine/Fee": "160 — Limited Civil Complaint - ($10K up to $25K)-GC 70613(a), 70602.5", "Party/Payor": "Hannah Seth", "Balance": "0.00", "Amount": "370.00", "Paid": "370.00" },
+              { "Date": "01/21/2025", "Fine/Fee": "160 — Limited Civil Complaint", "Party/Payor": "Hannah Seth", "Balance": "0.00", "Amount": "370.00", "Paid": "370.00" },
               { "Date": "06/10/2025", "Fine/Fee": "PROB — Probation Fee", "Party/Payor": "Hannah Seth", "Balance": "100.00", "Amount": "100.00", "Paid": "0.00" },
-              { "Date": "06/10/2025", "Fine/Fee": "TST — Test Fee", "Party/Payor": "Eileen Bradley", "Balance": "200.00", "Amount": "200.00", "Paid": "0.00" }
+              { "Date": "06/10/2025", "Fine/Fee": "TST — Test Fee", "Party/Payor": "Eileen Bradley", "Balance": "200.00", "Amount": "200.00", "Paid": "0.00" },
+              { "Date": "07/01/2025", "Fine/Fee": "Motion Fee", "Party/Payor": "Hannah Seth", "Balance": "0.00", "Amount": "60.00", "Paid": "60.00" },
+              { "Date": "07/15/2025", "Fine/Fee": "Sanctions", "Party/Payor": "Eileen Bradley", "Balance": "250.00", "Amount": "250.00", "Paid": "0.00" },
+              { "Date": "08/01/2025", "Fine/Fee": "Jury Fees - First Day", "Party/Payor": "Hannah Seth", "Balance": "0.00", "Amount": "150.00", "Paid": "150.00" },
+              { "Date": "08/20/2025", "Fine/Fee": "Copying Fees", "Party/Payor": "Eileen Bradley", "Balance": "15.50", "Amount": "15.50", "Paid": "0.00" },
+              { "Date": "09/05/2025", "Fine/Fee": "Continuance Fee", "Party/Payor": "Hannah Seth", "Balance": "0.00", "Amount": "20.00", "Paid": "20.00" }
             ],
-            "totals": { "Amount": "670.00", "Paid": "370.00", "Balance": "300.00" }
+            "totals": { "Amount": "1215.50", "Paid": "600.00", "Balance": "615.50" }
           },
           { "title": "Pay Plans", "columns": [ { "key": "Pay Plan", "label": "Pay Plan", "meta": { "cardRole": "title" } } ], "visible_rows": [ { "Pay Plan": "Pay Plan No. PP73-1 starts on 06/10/2025" } ] },
           { "title": "Party Trusts", "columns": [ { "key": "Account Name", "label": "Account Name", "meta": { "cardRole": "title" } } ], "visible_rows": [ { "Account Name": "Cash Bond" } ] }

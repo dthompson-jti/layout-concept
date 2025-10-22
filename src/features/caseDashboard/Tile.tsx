@@ -35,9 +35,11 @@ export const Tile = ({
   viewMode = 'grid',
   menuActions,
 }: TileProps) => {
+  // FIX: Removed the `y` animation to prevent the "bouncing" effect.
+  // The animation will now be a simple, clean vertical expansion.
   const contentVariants = {
-    collapsed: { height: 0, opacity: 0, y: -10 },
-    expanded: { height: 'auto', opacity: 1, y: 0 },
+    collapsed: { height: 0, opacity: 0 },
+    expanded: { height: 'auto', opacity: 1 },
   };
 
   const tileMeta = useAtomValue(tileMetaFamily(tileId));
@@ -111,7 +113,8 @@ export const Tile = ({
             animate="expanded"
             exit="collapsed"
             variants={contentVariants}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            // FIX: Use a gentler, non-springy easing curve for a more natural feel.
+            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
             className={styles.tileBodyWrapper}
           >
             <div className={styles.tileBody}>{children}</div>

@@ -9,9 +9,6 @@ import { AppHeader } from './features/appHeader/AppHeader';
 import { CaseHeader } from './features/caseHeader/CaseHeader';
 import { mockCaseData } from './data/caseData';
 
-// REMOVED: Unused variable
-// const TOTAL_HEADER_HEIGHT = 64 + 310; 
-
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
 function App() {
@@ -40,7 +37,6 @@ function App() {
     const diff = latest - previous;
     const currentY = headerY.get();
 
-    // FIX: Use 'const' as newY is never reassigned
     const newY = currentY - diff;
     
     const finalY = clamp(newY, -headerHeight, 0);
@@ -56,8 +52,12 @@ function App() {
         className={styles.fixedHeaderUnit}
         style={{ y: headerY }}
       >
-        <AppHeader />
-        <CaseHeader data={mockCaseData} />
+        {/* FIX: Add a wrapper div to re-enable pointer events on the content,
+            while the parent container lets scroll events pass through. */}
+        <div className={styles.headerContentWrapper}>
+          <AppHeader />
+          <CaseHeader data={mockCaseData} />
+        </div>
       </motion.header>
 
       <div className={styles.headerSpacer} style={{ height: headerHeight }} />

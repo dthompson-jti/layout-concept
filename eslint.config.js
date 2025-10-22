@@ -5,40 +5,41 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 
-// NOTE: Reverted to the original, simpler ESLint configuration.
-// This configuration provides essential type-aware linting for React + TypeScript
-// without the additional strict rules that were causing noise for the POC.
+// FIX: Reverted to a known-good, simpler configuration to resolve the crash.
+// This config provides the essential features for a React+TS project without being overly strict.
 export default [
-  { ignores: ['dist/', 'vite.config.ts', '.eslintrc.cjs'] },
+  { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
+    ...js.configs.recommended,
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+      },
+    },
+  },
+  ...tseslint.configs.recommended,
   {
-    files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      parserOptions: {
+        project: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': 'warn',
-    },
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-      },
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
     },
   },
   {
-    files: ['**/*.{ts,tsx}'],
-    ...tseslint.configs.recommendedTypeChecked,
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.json', './tsconfig.node.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-    rules: {
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-    }
-  },
-  js.configs.recommended,
-];
+    ignores: ['dist/', 'vite.config.ts', '.eslintrc.cjs'],
+  }
+]

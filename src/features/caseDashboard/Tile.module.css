@@ -32,7 +32,6 @@
   min-width: 0; /* Allow title to truncate */
 }
 
-/* NEW: A wrapper for the title and badge to position them together. */
 .titleGroup {
   display: flex;
   align-items: center;
@@ -78,8 +77,10 @@
 .collapseButton .material-symbols-rounded {
   transition: transform 0.25s ease-in-out;
 }
-.tileWrapper[data-collapsed='true'] .collapseButton .material-symbols-rounded {
-  transform: rotate(-180deg);
+
+/* FIX: Rotate the chevron when the tile is EXPANDED (not collapsed). */
+.tileWrapper[data-collapsed='false'] .collapseButton .material-symbols-rounded {
+  transform: rotate(180deg);
 }
 
 
