@@ -18,24 +18,26 @@ import { CSS } from '@dnd-kit/utilities';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { TILE_COMPONENT_MAP } from './TileRegistry';
-import { userLayoutAtom, isEditModeAtom, TileConfig, maximizedTileAtom, activeDragIdAtom, dashboardViewModeAtom, DashboardViewMode } from './dashboardState';
+import { userLayoutAtom, isEditModeAtom, TileConfig, maximizedTileAtom, activeDragIdAtom, globalViewModeAtom } from './dashboardState';
 import { caseDetailDataMap, MenuAction } from '../../data/caseDetailData';
 import { Tile } from './Tile';
 import { HiddenTilesTray } from './HiddenTilesTray';
 import { DashboardCommandBar } from './DashboardCommandBar';
 import { EditModeActions } from './EditModeActions';
 import { ViewContext } from './ViewContext';
+// FIX: Correct the import paths for Menu and Tooltip components.
+import { MenuRoot, MenuTrigger, MenuContent, MenuItem } from '../../components/Menu';
+import { Tooltip } from '../../components/Tooltip';
 import styles from './CaseDashboard.module.css';
 
 interface SortableTileProps {
   tile: TileConfig;
   isEditMode: boolean;
-  viewMode: DashboardViewMode;
   onToggleCollapse: (id: string) => void;
   onMaximize: (tile: TileConfig) => void;
 }
 
-const SortableTile = ({ tile, isEditMode, viewMode, onToggleCollapse, onMaximize }: SortableTileProps) => {
+const SortableTile = ({ tile, isEditMode, onToggleCollapse, onMaximize }: SortableTileProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: tile.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1, zIndex: isDragging ? 100 : 'auto' };
   const TileContent = TILE_COMPONENT_MAP[tile.componentKey];
@@ -44,16 +46,11 @@ const SortableTile = ({ tile, isEditMode, viewMode, onToggleCollapse, onMaximize
     return <div>Error: Unknown tile component '{tile.componentKey}'</div>;
   }
   
-  const isCollapsed = viewMode === 'list' ? false : tile.isCollapsed;
+  const isCollapsed = tile.isCollapsed;
   const menuActions: (string | MenuAction)[] = caseDetailDataMap.get(tile.id)?.menu.actions || [];
 
   return (
     <motion.div
-      // DEFINITIVE FIX: Change `layout` to `layout="position"`.
-      // This tells Framer Motion to ONLY animate position changes (like for DnD)
-      // and to IGNORE size changes. The size animation will now be handled
-      // exclusively by the AnimatePresence block inside the Tile component,
-      // which uses the correct non-springy ease curve. This resolves the conflict.
       layout="position"
       layoutId={`tile-container-${tile.id}`}
       ref={setNodeRef}
@@ -67,7 +64,6 @@ const SortableTile = ({ tile, isEditMode, viewMode, onToggleCollapse, onMaximize
         onMaximize={() => onMaximize(tile)}
         dragHandleProps={listeners}
         isEditMode={isEditMode}
-        viewMode={viewMode}
         onToggleCollapse={onToggleCollapse}
         menuActions={menuActions}
       >
@@ -82,7 +78,7 @@ export const CaseDashboard = () => {
   const [isEditMode, setIsEditMode] = useAtom(isEditModeAtom);
   const [activeId, setActiveId] = useAtom(activeDragIdAtom);
   const [maximizedTile, setMaximizedTile] = useAtom(maximizedTileAtom);
-  const [viewMode] = useAtom(dashboardViewModeAtom);
+  const [viewMode] = useAtom(globalViewModeAtom);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
@@ -111,13 +107,14 @@ export const CaseDashboard = () => {
   const masonryBreakpoints = { default: 3, 1280: 2, 768: 1 };
   const MaximizedContent = maximizedTile ? TILE_COMPONENT_MAP[maximizedTile.componentKey] : null;
   const maximizedMenuActions: (string | MenuAction)[] = maximizedTile ? caseDetailDataMap.get(maximizedTile.id)?.menu.actions || [] : [];
+  
+  const isMasonryView = viewMode.startsWith('masonry');
 
   const tilesToRender = visibleTiles.map(tile => (
     <SortableTile
       key={tile.id}
       tile={tile}
       isEditMode={isEditMode}
-      viewMode={viewMode}
       onToggleCollapse={handleToggleCollapse}
       onMaximize={setMaximizedTile}
     />
@@ -138,7 +135,7 @@ export const CaseDashboard = () => {
 
         <div className={styles.contentArea}>
           <SortableContext items={visibleTiles.map(t => t.id)} strategy={verticalListSortingStrategy}>
-            {viewMode === 'grid' ? (
+            {isMasonryView ? (
               <Masonry breakpointCols={masonryBreakpoints} className={styles.masonryGrid} columnClassName={styles.masonryGridColumn}>
                 {tilesToRender}
               </Masonry>
@@ -173,10 +170,37 @@ export const CaseDashboard = () => {
             >
               <motion.div className={styles.modalContentWrapper} layoutId={`tile-container-${maximizedTile.id}`}>
                 <div className={styles.modalHeader}>
-                  <h2>{maximizedTile.title}</h2>
-                  <button className="btn btn-tertiary icon-only" onClick={() => setMaximizedTile(null)}>
-                    <span className="material-symbols-rounded">close</span>
-                  </button>
+                  <div className={styles.titleGroup}>
+                    <h2>{maximizedTile.title}</h2>
+                  </div>
+                  <div className={styles.actionsGroup}>
+                    {maximizedMenuActions.length > 0 && (
+                      <MenuRoot>
+                        <Tooltip content="More Options">
+                          <MenuTrigger asChild>
+                            <button className="btn btn-tertiary icon-only">
+                              <span className="material-symbols-rounded">more_horiz</span>
+                            </button>
+                          </MenuTrigger>
+                        </Tooltip>
+                        <MenuContent>
+                          {maximizedMenuActions.map((action, index) => {
+                            const label = typeof action === 'string' ? action : action.label;
+                            const hasSubmenu = typeof action !== 'string' && action.submenu;
+                            return (
+                              <MenuItem key={`${label}-${index}`} className="menu-item">
+                                {label}
+                                {hasSubmenu && <span className="material-symbols-rounded" style={{ marginLeft: 'auto' }}>chevron_right</span>}
+                              </MenuItem>
+                            );
+                          })}
+                        </MenuContent>
+                      </MenuRoot>
+                    )}
+                    <button className="btn btn-tertiary icon-only" onClick={() => setMaximizedTile(null)}>
+                      <span className="material-symbols-rounded">close</span>
+                    </button>
+                  </div>
                 </div>
                 <div className={styles.modalBody}>
                   <ViewContext.Provider value="maximized">

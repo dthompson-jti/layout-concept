@@ -47,19 +47,16 @@
 .modalBackdrop {
   position: fixed;
   inset: 0;
-  /* The background color is now controlled by Framer Motion for smooth transitions */
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Padding is removed to allow the content wrapper to define the margins */
 }
 
 .modalContentWrapper {
   background-color: var(--surface-bg-primary);
   border-radius: var(--spacing-4);
   max-width: 1600px;
-  /* FIX: Set width and height to 95% of viewport for the "floating" effect. */
   width: 95vw;
   height: 95vh;
   display: flex;
@@ -75,11 +72,28 @@
   padding: var(--spacing-3) var(--spacing-4);
   border-bottom: 1px solid var(--surface-border-secondary);
   flex-shrink: 0;
+  /* FIX: Add gap for new menu button */
+  gap: var(--spacing-2);
+}
+
+/* FIX: Group title and give it flex-grow to push actions to the right */
+.modalHeader .titleGroup {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    flex-grow: 1;
 }
 
 .modalHeader h2 {
   margin: 0;
   font-size: 1.25em;
+}
+
+/* FIX: Group action buttons */
+.modalHeader .actionsGroup {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
 }
 
 .modalBody {

@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { DraggableSyntheticListeners } from '@dnd-kit/core';
 import { Badge } from '../../components/Badge';
 import { Tooltip } from '../../components/Tooltip';
-import { DashboardViewMode, tileMetaFamily } from './dashboardState';
+// FIX: Remove unused import for DashboardViewMode.
+import { tileMetaFamily } from './dashboardState';
 import { MenuRoot, MenuTrigger, MenuContent, MenuItem } from '../../components/Menu';
 import { MenuAction } from '../../data/caseDetailData';
 import styles from './Tile.module.css';
@@ -19,7 +20,7 @@ interface TileProps {
   onMaximize: () => void;
   isEditMode: boolean;
   dragHandleProps?: DraggableSyntheticListeners;
-  viewMode?: DashboardViewMode;
+  // FIX: Remove the viewMode prop as it's no longer used.
   menuActions: (string | MenuAction)[];
 }
 
@@ -32,11 +33,8 @@ export const Tile = ({
   onMaximize,
   isEditMode,
   dragHandleProps,
-  viewMode = 'grid',
   menuActions,
 }: TileProps) => {
-  // FIX: Implement the refined animation for the tile body. This isolates it from
-  // the parent's drag-and-drop animations, allowing the chevron's CSS transition to work.
   const contentVariants = {
     collapsed: { height: 0, opacity: 0 },
     expanded: { height: 'auto', opacity: 1 },
@@ -48,9 +46,8 @@ export const Tile = ({
     tileMeta.count !== undefined ? `${tileMeta.count.toLocaleString()} items` : '';
 
   return (
-    // FIX: Ensure the data attribute is correctly driven by the isCollapsed boolean.
-    // This attribute is what the CSS uses to target and rotate the chevron.
-    <div className={styles.tileWrapper} data-view-mode={viewMode} data-collapsed={isCollapsed}>
+    // FIX: Remove the data-view-mode attribute as it's no longer used for styling.
+    <div className={styles.tileWrapper} data-collapsed={isCollapsed}>
       <div className={styles.tileHeader}>
         <div className={styles.headerLeft}>
           {isEditMode ? (
@@ -102,7 +99,6 @@ export const Tile = ({
               aria-expanded={!isCollapsed}
               disabled={isEditMode}
             >
-              {/* FIX: Revert to a single span. The animation is now handled by the restored CSS. */}
               <span className="material-symbols-rounded">expand_more</span>
             </button>
           </Tooltip>
@@ -116,7 +112,6 @@ export const Tile = ({
             animate="expanded"
             exit="collapsed"
             variants={contentVariants}
-            // FIX: Use a specific, non-springy transition for the body expand/collapse.
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             className={styles.tileBodyWrapper}
             style={{ transformOrigin: 'top' }}

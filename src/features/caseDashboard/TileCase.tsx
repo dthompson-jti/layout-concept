@@ -18,5 +18,6 @@ export const TileCase = ({ tileId, menuActions }: TileComponentProps) => {
 
   if (!tileData) return <div>Error: Case data not found.</div>;
 
-  return <GenericDataView tileId={tileId} tables={tileData.page.tables} menuActions={menuActions} />;
+  // FIX: Remove the tileId prop from the GenericDataView call.
+  return <GenericDataView tables={tileData.page.tables} menuActions={menuActions} />;
 };

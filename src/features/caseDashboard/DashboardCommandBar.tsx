@@ -1,33 +1,64 @@
 // src/features/caseDashboard/DashboardCommandBar.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
-import { dashboardViewModeAtom, isEditModeAtom, DashboardViewMode } from './dashboardState';
+import { isEditModeAtom, globalViewModeAtom, GlobalViewMode } from './dashboardState';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import { Tooltip } from '../../components/Tooltip';
 import { MenuRoot, MenuTrigger, MenuContent, MenuItem } from '../../components/Menu';
 import styles from './DashboardCommandBar.module.css';
 
+// A simple hook to detect screen size, kept within this file.
+const useMediaQuery = (query: string) => {
+  const [matches, setMatches] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia(query).matches;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    const listener = () => setMatches(media.matches);
+    media.addEventListener('change', listener);
+    return () => media.removeEventListener('change', listener);
+  }, [query]);
+
+  return matches;
+};
+
+
 export const DashboardCommandBar = () => {
   const [promptText, setPromptText] = useState('');
-  const [viewMode, setViewMode] = useAtom(dashboardViewModeAtom);
+  // FIX: Use the new global view mode atom.
+  const [viewMode, setViewMode] = useAtom(globalViewModeAtom);
   const [isEditMode, setIsEditMode] = useAtom(isEditModeAtom);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 767px)');
 
-  const viewToggleOptions = [
-    { value: 'grid', label: 'Grid View', icon: 'dashboard' },
+  // FIX: Define options for the new 3-state global toggle.
+  const desktopViewToggleOptions = [
     { value: 'list', label: 'List View', icon: 'view_headline' },
+    { value: 'masonry-cards', label: 'Grid View (Cards)', icon: 'dashboard' },
+    { value: 'masonry-table', label: 'Grid View (Tables)', icon: 'data_table' },
   ];
+
+  // FIX: Mobile gets a simplified 2-state toggle.
+  const mobileViewToggleOptions = [
+    { value: 'masonry-cards', label: 'Card View', icon: 'dashboard' },
+    { value: 'masonry-table', label: 'Table View', icon: 'data_table' },
+  ];
+  
+  const currentOptions = isMobile ? mobileViewToggleOptions : desktopViewToggleOptions;
+
+  // FIX: If on mobile and in list view, default to masonry-cards.
+  useEffect(() => {
+    if (isMobile && viewMode === 'list') {
+      setViewMode('masonry-cards');
+    }
+  }, [isMobile, viewMode, setViewMode]);
+
 
   const handleMenuSelect = (action: () => void) => {
     action();
-    setIsMenuOpen(false);
-  };
-
-  // FIX: Added a console.log for debugging menu state changes.
-  // This helps verify if Radix is firing the event to close the menu.
-  const handleOpenChange = (open: boolean) => {
-    console.log(`[DEBUG] Menu onOpenChange triggered. New state should be: ${open}`);
-    setIsMenuOpen(open);
   };
 
   const moreMenu = (
@@ -73,12 +104,14 @@ export const DashboardCommandBar = () => {
       <div className={styles.viewControls}>
         <div className={styles.toggleWrapper}>
           <IconToggleGroup
-            options={viewToggleOptions}
+            options={currentOptions}
             value={viewMode}
-            onValueChange={(value) => setViewMode(value as DashboardViewMode)}
+            onValueChange={(value) => {
+              if (value) setViewMode(value as GlobalViewMode)
+            }}
           />
         </div>
-        <MenuRoot open={isMenuOpen} onOpenChange={handleOpenChange}>
+        <MenuRoot>
           <Tooltip content="More Options">
             <MenuTrigger asChild>
               <button className="btn btn-secondary icon-only">

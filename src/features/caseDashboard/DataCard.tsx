@@ -51,8 +51,8 @@ export const DataCard = <T extends object>({ row, menuActions }: DataCardProps<T
       )}
       
       <div className={styles.cardActions}>
-        {/* NEW: Conditionally render menu in maximized view */}
-        {viewContext === 'maximized' && (
+        {/* FIX: Conditionally render menu in maximized view using the context hook. */}
+        {viewContext === 'maximized' && menuActions.length > 0 && (
           <MenuRoot>
             <MenuTrigger asChild>
               <button className="btn btn-tertiary icon-only">

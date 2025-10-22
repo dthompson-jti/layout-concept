@@ -3,7 +3,8 @@ import { atom } from 'jotai';
 import { atomWithStorage, atomFamily } from 'jotai/utils';
 import { caseDetailDataMap, MenuAction } from '../../data/caseDetailData';
 
-export type DashboardViewMode = 'grid' | 'list';
+// FIX: Consolidate view modes into a single global state.
+export type GlobalViewMode = 'list' | 'masonry-cards' | 'masonry-table';
 export type TileContentViewMode = 'table' | 'cards';
 
 export interface TileComponentProps {
@@ -59,10 +60,12 @@ export const isEditModeAtom = atom(false);
 export const maximizedTileAtom = atom<TileConfig | null>(null);
 export const activeDragIdAtom = atom<string | null>(null);
 
-// FIX: The default dashboard view is now 'list'.
-export const dashboardViewModeAtom = atomWithStorage<DashboardViewMode>('dashboard-view-mode', 'list');
+// FIX: Create a new atom for the global view mode and set the default to 'list'.
+export const globalViewModeAtom = atomWithStorage<GlobalViewMode>('dashboard-global-view-mode-v1', 'list');
 
-export const tileViewModesAtom = atomWithStorage<Record<string, TileContentViewMode>>('tile-content-view-modes', {});
+// REMOVED: The old, separate view mode atoms are no longer needed.
+// export const dashboardViewModeAtom = atomWithStorage<DashboardViewMode>('dashboard-view-mode', 'list');
+// export const tileViewModesAtom = atomWithStorage<Record<string, TileContentViewMode>>('tile-content-view-modes', {});
 
 export const tileMetaFamily = atomFamily(
   () => atom<TileMeta>({ count: undefined, isUpdated: false }),
