@@ -1,31 +1,45 @@
 /* src/features/caseDashboard/CardListDisplay.module.css */
-/* FIX: This file was renamed from VirtualizedCards.module.css */
 
 .scrollContainer {
-  /* Let the container fill available space */
   flex-grow: 1;
-  /* This is the key for flex children to scroll */
   min-height: 0;
   padding: 0 var(--spacing-4);
+  /* DEFINITIVE FIX: Use standard CSS for scrollbar styling instead of 'composes'. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-border-tertiary) transparent;
 }
 
+.scrollContainer::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.scrollContainer::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.scrollContainer::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 10px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+.scrollContainer:hover::-webkit-scrollbar-thumb {
+  background-color: var(--surface-border-tertiary);
+}
+
+
 .scrollContainer[data-is-limited='true'] {
-  /* When limited, don't create a scroll context */
   overflow-y: hidden;
 }
 
 .scrollContainer[data-is-limited='false'] {
-  /* When not limited, create the scrolling portal */
   overflow-y: auto;
   max-height: 450px;
-  padding-right: calc(var(--spacing-4) - 6px); /* Accommodate scrollbar */
 }
 
 .cardList {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-4);
-  /* Add padding to the top and bottom of the list itself */
   padding-top: var(--spacing-4);
   padding-bottom: var(--spacing-4);
 }

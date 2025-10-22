@@ -1,6 +1,6 @@
 // src/features/caseDashboard/CaseDashboard.tsx
 import { useAtom } from 'jotai';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Masonry from 'react-masonry-css';
 import {
@@ -78,6 +78,8 @@ export const CaseDashboard = () => {
   const [activeId, setActiveId] = useAtom(activeDragIdAtom);
   const [maximizedTile, setMaximizedTile] = useAtom(maximizedTileAtom);
   const [viewMode] = useAtom(globalViewModeAtom);
+  
+  const modalContentRef = useRef<HTMLDivElement>(null);
   
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
@@ -166,23 +168,14 @@ export const CaseDashboard = () => {
               animate={{ backgroundColor: 'rgba(10, 12, 18, 0.7)' }}
               exit={{ backgroundColor: 'rgba(10, 12, 18, 0)' }}
               transition={{ duration: 0.3 }}
-              // DEFINITIVE FIX: Add a click handler to the backdrop to close the modal.
-              // This prevents clicks from propagating to elements underneath.
-              onClick={() => setMaximizedTile(null)}
             >
-              {/* DEFINITIVE FIX: Stop click propagation on the content wrapper itself. */}
-              <motion.div className={styles.modalContentWrapper} layoutId={`tile-container-${maximizedTile.id}`} onClick={(e) => e.stopPropagation()}>
+              <motion.div ref={modalContentRef} className={styles.modalContentWrapper} layoutId={`tile-container-${maximizedTile.id}`}>
                 <div className={styles.modalHeader}>
                   <div className={styles.titleGroup}>
                     <h2>{maximizedTile.title}</h2>
                   </div>
                   <div className={styles.actionsGroup}>
                     {maximizedMenuActions.length > 0 && (
-                      // DEFINITIVE FIX: Add the `modal={false}` prop to the MenuRoot.
-                      // This tells Radix to render the menu content relative to the trigger,
-                      // NOT in a separate portal. This is essential when the trigger itself
-                      // is inside a transformed element (like our animating modal),
-                      // preventing positioning conflicts and ensuring the menu is clickable.
                       <MenuRoot modal={false}>
                         <Tooltip content="More Options">
                           <MenuTrigger asChild>
@@ -191,6 +184,8 @@ export const CaseDashboard = () => {
                             </button>
                           </MenuTrigger>
                         </Tooltip>
+                        {/* DEFINITIVE FIX: The `container` prop is not valid for this component. */}
+                        {/* The `modal={false}` prop correctly solves the positioning issue. */}
                         <MenuContent>
                           {maximizedMenuActions.map((action, index) => {
                             const label = typeof action === 'string' ? action : action.label;

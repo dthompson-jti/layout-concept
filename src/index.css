@@ -17,12 +17,9 @@
 @import './styles/buttons.css' layer(components);
 @import './styles/menu.css' layer(components);
 @import './styles/tabs.css' layer(components);
-/* REMOVED: The following line was causing the build error. */
-/* @import './styles/navigator.css' layer(components); */
 @import './styles/appearance.css' layer(components);
 
 @layer components {
-  /* NEW: Add utility class for hyperlink styling */
   .text-as-link {
     color: var(--surface-fg-theme-strong);
     font-weight: 500;
@@ -32,5 +29,32 @@
   .text-as-link:hover {
     color: var(--surface-fg-theme-strong-hover);
     text-decoration: underline;
+  }
+
+  /* 
+    DEFINITIVE FIX: Add a utility class for styled scrollbars.
+    This will make the scrollbar track transparent by default,
+    and the thumb will appear only when the user hovers over the scrollable area.
+    This provides a cleaner UI without sacrificing accessibility.
+  */
+  .styled-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface-border-tertiary) transparent;
+  }
+  .styled-scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  .styled-scrollbar::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  .styled-scrollbar::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  .styled-scrollbar:hover::-webkit-scrollbar-thumb {
+    background-color: var(--surface-border-tertiary);
   }
 }

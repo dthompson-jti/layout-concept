@@ -24,7 +24,27 @@
 .tableScrollWrapper {
   flex-grow: 1;
   overflow: auto;
+  /* DEFINITIVE FIX: Use standard CSS for scrollbar styling instead of 'composes'. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-border-tertiary) transparent;
 }
+.tableScrollWrapper::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.tableScrollWrapper::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.tableScrollWrapper::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 10px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+.tableScrollWrapper:hover::-webkit-scrollbar-thumb {
+  background-color: var(--surface-border-tertiary);
+}
+
 
 .tableScrollWrapper[data-context='masonry'][data-is-limited='true'] {
   overflow-y: hidden; 
@@ -73,22 +93,15 @@
   width: 1%;
 }
 
-/* DEFINITIVE FIX: Target the list view container from the parent component. */
-/* This higher specificity ensures the styles are applied correctly. */
-.listViewContainer .table {
-  table-layout: fixed; /* Revert to fixed layout for precise control */
+:global(.listViewContainer) .table {
+  table-layout: fixed;
 }
-.listViewContainer .tableHeader th:first-child {
-  /* Give the first column a generous fixed width */
-  width: 250px;
+:global(.listViewContainer) .tableHeader th:first-child {
+  width: 30%;
+  min-width: 200px;
 }
-.listViewContainer .tableHeader th {
-  /* Allow other columns to be flexible */
-  width: auto;
-}
-.listViewContainer .table th:first-child,
-.listViewContainer .table td:first-child {
-  /* Disable sticky positioning which was causing the scrollbar */
+:global(.listViewContainer) .table th:first-child,
+:global(.listViewContainer) .table td:first-child {
   position: static;
   border-right: none;
 }
@@ -133,23 +146,20 @@
   background-color: var(--surface-bg-primary);
 }
 
-.table th:first-child,
-.table td:first-child {
+:not(:global(.listViewContainer)) > .table th:first-child,
+:not(:global(.listViewContainer)) > .table td:first-child {
   position: sticky;
   left: 0;
   z-index: 5;
   border-right: 1px solid var(--surface-border-secondary);
 }
-
-.table th:first-child {
+:not(:global(.listViewContainer)) > .table th:first-child {
   z-index: 15;
   background-color: var(--surface-bg-secondary);
 }
-
-.table tbody tr:hover td {
+:not(:global(.listViewContainer)) > .table tbody tr:hover td {
   background-color: var(--surface-bg-secondary);
 }
-
-.table tbody tr[data-state='selected'] td {
+:not(:global(.listViewContainer)) > .table tbody tr[data-state='selected'] td {
   background-color: var(--surface-bg-theme-subtle);
 }
