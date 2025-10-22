@@ -11,23 +11,29 @@ export const DashboardCommandBar = () => {
   const [promptText, setPromptText] = useState('');
   const [viewMode, setViewMode] = useAtom(dashboardViewModeAtom);
   const [isEditMode, setIsEditMode] = useAtom(isEditModeAtom);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const viewToggleOptions = [
     { value: 'grid', label: 'Grid View', icon: 'dashboard' },
     { value: 'list', label: 'List View', icon: 'view_headline' },
   ];
 
+  const handleMenuSelect = (action: () => void) => {
+    action();
+    setIsMenuOpen(false); // Force close on select
+  };
+
   const moreMenu = (
     <>
-      <MenuItem className="menu-item">
+      <MenuItem className="menu-item" onSelect={() => handleMenuSelect(() => {})}>
         <span className="material-symbols-rounded">save</span>
         Update layout profile
       </MenuItem>
-      <MenuItem className="menu-item">
+      <MenuItem className="menu-item" onSelect={() => handleMenuSelect(() => {})}>
         <span className="material-symbols-rounded">capture</span>
         Edit in Screen Studio
       </MenuItem>
-      <MenuItem className="menu-item" onSelect={() => setIsEditMode(p => !p)}>
+      <MenuItem className="menu-item" onSelect={() => handleMenuSelect(() => setIsEditMode(p => !p))}>
         <span className="material-symbols-rounded">edit</span>
         {isEditMode ? 'Done Editing' : 'Edit Layout'}
       </MenuItem>
@@ -46,6 +52,7 @@ export const DashboardCommandBar = () => {
           placeholder="Start typing a prompt"
           value={promptText}
           onChange={(e) => setPromptText(e.target.value)}
+          size={1}
         />
         <button
           className={`btn btn-secondary ${styles.submitButton}`}
@@ -64,7 +71,7 @@ export const DashboardCommandBar = () => {
             onValueChange={(value) => setViewMode(value as DashboardViewMode)}
           />
         </div>
-        <MenuRoot>
+        <MenuRoot open={isMenuOpen} onOpenChange={setIsMenuOpen}>
           <Tooltip content="More Options">
             <MenuTrigger asChild>
               <button className="btn btn-secondary icon-only">

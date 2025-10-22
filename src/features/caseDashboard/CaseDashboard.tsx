@@ -19,9 +19,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { TILE_COMPONENT_MAP } from './TileRegistry';
 import { userLayoutAtom, isEditModeAtom, TileConfig, maximizedTileAtom, activeDragIdAtom, dashboardViewModeAtom, DashboardViewMode } from './dashboardState';
 import { Tile } from './Tile';
-import { EditModeOverlay } from './EditModeOverlay';
 import { HiddenTilesTray } from './HiddenTilesTray';
 import { DashboardCommandBar } from './DashboardCommandBar';
+import { EditModeActions } from './EditModeActions';
 import styles from './CaseDashboard.module.css';
 
 interface SortableTileProps {
@@ -63,7 +63,7 @@ const SortableTile = ({ tile, isEditMode, viewMode, onToggleCollapse, onMaximize
 
 export const CaseDashboard = () => {
   const [layout, setLayout] = useAtom(userLayoutAtom);
-  const [isEditMode] = useAtom(isEditModeAtom);
+  const [isEditMode, setIsEditMode] = useAtom(isEditModeAtom);
   const [activeId, setActiveId] = useAtom(activeDragIdAtom);
   const [maximizedTile, setMaximizedTile] = useAtom(maximizedTileAtom);
   const [viewMode] = useAtom(dashboardViewModeAtom);
@@ -109,7 +109,9 @@ export const CaseDashboard = () => {
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className={styles.dashboardContainer}>
-        <EditModeOverlay isEditMode={isEditMode} onExitEditMode={() => { /* Placeholder */ }} />
+        <AnimatePresence>
+          {isEditMode && <EditModeActions onSave={() => setIsEditMode(false)} />}
+        </AnimatePresence>
         
         <DashboardCommandBar />
 

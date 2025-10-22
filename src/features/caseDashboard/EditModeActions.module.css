@@ -1,0 +1,32 @@
+/* src/features/caseDashboard/EditModeActions.module.css */
+.actionsContainer {
+  position: fixed;
+  bottom: var(--spacing-6);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  
+  background-color: var(--surface-bg-primary-solid);
+  color: var(--control-fg-on-solid);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: 9999px;
+  box-shadow: var(--surface-shadow-xl);
+  border: 1px solid var(--surface-border-primary);
+}
+
+.infoText {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: 0.9em;
+  font-weight: 500;
+  color: var(--surface-fg-secondary_on_brand);
+}
+
+.actionsContainer button .material-symbols-rounded {
+  margin-right: var(--spacing-2);
+}

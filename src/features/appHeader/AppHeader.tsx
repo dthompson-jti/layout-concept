@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react';
 import { Tooltip } from '../../components/Tooltip';
 import { Select, SelectItem } from '../../components/Select';
-import { mockUser, mockCaseList, mockLanguages, CaseInfo, Language } from '../../data/appHeaderData';
+// FIX: Removed unused CaseInfo import
+import { mockUser, mockCaseList, mockLanguages, Language } from '../../data/appHeaderData';
 import styles from './AppHeader.module.css';
 
 const ActionButton = ({ icon, label }: { icon: string; label: string }) => (
@@ -15,10 +16,9 @@ const ActionButton = ({ icon, label }: { icon: string; label: string }) => (
 
 export const AppHeader = () => {
   const isMobile = useMediaQuery('(max-width: 767px)');
-  // FIX: Removed unused state setter to fix linting warning
   const [currentLanguage, setCurrentLanguage] = useState(mockLanguages[0].value);
 
-  const currentCase = mockCaseList[0]; // Use a static case since the picker is a dummy
+  const currentCase = mockCaseList[0];
   const currentDate = new Date().toLocaleDateString('EN-US', {
     weekday: 'short',
     year: 'numeric',
