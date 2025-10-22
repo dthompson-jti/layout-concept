@@ -26,9 +26,12 @@ const getRowLimit = (tableCount: number, viewContext: 'masonry' | 'maximized'): 
 
 export const GenericDataView = ({ tileId, tables, menuActions }: GenericDataViewProps) => {
   const [viewModes, setViewModes] = useAtom(tileViewModesAtom);
-  const viewMode = viewModes[tileId] || 'table';
   const viewContext = useViewContext();
   const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
+
+  // FIX: Implement contextual default view. In masonry, default to 'cards'. Otherwise, 'table'.
+  // This default is only used if the user hasn't already saved a preference for this tile.
+  const viewMode = viewModes[tileId] || (viewContext === 'masonry' ? 'cards' : 'table');
 
   const rowLimit = getRowLimit(tables.length, viewContext);
 
@@ -42,23 +45,27 @@ export const GenericDataView = ({ tileId, tables, menuActions }: GenericDataView
 
   return (
     <div className={styles.container}>
-      {tables.length === 1 && (
-        <TileContentToolbar
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          searchValue={searchTerms[tables[0].title] || ''}
-          onSearchChange={(value) => handleSearchChange(tables[0].title, value)}
-        />
-      )}
+      {/* FIX: The main toolbar is now always rendered to provide a consistent place for the view toggle. */}
+      <TileContentToolbar
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        // Only show a search bar here if there's just one table.
+        searchValue={tables.length === 1 ? searchTerms[tables[0].title] || '' : ''}
+        onSearchChange={(value) => tables.length === 1 && handleSearchChange(tables[0].title, value)}
+        // Hide the search bar if there are multiple tables to avoid confusion.
+        showSearch={tables.length === 1}
+      />
       <div className={styles.contentBody} data-scrollable={viewContext === 'maximized' && tables.length > 1}>
         {tables.map((tableData) => (
             <section key={tableData.title} className={styles.tableSection}>
+                 {/* FIX: For multi-table views, render a secondary toolbar with only the title and search input. */}
                  {tables.length > 1 && (
                     <TileContentToolbar
-                    isMultiTable
-                    tableTitle={tableData.title}
-                    searchValue={searchTerms[tableData.title] || ''}
-                    onSearchChange={(value) => handleSearchChange(tableData.title, value)}
+                      isMultiTable
+                      tableTitle={tableData.title}
+                      searchValue={searchTerms[tableData.title] || ''}
+                      onSearchChange={(value) => handleSearchChange(tableData.title, value)}
+                      showSearch={true} // Always show search on secondary toolbars
                     />
                 )}
                 <DataTableDisplay

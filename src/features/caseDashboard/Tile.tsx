@@ -35,7 +35,8 @@ export const Tile = ({
   viewMode = 'grid',
   menuActions,
 }: TileProps) => {
-  // FIX: Implement the refined animation from the working sandbox.
+  // FIX: Implement the refined animation for the tile body. This isolates it from
+  // the parent's drag-and-drop animations, allowing the chevron's CSS transition to work.
   const contentVariants = {
     collapsed: { height: 0, opacity: 0 },
     expanded: { height: 'auto', opacity: 1 },
@@ -48,6 +49,7 @@ export const Tile = ({
 
   return (
     // FIX: Ensure the data attribute is correctly driven by the isCollapsed boolean.
+    // This attribute is what the CSS uses to target and rotate the chevron.
     <div className={styles.tileWrapper} data-view-mode={viewMode} data-collapsed={isCollapsed}>
       <div className={styles.tileHeader}>
         <div className={styles.headerLeft}>
@@ -82,7 +84,7 @@ export const Tile = ({
               <MenuContent>
                 {menuActions.map((action, index) => {
                   const label = typeof action === 'string' ? action : action.label;
-  const hasSubmenu = typeof action !== 'string' && action.submenu;
+                  const hasSubmenu = typeof action !== 'string' && action.submenu;
                   return (
                     <MenuItem key={`${label}-${index}`} className="menu-item">
                       {label}
@@ -100,7 +102,7 @@ export const Tile = ({
               aria-expanded={!isCollapsed}
               disabled={isEditMode}
             >
-              {/* FIX: Revert to a single span. The animation is now handled by CSS. */}
+              {/* FIX: Revert to a single span. The animation is now handled by the restored CSS. */}
               <span className="material-symbols-rounded">expand_more</span>
             </button>
           </Tooltip>
@@ -114,7 +116,7 @@ export const Tile = ({
             animate="expanded"
             exit="collapsed"
             variants={contentVariants}
-            // FIX: Use the specific, proven transition properties for a high-craft feel.
+            // FIX: Use a specific, non-springy transition for the body expand/collapse.
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             className={styles.tileBodyWrapper}
             style={{ transformOrigin: 'top' }}

@@ -8,7 +8,6 @@ export type TileContentViewMode = 'table' | 'cards';
 
 export interface TileComponentProps {
   tileId: string;
-  // NEW: Prop for passing menu actions to tile content
   menuActions: (string | MenuAction)[];
 }
 
@@ -27,7 +26,6 @@ export interface TileMeta {
 
 // --- DATA-DRIVEN LAYOUT GENERATION ---
 
-// A map from the sanitized data key to a user-friendly display title.
 const TILE_TITLE_MAP: Record<string, string> = {
   case: 'Case Overview',
   subcase: 'Subcases',
@@ -37,10 +35,8 @@ const TILE_TITLE_MAP: Record<string, string> = {
   financial: 'Financials',
 };
 
-// This function generates the default dashboard layout directly from the data source.
 const generateDefaultLayout = (): TileConfig[] => {
   const layout: TileConfig[] = [];
-  // FIX: Correctly iterate over map keys to fix the `no-unused-vars` error.
   for (const key of caseDetailDataMap.keys()) {
     layout.push({
       id: key,
@@ -63,7 +59,8 @@ export const isEditModeAtom = atom(false);
 export const maximizedTileAtom = atom<TileConfig | null>(null);
 export const activeDragIdAtom = atom<string | null>(null);
 
-export const dashboardViewModeAtom = atomWithStorage<DashboardViewMode>('dashboard-view-mode', 'grid');
+// FIX: The default dashboard view is now 'list'.
+export const dashboardViewModeAtom = atomWithStorage<DashboardViewMode>('dashboard-view-mode', 'list');
 
 export const tileViewModesAtom = atomWithStorage<Record<string, TileContentViewMode>>('tile-content-view-modes', {});
 

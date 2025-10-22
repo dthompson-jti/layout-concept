@@ -23,9 +23,43 @@
 }
 
 .tableTitle {
-    margin: 0;
+    margin: 0 0 0 -8px; /* Optical alignment */
     font-size: 1em;
     font-weight: 600;
     color: var(--surface-fg-secondary);
     white-space: nowrap;
+}
+
+/* FIX: New styles for the compact, segmented-control style toggle group */
+.viewToggleWrapper {
+  flex-shrink: 0;
+  margin-left: auto; /* Push to the right if there's no search bar */
+}
+.viewToggleWrapper .icon-toggle-group {
+  display: flex;
+  height: 28px;
+  background-color: var(--surface-bg-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--surface-border-secondary);
+  padding: 2px;
+}
+.viewToggleWrapper .icon-toggle-group button {
+  width: 32px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background-color: transparent;
+  color: var(--surface-fg-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.viewToggleWrapper .icon-toggle-group button[data-state='on'] {
+  background-color: var(--surface-bg-primary);
+  color: var(--surface-fg-primary);
+  box-shadow: var(--surface-shadow-xs);
+}
+.viewToggleWrapper .icon-toggle-group button .material-symbols-rounded {
+  font-size: 18px;
 }

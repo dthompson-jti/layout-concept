@@ -11,6 +11,8 @@ interface TileContentToolbarProps {
   onSearchChange: (value: string) => void;
   isMultiTable?: boolean;
   tableTitle?: string;
+  // FIX: Add prop to conditionally show/hide the search input.
+  showSearch?: boolean;
 }
 
 export const TileContentToolbar = ({
@@ -20,6 +22,7 @@ export const TileContentToolbar = ({
   onSearchChange,
   isMultiTable = false,
   tableTitle,
+  showSearch = true, // Default to true
 }: TileContentToolbarProps) => {
 
   const viewToggleOptions = [
@@ -31,24 +34,31 @@ export const TileContentToolbar = ({
     return (
       <div className={`${styles.toolbar} ${styles.multiTableToolbar}`}>
         <h4 className={styles.tableTitle}>{tableTitle}</h4>
-        <div className={styles.searchWrapper}>
-          <SearchInput value={searchValue} onChange={onSearchChange} placeholder={`Filter ${tableTitle?.toLowerCase()}...`} variant="integrated" />
-        </div>
+        {showSearch && (
+          <div className={styles.searchWrapper}>
+            <SearchInput value={searchValue} onChange={onSearchChange} placeholder={`Filter ${tableTitle?.toLowerCase()}...`} variant="integrated" />
+          </div>
+        )}
       </div>
     );
   }
 
   return (
     <div className={styles.toolbar}>
-      <div className={styles.searchWrapper}>
-        <SearchInput value={searchValue} onChange={onSearchChange} placeholder="Filter items..." variant="integrated" />
-      </div>
+      {showSearch && (
+        <div className={styles.searchWrapper}>
+          <SearchInput value={searchValue} onChange={onSearchChange} placeholder="Filter items..." variant="integrated" />
+        </div>
+      )}
       {onViewModeChange && viewMode && (
-        <IconToggleGroup
-          options={viewToggleOptions}
-          value={viewMode}
-          onValueChange={(value) => onViewModeChange(value as TileContentViewMode)}
-        />
+        // FIX: Add a class to style the compact toggle group.
+        <div className={styles.viewToggleWrapper}>
+          <IconToggleGroup
+            options={viewToggleOptions}
+            value={viewMode}
+            onValueChange={(value) => onViewModeChange(value as TileContentViewMode)}
+          />
+        </div>
       )}
     </div>
   );
