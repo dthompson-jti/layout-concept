@@ -1,0 +1,31 @@
+/* src/features/caseDashboard/TileContentToolbar.module.css */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4) var(--spacing-2);
+  border-bottom: 1px solid var(--surface-border-secondary);
+  flex-shrink: 0;
+}
+
+.searchWrapper {
+  flex-grow: 1;
+  min-width: 150px;
+}
+
+.multiTableToolbar {
+  padding-top: var(--spacing-4);
+  padding-bottom: var(--spacing-3);
+  border-bottom: none;
+}
+.multiTableToolbar:first-child {
+    padding-top: var(--spacing-2);
+}
+
+.tableTitle {
+    margin: 0;
+    font-size: 1em;
+    font-weight: 600;
+    color: var(--surface-fg-secondary);
+    white-space: nowrap;
+}

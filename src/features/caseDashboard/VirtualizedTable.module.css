@@ -30,9 +30,13 @@
 }
 
 /* NEW: Table height contexts */
-.tableScrollWrapper[data-context='masonry'] {
-  /* 7 rows * 49px row height + 49px header height = 392px */
-  height: 392px;
+.tableScrollWrapper[data-context='masonry'][data-is-limited='true'] {
+  overflow: hidden; /* Prevent scrolling when row count is limited */
+  height: auto;
+}
+.tableScrollWrapper[data-context='masonry'][data-is-limited='false'] {
+  /* Default height for single-table tiles in masonry view */
+  height: 392px; /* 7 rows * 49px + header */
 }
 .tableScrollWrapper[data-context='maximized'] {
   height: 100%;

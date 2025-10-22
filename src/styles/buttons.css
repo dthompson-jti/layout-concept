@@ -14,6 +14,9 @@
   border: none;
   font-family: var(--font-family-sans);
   font-size: 14px;
+  /* NEW: Prevent text selection on all buttons */
+  user-select: none;
+  -webkit-user-select: none;
 }
 .btn:disabled {
   opacity: 0.5;

@@ -1,5 +1,5 @@
 // src/features/caseDashboard/VirtualizedCards.tsx
-import { useRef, useState, useLayoutEffect } from 'react';
+import { useRef } from 'react';
 import { Row } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { DataCard } from './DataCard';
@@ -7,34 +7,16 @@ import styles from './VirtualizedCards.module.css';
 
 interface VirtualizedCardsProps<T extends object> {
   rows: Row<T>[];
+  rowLimit?: number;
 }
 
-const getPriorityFromWidth = (width: number): number => {
-  if (width < 480) return 1; // Mobile
-  if (width < 768) return 2; // Tablet
-  return 3; // Desktop
-};
-
-export const VirtualizedCards = <T extends object>({ rows }: VirtualizedCardsProps<T>) => {
+export const VirtualizedCards = <T extends object>({ rows, rowLimit }: VirtualizedCardsProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [visiblePriority, setVisiblePriority] = useState(3);
 
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const observer = new ResizeObserver(entries => {
-      const entry = entries[0];
-      if (entry) {
-        setVisiblePriority(getPriorityFromWidth(entry.contentRect.width));
-      }
-    });
-    observer.observe(container);
-    return () => observer.disconnect();
-  }, []);
+  const rowsToRender = rowLimit ? rows.slice(0, rowLimit) : rows;
 
   const rowVirtualizer = useVirtualizer({
-    count: rows.length,
+    count: rowsToRender.length,
     getScrollElement: () => containerRef.current,
     estimateSize: () => 180, 
     overscan: 5,
@@ -46,11 +28,11 @@ export const VirtualizedCards = <T extends object>({ rows }: VirtualizedCardsPro
   const paddingBottom = virtualRows.length > 0 ? totalSize - (virtualRows[virtualRows.length - 1]?.end ?? 0) : 0;
 
   return (
-    <div ref={containerRef} className={styles.scrollContainer}>
+    <div ref={containerRef} className={styles.scrollContainer} data-is-limited={!!rowLimit}>
       <div style={{ height: `${totalSize}px`, position: 'relative' }}>
         {paddingTop > 0 && <div style={{ height: `${paddingTop}px` }} />}
         {virtualRows.map(virtualRow => {
-          const row = rows[virtualRow.index];
+          const row = rowsToRender[virtualRow.index];
           return (
             <div
               key={row.id}
@@ -63,8 +45,7 @@ export const VirtualizedCards = <T extends object>({ rows }: VirtualizedCardsPro
                 padding: '0 var(--spacing-4) var(--spacing-4)',
               }}
             >
-              {/* FIX: Removed 'columns' prop as it's not needed */}
-              <DataCard row={row} visiblePriority={visiblePriority} />
+              <DataCard row={row} />
             </div>
           );
         })}

@@ -1,0 +1,21 @@
+/* src/features/caseDashboard/GenericDataView.module.css */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.contentBody {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.contentBody[data-scrollable='true'] {
+  overflow-y: auto;
+}
+
+.tableSection {
+  display: flex;
+  flex-direction: column;
+}

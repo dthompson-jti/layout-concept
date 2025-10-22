@@ -1,41 +1,61 @@
 // src/features/caseDashboard/dashboardState.ts
 import { atom } from 'jotai';
 import { atomWithStorage, atomFamily } from 'jotai/utils';
+import { caseDetailDataMap } from '../../data/caseDetailData';
 
 export type DashboardViewMode = 'grid' | 'list';
 export type TileContentViewMode = 'table' | 'cards';
 
-// A common interface for props passed to ALL tile content components.
-// FIX: Removed setHeaderControls as it was part of a brittle pattern causing TS errors.
-// Child components should be self-contained and not modify their parent's layout.
 export interface TileComponentProps {
   tileId: string;
 }
 
 export interface TileConfig {
-  id: string;
-  componentKey: string;
+  id: string; // e.g., 'case', 'docs', 'parties'
+  componentKey: string; // e.g., 'Case', 'Docs', 'Parties'
+  title: string; // e.g., 'Case Overview', 'Documents'
   isCollapsed: boolean;
   isHidden: boolean;
 }
 
-// NEW: A type for the metadata each tile can report about itself.
 export interface TileMeta {
   count?: number;
   isUpdated?: boolean;
 }
 
-const defaultLayout: TileConfig[] = [
-  { id: 'summary-1', componentKey: 'CaseSummary', isCollapsed: false, isHidden: false },
-  { id: 'parties-1', componentKey: 'PartyInformation', isCollapsed: false, isHidden: false },
-  { id: 'history-1', componentKey: 'CaseHistory', isCollapsed: false, isHidden: false },
-  { id: 'docs-1', componentKey: 'Documents', isCollapsed: true, isHidden: false },
-  { id: 'judicial-1', componentKey: 'JudicialAssignments', isCollapsed: false, isHidden: false },
-  { id: 'related-1', componentKey: 'RelatedCases', isCollapsed: false, isHidden: false },
-  { id: 'financials-1', componentKey: 'Financials', isCollapsed: false, isHidden: true },
-];
+// --- DATA-DRIVEN LAYOUT GENERATION ---
 
-export const userLayoutAtom = atomWithStorage<TileConfig[]>('user-case-layout-v2', defaultLayout);
+// A map from the sanitized data key to a user-friendly display title.
+const TILE_TITLE_MAP: Record<string, string> = {
+  case: 'Case Overview',
+  subcase: 'Subcases',
+  docs: 'Documents',
+  hearings: 'Hearings',
+  parties: 'Parties & Representation',
+  financial: 'Financials',
+};
+
+// This function generates the default dashboard layout directly from the data source.
+const generateDefaultLayout = (): TileConfig[] => {
+  const layout: TileConfig[] = [];
+  // FIX: Correctly iterate over map keys to fix the `no-unused-vars` error.
+  for (const key of caseDetailDataMap.keys()) {
+    layout.push({
+      id: key,
+      componentKey: key.charAt(0).toUpperCase() + key.slice(1),
+      title: TILE_TITLE_MAP[key] || 'Unknown Tile',
+      isCollapsed: false,
+      isHidden: false,
+    });
+  }
+  return layout;
+};
+
+const defaultLayout: TileConfig[] = generateDefaultLayout();
+
+// --- ATOMS ---
+
+export const userLayoutAtom = atomWithStorage<TileConfig[]>('user-case-layout-v3', defaultLayout);
 export const isEditModeAtom = atom(false);
 
 export const maximizedTileAtom = atom<TileConfig | null>(null);
@@ -45,9 +65,6 @@ export const dashboardViewModeAtom = atomWithStorage<DashboardViewMode>('dashboa
 
 export const tileViewModesAtom = atomWithStorage<Record<string, TileContentViewMode>>('tile-content-view-modes', {});
 
-// REFINED: Use atomFamily for performant, per-tile state.
-// Each tile's component will write to its own atom, and each Tile header
-// will read only from its corresponding atom, preventing unnecessary re-renders.
 export const tileMetaFamily = atomFamily(
   () => atom<TileMeta>({ count: undefined, isUpdated: false }),
   (a, b) => a === b

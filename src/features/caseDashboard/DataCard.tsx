@@ -1,36 +1,29 @@
 // src/features/caseDashboard/DataCard.tsx
-import { flexRender, Row, Column } from '@tanstack/react-table';
+import { flexRender, Row, Column, ColumnDef } from '@tanstack/react-table';
 import styles from './DataCard.module.css';
 
 interface DataCardProps<T extends object> {
   row: Row<T>;
-  visiblePriority: number;
 }
 
-// NOTE: No changes are needed here. The errors were symptomatic of the
-// broken type augmentation. With `tanstack-table.d.ts` fixed, TypeScript
-// will now correctly infer the types for `meta`, and these errors will resolve.
-const getMeta = <T extends object>(col: Column<T>) => col.columnDef.meta;
+// Helper to safely get meta from a column definition
+const getMeta = <T extends object>(colDef: ColumnDef<T>) => colDef.meta as { cardRole?: string } | undefined;
 
-export const DataCard = <T extends object>({ row, visiblePriority }: DataCardProps<T>) => {
-  const instantiatedColumns = row.getVisibleCells().map(cell => cell.column);
-
-  const visibleColumns = instantiatedColumns.filter(col => {
-    const meta = getMeta(col);
-    return meta?.priority && meta.priority <= visiblePriority;
-  });
+export const DataCard = <T extends object>({ row }: DataCardProps<T>) => {
+  const visibleCells = row.getVisibleCells();
 
   const renderField = (col: Column<T>) => {
-    const cell = row.getVisibleCells().find(c => c.column.id === col.id);
+    const cell = visibleCells.find(c => c.column.id === col.id);
     if (!cell) return null;
     return flexRender(cell.column.columnDef.cell, cell.getContext());
   };
 
-  const titleCol = visibleColumns.find(c => getMeta(c)?.cardRole === 'title');
-  const subtitleCol = visibleColumns.find(c => getMeta(c)?.cardRole === 'subtitle');
-  const badgeCol = visibleColumns.find(c => getMeta(c)?.cardRole === 'badge');
-  const metaCols = visibleColumns.filter(c => {
-    const meta = getMeta(c);
+  // Find columns based on the meta property in their definitions
+  const titleCol = visibleCells.map(c => c.column).find(c => getMeta(c.columnDef)?.cardRole === 'title');
+  const subtitleCol = visibleCells.map(c => c.column).find(c => getMeta(c.columnDef)?.cardRole === 'subtitle');
+  const badgeCol = visibleCells.map(c => c.column).find(c => getMeta(c.columnDef)?.cardRole === 'badge');
+  const metaCols = visibleCells.map(c => c.column).filter(c => {
+    const meta = getMeta(c.columnDef);
     return !meta?.cardRole || meta.cardRole === 'meta';
   });
 

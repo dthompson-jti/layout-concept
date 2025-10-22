@@ -7,6 +7,7 @@ import { Badge } from '../../components/Badge';
 import { Tooltip } from '../../components/Tooltip';
 import { DashboardViewMode, tileMetaFamily } from './dashboardState';
 import { MenuRoot, MenuTrigger, MenuContent, MenuItem } from '../../components/Menu';
+import { MenuAction } from '../../data/caseDetailData';
 import styles from './Tile.module.css';
 
 interface TileProps {
@@ -19,7 +20,7 @@ interface TileProps {
   isEditMode: boolean;
   dragHandleProps?: DraggableSyntheticListeners;
   viewMode?: DashboardViewMode;
-  // FIX: Removed headerControls, which was causing TS errors.
+  menuActions: (string | MenuAction)[];
 }
 
 export const Tile = ({
@@ -32,6 +33,7 @@ export const Tile = ({
   isEditMode,
   dragHandleProps,
   viewMode = 'grid',
+  menuActions,
 }: TileProps) => {
   const contentVariants = {
     collapsed: { height: 0, opacity: 0, y: -10 },
@@ -53,10 +55,8 @@ export const Tile = ({
               <h3>{title}</h3>
             </div>
           ) : (
-            // FIX: Group title and badge to control their layout together.
             <div className={styles.titleGroup}>
               <h3>{title}</h3>
-              {/* FIX: Badge is now positioned after the title. */}
               {tileMeta.isUpdated && <Badge variant="info">Updated</Badge>}
             </div>
           )}
@@ -78,10 +78,16 @@ export const Tile = ({
                 </MenuTrigger>
               </Tooltip>
               <MenuContent>
-                <MenuItem className="menu-item">
-                  <span className="material-symbols-rounded">auto_awesome</span>
-                  Run AI Prompt
-                </MenuItem>
+                {menuActions.map((action, index) => {
+                  const label = typeof action === 'string' ? action : action.label;
+                  const hasSubmenu = typeof action !== 'string' && action.submenu;
+                  return (
+                    <MenuItem key={`${label}-${index}`} className="menu-item">
+                      {label}
+                      {hasSubmenu && <span className="material-symbols-rounded" style={{ marginLeft: 'auto' }}>chevron_right</span>}
+                    </MenuItem>
+                  );
+                })}
               </MenuContent>
             </MenuRoot>
           </div>

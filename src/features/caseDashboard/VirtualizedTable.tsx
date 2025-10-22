@@ -7,20 +7,23 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useViewContext } from './ViewContext'; // NEW
+import { useViewContext } from './ViewContext';
 import styles from './VirtualizedTable.module.css';
 
 interface VirtualizedTableProps<T extends object> {
   tableInstance: Table<T>;
+  rowLimit?: number;
 }
 
-export const VirtualizedTable = <T extends object>({ tableInstance: table }: VirtualizedTableProps<T>) => {
-  const viewContext = useViewContext(); // NEW
+export const VirtualizedTable = <T extends object>({ tableInstance: table, rowLimit }: VirtualizedTableProps<T>) => {
+  const viewContext = useViewContext();
   const tableContainerRef = useRef<HTMLDivElement>(null);
-  const { rows } = table.getRowModel();
+  
+  const allRows = table.getRowModel().rows;
+  const rowsToRender = rowLimit ? allRows.slice(0, rowLimit) : allRows;
 
   const rowVirtualizer = useVirtualizer({
-    count: rows.length,
+    count: rowsToRender.length,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => 49,
     overscan: 10,
@@ -44,13 +47,13 @@ export const VirtualizedTable = <T extends object>({ tableInstance: table }: Vir
         )}
       </AnimatePresence>
 
-      <div ref={tableContainerRef} className={styles.tableScrollWrapper} data-context={viewContext}>
+      <div ref={tableContainerRef} className={styles.tableScrollWrapper} data-context={viewContext} data-is-limited={!!rowLimit}>
         <table className={styles.table}>
           <thead className={styles.tableHeader}>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id} onClick={header.column.getToggleSortingHandler()} style={{ width: header.getSize() }}>
+                  <th key={header.id} onClick={header.column.getToggleSortingHandler()} style={{ width: header.getSize() || 'auto' }}>
                     {flexRender(header.column.columnDef.header, header.getContext())}
                     <span className={styles.sortIndicator}>
                       {{ asc: <span className="material-symbols-rounded">arrow_upward</span>, desc: <span className="material-symbols-rounded">arrow_downward</span> }[header.column.getIsSorted() as SortDirection] ?? null}
@@ -63,11 +66,11 @@ export const VirtualizedTable = <T extends object>({ tableInstance: table }: Vir
           <tbody>
             {paddingTop > 0 && <tr><td colSpan={table.getAllColumns().length} style={{ height: `${paddingTop}px` }} /></tr>}
             {virtualRows.map((virtualRow: VirtualItem) => {
-              const row = rows[virtualRow.index];
+              const row = rowsToRender[virtualRow.index];
               return (
                 <tr key={row.id} data-state={row.getIsSelected() ? 'selected' : 'default'}>
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} style={{ width: cell.column.getSize() }}>
+                    <td key={cell.id} style={{ width: cell.column.getSize() || 'auto' }}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}

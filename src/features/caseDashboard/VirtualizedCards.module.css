@@ -6,3 +6,10 @@
   overflow-y: auto;
   padding-top: var(--spacing-4);
 }
+
+.scrollContainer[data-is-limited='true'] {
+  overflow-y: hidden;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+}

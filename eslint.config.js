@@ -1,30 +1,44 @@
+// eslint.config.js
 import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
-import { defineConfig, globalIgnores } from 'eslint/config'
 
-export default defineConfig([
-  globalIgnores(['dist']),
+// NOTE: Reverted to the original, simpler ESLint configuration.
+// This configuration provides essential type-aware linting for React + TypeScript
+// without the additional strict rules that were causing noise for the POC.
+export default [
+  { ignores: ['dist/', 'vite.config.ts', '.eslintrc.cjs'] },
   {
-    files: ['**/*.{ts,tsx}'],
-    // FIX: The `extends` array is updated to use type-aware linting rules.
-    extends: [
-      js.configs.recommended,
-      // `tseslint.configs.recommended` is replaced with `recommendedTypeChecked`.
-      tseslint.configs.recommendedTypeChecked,
-      reactHooks.configs['recommended-latest'],
-      reactRefresh.configs.vite,
-    ],
+    files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': 'warn',
+    },
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
-      // FIX: The `parserOptions` object is added to connect ESLint to TypeScript.
-      parserOptions: {
-        project: ['./tsconfig.app.json', './tsconfig.node.json'],
-        tsconfigRootDir: import.meta.dirname,
+      globals: {
+        ...globals.browser,
+        ...globals.node,
       },
     },
   },
-])
+  {
+    files: ['**/*.{ts,tsx}'],
+    ...tseslint.configs.recommendedTypeChecked,
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.json', './tsconfig.node.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    }
+  },
+  js.configs.recommended,
+];

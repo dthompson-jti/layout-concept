@@ -19,10 +19,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import { TILE_COMPONENT_MAP } from './TileRegistry';
 import { userLayoutAtom, isEditModeAtom, TileConfig, maximizedTileAtom, activeDragIdAtom, dashboardViewModeAtom, DashboardViewMode } from './dashboardState';
+import { caseDetailDataMap } from '../../data/caseDetailData';
 import { Tile } from './Tile';
 import { HiddenTilesTray } from './HiddenTilesTray';
 import { DashboardCommandBar } from './DashboardCommandBar';
 import { EditModeActions } from './EditModeActions';
+import { ViewContext } from './ViewContext';
 import styles from './CaseDashboard.module.css';
 
 interface SortableTileProps {
@@ -36,22 +38,27 @@ interface SortableTileProps {
 const SortableTile = ({ tile, isEditMode, viewMode, onToggleCollapse, onMaximize }: SortableTileProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: tile.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1, zIndex: isDragging ? 100 : 'auto' };
-  const TileContent = TILE_COMPONENT_MAP[tile.componentKey] || TILE_COMPONENT_MAP.Default;
-  const title = tile.componentKey.replace(/([A-Z])/g, ' $1').trim();
+  const TileContent = TILE_COMPONENT_MAP[tile.componentKey];
+  
+  if (!TileContent) {
+    return <div>Error: Unknown tile component '{tile.componentKey}'</div>;
+  }
   
   const isCollapsed = viewMode === 'list' ? false : tile.isCollapsed;
+  const menuActions = caseDetailDataMap.get(tile.id)?.menu.actions || [];
 
   return (
     <motion.div layoutId={`tile-container-${tile.id}`} ref={setNodeRef} style={style} {...attributes}>
       <Tile
         tileId={tile.id}
-        title={title}
+        title={tile.title}
         isCollapsed={isCollapsed}
         onMaximize={() => onMaximize(tile)}
         dragHandleProps={listeners}
         isEditMode={isEditMode}
         viewMode={viewMode}
         onToggleCollapse={onToggleCollapse}
+        menuActions={menuActions}
       >
         <TileContent tileId={tile.id} />
       </Tile>
@@ -133,7 +140,7 @@ export const CaseDashboard = () => {
         
         <DragOverlay dropAnimation={null}>
           {activeTile && (
-            <Tile tileId={activeTile.id} title={activeTile.componentKey.replace(/([A-Z])/g, ' $1').trim()} isCollapsed={false} onToggleCollapse={() => {}} onMaximize={() => {}} isEditMode={true}>
+            <Tile tileId={activeTile.id} title={activeTile.title} isCollapsed={false} onToggleCollapse={() => {}} onMaximize={() => {}} isEditMode={true} menuActions={[]}>
               <div style={{ height: '100px', width: '100%' }} />
             </Tile>
           )}
@@ -145,7 +152,6 @@ export const CaseDashboard = () => {
       {createPortal(
         <AnimatePresence>
           {maximizedTile && MaximizedContent && (
-            // FIX: Added explicit animation props to the backdrop for a smooth fade-in.
             <motion.div
               className={styles.modalBackdrop}
               initial={{ backgroundColor: 'rgba(10, 12, 18, 0)' }}
@@ -155,13 +161,15 @@ export const CaseDashboard = () => {
             >
               <motion.div className={styles.modalContentWrapper} layoutId={`tile-container-${maximizedTile.id}`}>
                 <div className={styles.modalHeader}>
-                  <h2>{maximizedTile.componentKey.replace(/([A-Z])/g, ' $1').trim()}</h2>
+                  <h2>{maximizedTile.title}</h2>
                   <button className="btn btn-tertiary icon-only" onClick={() => setMaximizedTile(null)}>
                     <span className="material-symbols-rounded">close</span>
                   </button>
                 </div>
                 <div className={styles.modalBody}>
-                  <MaximizedContent tileId={maximizedTile.id} />
+                  <ViewContext.Provider value="maximized">
+                    <MaximizedContent tileId={maximizedTile.id} />
+                  </ViewContext.Provider>
                 </div>
               </motion.div>
             </motion.div>
