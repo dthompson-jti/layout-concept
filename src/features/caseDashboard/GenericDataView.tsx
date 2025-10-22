@@ -9,7 +9,6 @@ import { DataTableDisplay } from './DataTableDisplay';
 import styles from './GenericDataView.module.css';
 
 interface GenericDataViewProps {
-  // FIX: Remove the unused tileId prop.
   tables: TableData[];
   menuActions: (string | MenuAction)[];
 }
@@ -24,13 +23,14 @@ const getRowLimit = (tableCount: number, viewContext: 'masonry' | 'maximized'): 
   return undefined;
 };
 
-// FIX: Remove tileId from the function signature.
 export const GenericDataView = ({ tables, menuActions }: GenericDataViewProps) => {
   const globalViewMode = useAtomValue(globalViewModeAtom);
   const viewContext = useViewContext();
   const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
 
-  const viewMode: TileContentViewMode = globalViewMode === 'masonry-table' ? 'table' : 'cards';
+  // FIX: Correct the logic to ensure 'list' view always defaults to 'table' content.
+  // Only the 'masonry-cards' global view mode should result in 'cards' content.
+  const viewMode: TileContentViewMode = globalViewMode === 'masonry-cards' ? 'cards' : 'table';
 
   const rowLimit = getRowLimit(tables.length, viewContext);
 

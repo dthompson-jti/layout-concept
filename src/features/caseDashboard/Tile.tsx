@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { DraggableSyntheticListeners } from '@dnd-kit/core';
 import { Badge } from '../../components/Badge';
 import { Tooltip } from '../../components/Tooltip';
-// FIX: Remove unused import for DashboardViewMode.
 import { tileMetaFamily } from './dashboardState';
 import { MenuRoot, MenuTrigger, MenuContent, MenuItem } from '../../components/Menu';
 import { MenuAction } from '../../data/caseDetailData';
@@ -20,7 +19,6 @@ interface TileProps {
   onMaximize: () => void;
   isEditMode: boolean;
   dragHandleProps?: DraggableSyntheticListeners;
-  // FIX: Remove the viewMode prop as it's no longer used.
   menuActions: (string | MenuAction)[];
 }
 
@@ -46,7 +44,6 @@ export const Tile = ({
     tileMeta.count !== undefined ? `${tileMeta.count.toLocaleString()} items` : '';
 
   return (
-    // FIX: Remove the data-view-mode attribute as it's no longer used for styling.
     <div className={styles.tileWrapper} data-collapsed={isCollapsed}>
       <div className={styles.tileHeader}>
         <div className={styles.headerLeft}>
@@ -99,7 +96,14 @@ export const Tile = ({
               aria-expanded={!isCollapsed}
               disabled={isEditMode}
             >
-              <span className="material-symbols-rounded">expand_more</span>
+              {/* FIX: Animate chevron directly with Framer Motion to bypass CSS conflicts. */}
+              <motion.span
+                className="material-symbols-rounded"
+                animate={{ rotate: isCollapsed ? 0 : 180 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+              >
+                expand_more
+              </motion.span>
             </button>
           </Tooltip>
         </div>

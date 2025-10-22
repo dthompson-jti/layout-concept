@@ -74,15 +74,9 @@
   align-items: center;
 }
 
-/* FIX: Restore the CSS transition for the chevron icon. */
-.collapseButton .material-symbols-rounded {
-  transition: transform 0.25s ease-in-out;
-}
-
-/* FIX: Restore the CSS rule to rotate the chevron when the tile is expanded. */
-.tileWrapper[data-collapsed='false'] .collapseButton .material-symbols-rounded {
-  transform: rotate(180deg);
-}
+/* FIX: The CSS-based transition for the chevron has been removed. */
+/* Animation is now handled directly by Framer Motion in the Tile.tsx component. */
+/* This avoids conflicts with parent animation libraries. */
 
 .tileBodyWrapper {
   overflow: hidden;
