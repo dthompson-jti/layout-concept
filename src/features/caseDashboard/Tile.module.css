@@ -74,7 +74,15 @@
   align-items: center;
 }
 
-/* FIX: Remove the empty ruleset that was causing a warning. */
+/* FIX: Restore the CSS transition for the chevron icon. */
+.collapseButton .material-symbols-rounded {
+  transition: transform 0.25s ease-in-out;
+}
+
+/* FIX: Restore the CSS rule to rotate the chevron when the tile is expanded. */
+.tileWrapper[data-collapsed='false'] .collapseButton .material-symbols-rounded {
+  transform: rotate(180deg);
+}
 
 .tileBodyWrapper {
   overflow: hidden;

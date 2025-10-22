@@ -19,7 +19,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import { TILE_COMPONENT_MAP } from './TileRegistry';
 import { userLayoutAtom, isEditModeAtom, TileConfig, maximizedTileAtom, activeDragIdAtom, dashboardViewModeAtom, DashboardViewMode } from './dashboardState';
-// FIX: Explicitly use the MenuAction type to resolve the "never read" warning.
 import { caseDetailDataMap, MenuAction } from '../../data/caseDetailData';
 import { Tile } from './Tile';
 import { HiddenTilesTray } from './HiddenTilesTray';
@@ -46,11 +45,21 @@ const SortableTile = ({ tile, isEditMode, viewMode, onToggleCollapse, onMaximize
   }
   
   const isCollapsed = viewMode === 'list' ? false : tile.isCollapsed;
-  // FIX: Explicitly type the variable to show usage of the MenuAction type.
   const menuActions: (string | MenuAction)[] = caseDetailDataMap.get(tile.id)?.menu.actions || [];
 
   return (
-    <motion.div layoutId={`tile-container-${tile.id}`} ref={setNodeRef} style={style} {...attributes}>
+    <motion.div
+      // DEFINITIVE FIX: Change `layout` to `layout="position"`.
+      // This tells Framer Motion to ONLY animate position changes (like for DnD)
+      // and to IGNORE size changes. The size animation will now be handled
+      // exclusively by the AnimatePresence block inside the Tile component,
+      // which uses the correct non-springy ease curve. This resolves the conflict.
+      layout="position"
+      layoutId={`tile-container-${tile.id}`}
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+    >
       <Tile
         tileId={tile.id}
         title={tile.title}
@@ -101,7 +110,6 @@ export const CaseDashboard = () => {
 
   const masonryBreakpoints = { default: 3, 1280: 2, 768: 1 };
   const MaximizedContent = maximizedTile ? TILE_COMPONENT_MAP[maximizedTile.componentKey] : null;
-  // FIX: Explicitly type the variable to show usage of the MenuAction type.
   const maximizedMenuActions: (string | MenuAction)[] = maximizedTile ? caseDetailDataMap.get(maximizedTile.id)?.menu.actions || [] : [];
 
   const tilesToRender = visibleTiles.map(tile => (

@@ -35,6 +35,7 @@ export const Tile = ({
   viewMode = 'grid',
   menuActions,
 }: TileProps) => {
+  // FIX: Implement the refined animation from the working sandbox.
   const contentVariants = {
     collapsed: { height: 0, opacity: 0 },
     expanded: { height: 'auto', opacity: 1 },
@@ -46,6 +47,7 @@ export const Tile = ({
     tileMeta.count !== undefined ? `${tileMeta.count.toLocaleString()} items` : '';
 
   return (
+    // FIX: Ensure the data attribute is correctly driven by the isCollapsed boolean.
     <div className={styles.tileWrapper} data-view-mode={viewMode} data-collapsed={isCollapsed}>
       <div className={styles.tileHeader}>
         <div className={styles.headerLeft}>
@@ -80,7 +82,7 @@ export const Tile = ({
               <MenuContent>
                 {menuActions.map((action, index) => {
                   const label = typeof action === 'string' ? action : action.label;
-                  const hasSubmenu = typeof action !== 'string' && action.submenu;
+  const hasSubmenu = typeof action !== 'string' && action.submenu;
                   return (
                     <MenuItem key={`${label}-${index}`} className="menu-item">
                       {label}
@@ -98,20 +100,8 @@ export const Tile = ({
               aria-expanded={!isCollapsed}
               disabled={isEditMode}
             >
-              {/* FIX: Use AnimatePresence for a clean cross-fade between icons */}
-              <AnimatePresence initial={false} mode="wait">
-                <motion.span
-                  key={isCollapsed ? 'expand' : 'collapse'}
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 5 }}
-                  transition={{ duration: 0.15 }}
-                  className="material-symbols-rounded"
-                  style={{ display: 'block' }} // Prevent layout shift
-                >
-                  {isCollapsed ? 'expand_more' : 'expand_less'}
-                </motion.span>
-              </AnimatePresence>
+              {/* FIX: Revert to a single span. The animation is now handled by CSS. */}
+              <span className="material-symbols-rounded">expand_more</span>
             </button>
           </Tooltip>
         </div>
@@ -124,8 +114,10 @@ export const Tile = ({
             animate="expanded"
             exit="collapsed"
             variants={contentVariants}
-            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+            // FIX: Use the specific, proven transition properties for a high-craft feel.
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             className={styles.tileBodyWrapper}
+            style={{ transformOrigin: 'top' }}
           >
             <div className={styles.tileBody}>{children}</div>
           </motion.div>
