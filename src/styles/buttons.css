@@ -58,7 +58,8 @@
   border-color: var(--control-border-secondary-hover);
   box-shadow: inset 0 -2px 0 0 var(--control-border-secondary-hover);
 }
-.btn-secondary:active:not(:disabled), .btn-secondary.active {
+/* FIX: Add data-state='active' to the selected state rule for the edit button. */
+.btn-secondary:active:not(:disabled), .btn-secondary.active, .btn-secondary[data-state='active'] {
   background-color: var(--primitives-grey-100);
   border-color: var(--control-border-secondary-pressed);
   /* FIX: Remove transform and match hover state's shadow thickness. */

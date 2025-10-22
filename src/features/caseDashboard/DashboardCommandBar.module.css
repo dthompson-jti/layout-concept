@@ -1,0 +1,113 @@
+/* src/features/caseDashboard/DashboardCommandBar.module.css */
+.commandBar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--surface-bg-primary);
+  border-top: 1px solid var(--surface-border-secondary);
+  border-bottom: 1px solid var(--surface-border-secondary);
+  width: 100%;
+  min-height: 66px;
+}
+
+.aiPromptWrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - (2 * var(--spacing-4)));
+  max-width: 768px;
+  display: flex;
+  align-items: center;
+  height: 42px;
+  background-color: var(--surface-bg-secondary);
+  border-radius: 9999px;
+  padding: 0 var(--spacing-1);
+  border: 1px solid var(--surface-border-secondary);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.aiPromptWrapper:focus-within {
+  border-color: var(--surface-border-theme);
+  box-shadow: 0 0 0 2px var(--control-focus-ring-standard);
+}
+
+.promptInput {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-family-sans);
+  font-size: 14px;
+  padding: 0 var(--spacing-2);
+  color: var(--surface-fg-primary);
+}
+
+.promptButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  border-radius: 9999px;
+  border: none;
+  transition: background-color 0.2s, opacity 0.2s;
+  height: 34px;
+  width: 34px;
+}
+.promptButton .material-symbols-rounded {
+  font-size: 20px;
+}
+
+.attachButton {
+  background: none;
+  color: var(--surface-fg-secondary);
+}
+.attachButton:hover {
+  background-color: var(--control-bg-tertiary-hover);
+}
+
+.submitButton {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--control-border-secondary);
+}
+.submitButton:disabled {
+  background-color: var(--control-bg-secondary);
+  color: var(--surface-fg-primary);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.viewControls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Add a wrapper to target for mobile hiding */
+.toggleWrapper {
+  display: flex;
+}
+
+@media (max-width: var(--breakpoint-mobile)) {
+  .commandBar {
+    justify-content: space-between;
+  }
+  .aiPromptWrapper {
+    position: static;
+    transform: none;
+    flex-grow: 1;
+    /* FIX: Allow the prompt wrapper to shrink correctly on small screens */
+    min-width: 0;
+  }
+
+  .toggleWrapper {
+    display: none;
+  }
+}

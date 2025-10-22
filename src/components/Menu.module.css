@@ -1,0 +1,17 @@
+/* src/components/Menu.module.css */
+
+.menuContent {
+  min-width: 220px;
+  background-color: var(--surface-bg-primary);
+  border-radius: var(--spacing-2);
+  padding: var(--spacing-1);
+  box-shadow: var(--surface-shadow-lg);
+  border: 1px solid var(--surface-border-secondary);
+  animation: fadeIn 0.1s ease-out;
+  z-index: 100;
+}
+
+/*
+  NOTE: The .menu-item styles are located in the global `src/styles/menu.css` file.
+  This module only contains styles for the popover container itself.
+*/

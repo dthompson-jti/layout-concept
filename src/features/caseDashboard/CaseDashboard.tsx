@@ -21,9 +21,7 @@ import { userLayoutAtom, isEditModeAtom, TileConfig, maximizedTileAtom, activeDr
 import { Tile } from './Tile';
 import { EditModeOverlay } from './EditModeOverlay';
 import { HiddenTilesTray } from './HiddenTilesTray';
-import { IconToggleGroup } from '../../components/IconToggleGroup';
-import { Tooltip } from '../../components/Tooltip';
-// REMOVED: CaseHeader is no longer rendered here
+import { DashboardCommandBar } from './DashboardCommandBar';
 import styles from './CaseDashboard.module.css';
 
 interface SortableTileProps {
@@ -63,13 +61,12 @@ const SortableTile = ({ tile, isEditMode, viewMode, onToggleCollapse, onMaximize
   );
 };
 
-// CHANGE: This component no longer needs to manage header animation
 export const CaseDashboard = () => {
   const [layout, setLayout] = useAtom(userLayoutAtom);
-  const [isEditMode, setIsEditMode] = useAtom(isEditModeAtom);
+  const [isEditMode] = useAtom(isEditModeAtom);
   const [activeId, setActiveId] = useAtom(activeDragIdAtom);
   const [maximizedTile, setMaximizedTile] = useAtom(maximizedTileAtom);
-  const [viewMode, setViewMode] = useAtom(dashboardViewModeAtom);
+  const [viewMode] = useAtom(dashboardViewModeAtom);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
@@ -98,11 +95,6 @@ export const CaseDashboard = () => {
   const masonryBreakpoints = { default: 3, 1280: 2, 768: 1 };
   const MaximizedContent = maximizedTile ? TILE_COMPONENT_MAP[maximizedTile.componentKey] : null;
 
-  const viewToggleOptions = [
-    { value: 'grid', label: 'Grid View', icon: 'grid_view' },
-    { value: 'list', label: 'List View', icon: 'view_list' },
-  ];
-
   const tilesToRender = visibleTiles.map(tile => (
     <SortableTile
       key={tile.id}
@@ -116,43 +108,24 @@ export const CaseDashboard = () => {
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      {/* CaseHeader is now rendered in App.tsx */}
       <div className={styles.dashboardContainer}>
-        <EditModeOverlay isEditMode={isEditMode} onExitEditMode={() => setIsEditMode(false)} />
+        <EditModeOverlay isEditMode={isEditMode} onExitEditMode={() => { /* Placeholder */ }} />
         
-        <div className={styles.controlsHeader}>
-          <div className={styles.viewToggle}>
-            <IconToggleGroup
-              options={viewToggleOptions}
-              value={viewMode}
-              onValueChange={(value) => setViewMode(value as DashboardViewMode)}
-            />
-          </div>
-          <div className={styles.personalizeActions}>
-            <Tooltip content="Personalize Layout">
-              <button className="btn btn-secondary icon-only" onClick={() => setIsEditMode(p => !p)} data-state={isEditMode ? 'active' : 'inactive'}>
-                <span className="material-symbols-rounded">edit</span>
-              </button>
-            </Tooltip>
-            <Tooltip content="More Options">
-              <button className="btn btn-secondary icon-only">
-                <span className="material-symbols-rounded">more_horiz</span>
-              </button>
-            </Tooltip>
-          </div>
-        </div>
+        <DashboardCommandBar />
 
-        <SortableContext items={visibleTiles.map(t => t.id)} strategy={verticalListSortingStrategy}>
-          {viewMode === 'grid' ? (
-            <Masonry breakpointCols={masonryBreakpoints} className={styles.masonryGrid} columnClassName={styles.masonryGridColumn}>
-              {tilesToRender}
-            </Masonry>
-          ) : (
-            <div className={styles.listViewContainer}>
-              {tilesToRender}
-            </div>
-          )}
-        </SortableContext>
+        <div className={styles.contentArea}>
+          <SortableContext items={visibleTiles.map(t => t.id)} strategy={verticalListSortingStrategy}>
+            {viewMode === 'grid' ? (
+              <Masonry breakpointCols={masonryBreakpoints} className={styles.masonryGrid} columnClassName={styles.masonryGridColumn}>
+                {tilesToRender}
+              </Masonry>
+            ) : (
+              <div className={styles.listViewContainer}>
+                {tilesToRender}
+              </div>
+            )}
+          </SortableContext>
+        </div>
         
         <DragOverlay dropAnimation={null}>
           {activeTile && (

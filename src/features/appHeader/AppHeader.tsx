@@ -5,9 +5,6 @@ import { Select, SelectItem } from '../../components/Select';
 import { mockUser, mockCaseList, mockLanguages, CaseInfo, Language } from '../../data/appHeaderData';
 import styles from './AppHeader.module.css';
 
-// CHANGE: This component is now a simple presentational component.
-// It no longer needs any props or motion logic.
-
 const ActionButton = ({ icon, label }: { icon: string; label: string }) => (
   <Tooltip content={label}>
     <button className={styles.actionButton} aria-label={label}>
@@ -18,10 +15,10 @@ const ActionButton = ({ icon, label }: { icon: string; label: string }) => (
 
 export const AppHeader = () => {
   const isMobile = useMediaQuery('(max-width: 767px)');
-  const [currentCaseId, setCurrentCaseId] = useState(mockCaseList[0].id);
+  // FIX: Removed unused state setter to fix linting warning
   const [currentLanguage, setCurrentLanguage] = useState(mockLanguages[0].value);
 
-  const currentCase = mockCaseList.find((c: CaseInfo) => c.id === currentCaseId) || mockCaseList[0];
+  const currentCase = mockCaseList[0]; // Use a static case since the picker is a dummy
   const currentDate = new Date().toLocaleDateString('EN-US', {
     weekday: 'short',
     year: 'numeric',
@@ -73,11 +70,14 @@ export const AppHeader = () => {
       </div>
       
       <div className={styles.rightGroup}>
-        <div className={styles.casePickerContainer}>
-          <Select value={currentCaseId} onValueChange={setCurrentCaseId}>
-            {mockCaseList.map((c: CaseInfo) => <SelectItem key={c.id} value={c.id}>{c.id}</SelectItem>)}
-          </Select>
+        <div className={styles.caseInfo}>
+            <span className="material-symbols-rounded">folder_open</span>
+            <button className={styles.casePickerButton}>
+                <span>25STLC00161</span>
+                <span className="material-symbols-rounded">expand_more</span>
+            </button>
         </div>
+        <div className={styles.separator}></div>
         <div className={styles.departmentInfo}>
           <span className="material-symbols-rounded">calendar_month</span>
           <span>{currentCase.department}</span>

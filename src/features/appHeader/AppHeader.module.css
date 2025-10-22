@@ -9,7 +9,6 @@
   color: var(--control-fg-on-solid);
   flex-shrink: 0;
   gap: var(--spacing-4);
-  /* CHANGE: This component no longer needs positioning. It's just a content block. */
   width: 100%;
 }
 
@@ -32,6 +31,7 @@
   font-weight: 600;
   font-size: 1.1em;
   white-space: nowrap;
+  /* FIX: Remove margin-left: auto to keep it in the flow */
 }
 
 .userInfo, .dateInfo {
@@ -100,10 +100,7 @@
   width: 120px;
 }
 
-.casePickerContainer {
-  display: none;
-  width: 200px;
-}
+/* FIX: Remove old case picker container style */
 
 .departmentInfo {
   display: none;
@@ -114,6 +111,36 @@
 }
 
 .departmentInfo .material-symbols-rounded {
+  font-size: 20px;
+}
+
+/* FIX: New styles for case info group */
+.caseInfo {
+  display: none;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--surface-fg-secondary_on_brand);
+}
+
+.casePickerButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  background: none;
+  border: none;
+  color: var(--control-fg-on-solid);
+  font-family: var(--font-family-sans);
+  font-size: 0.9em;
+  font-weight: 500;
+  cursor: pointer;
+  padding: var(--spacing-1p5) var(--spacing-2);
+  border-radius: var(--spacing-2);
+  transition: background-color 0.2s;
+}
+.casePickerButton:hover {
+  background-color: var(--control-bg-on-solid-hover);
+}
+.casePickerButton .material-symbols-rounded {
   font-size: 20px;
 }
 
@@ -133,25 +160,25 @@
   .leftGroup > .actionButton:first-child[aria-label="Open menu"] {
     display: none;
   }
-  .searchContainer, .casePickerContainer, .departmentInfo {
+  .searchContainer, .caseInfo, .departmentInfo {
     display: flex;
   }
   .userInfo {
     display: block;
   }
-  .leftGroup > .actionButton:not(:first-child), .dateInfo, .appTitle, .languagePickerContainer {
+  .leftGroup > .actionButton:not(:first-child), .dateInfo, .languagePickerContainer {
     display: none;
+  }
+  .appTitle {
+    display: none; /* Title is shown next to date */
   }
 }
 
 @media (min-width: 1200px) {
-  .leftGroup > .actionButton, .dateInfo, .appTitle, .languagePickerContainer {
+  .leftGroup > .actionButton, .dateInfo, .languagePickerContainer, .appTitle {
     display: inline-flex;
   }
   .userInfo {
     margin-left: var(--spacing-2);
-  }
-  .appTitle {
-    margin-left: auto;
   }
 }
