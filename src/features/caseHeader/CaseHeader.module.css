@@ -72,17 +72,14 @@
   gap: var(--spacing-1);
 }
 
-/* FIX: Ensure total height is exactly 38px by controlling padding. */
+/* FIX: Remove local height override, rely on consistent base button styles now */
 .iconActions .btn-tertiary.icon-only {
-  height: 38px;
   width: 38px;
-  /* Remove default padding and use flex to center the icon perfectly. */
   padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
-
 
 /* --- Row Spacing & Info Grids --- */
 .row1, .row2, .row3 {
@@ -92,17 +89,25 @@
 .row2 { margin-bottom: var(--spacing-6); transition: margin-bottom 0.3s ease-in-out; }
 .row3 { margin-bottom: var(--spacing-6); transition: margin-bottom 0.3s ease-in-out; }
 
-.row3, .row2 {
+.row2 {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
   gap: var(--spacing-6);
 }
 
+/* FIX: Change from grid to a wrapping flexbox layout */
 .row3 {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--spacing-6);
   transition: gap 0.3s ease-in-out;
+}
+
+/* FIX: Add flex-basis to InfoBlock children to control their width */
+.row3 > * {
+  flex: 0 1 250px; /* Don't grow, shrink if needed, with a basis of 250px */
 }
 
 .row3 > div:nth-child(n+3) {
@@ -130,7 +135,7 @@
 
 @media (min-width: 1200px) {
   .row3 {
-    grid-template-columns: repeat(4, 1fr);
+    /* Let flexbox handle wrapping instead of a fixed grid */
   }
   .row3 > div:nth-child(n+3) {
     display: flex;

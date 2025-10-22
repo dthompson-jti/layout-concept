@@ -4,7 +4,8 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-4);
-  padding: var(--spacing-3) var(--spacing-4);
+  /* FIX: Add 8px extra top padding */
+  padding: calc(var(--spacing-3) + 8px) var(--spacing-4) var(--spacing-3);
   background-color: var(--surface-bg-primary);
   border-top: 1px solid var(--surface-border-secondary);
   border-bottom: 1px solid var(--surface-border-secondary);
@@ -90,7 +91,6 @@
   flex-shrink: 0;
 }
 
-/* Add a wrapper to target for mobile hiding */
 .toggleWrapper {
   display: flex;
 }
@@ -103,8 +103,9 @@
     position: static;
     transform: none;
     flex-grow: 1;
-    /* FIX: Allow the prompt wrapper to shrink correctly on small screens */
+    /* FIX: Allow the prompt wrapper to shrink correctly */
     min-width: 0;
+    width: auto; /* Override desktop calc() width */
   }
 
   .toggleWrapper {

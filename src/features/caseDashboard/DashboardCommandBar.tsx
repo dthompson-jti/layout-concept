@@ -19,8 +19,14 @@ export const DashboardCommandBar = () => {
 
   const moreMenu = (
     <>
-      <MenuItem className="menu-item">Update layout profile</MenuItem>
-      <MenuItem className="menu-item">Edit in Screen Studio</MenuItem>
+      <MenuItem className="menu-item">
+        <span className="material-symbols-rounded">save</span>
+        Update layout profile
+      </MenuItem>
+      <MenuItem className="menu-item">
+        <span className="material-symbols-rounded">capture</span>
+        Edit in Screen Studio
+      </MenuItem>
       <MenuItem className="menu-item" onSelect={() => setIsEditMode(p => !p)}>
         <span className="material-symbols-rounded">edit</span>
         {isEditMode ? 'Done Editing' : 'Edit Layout'}

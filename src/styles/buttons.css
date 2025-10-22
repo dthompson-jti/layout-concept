@@ -8,7 +8,6 @@
   font-weight: 500;
   cursor: pointer;
   border-radius: var(--spacing-2);
-  /* FIX: Remove transform from the transition property as it's no longer used on active state. */
   transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
   box-sizing: border-box;
   line-height: 1;
@@ -40,7 +39,6 @@
 .btn-primary:active:not(:disabled) {
   background-color: var(--control-bg-theme-pressed);
   border-color: var(--control-border-primary-pressed);
-  /* FIX: Remove transform and match hover state's shadow thickness. */
   box-shadow: inset 0 -3px 0 0 var(--control-border-primary-pressed);
 }
 
@@ -58,11 +56,9 @@
   border-color: var(--control-border-secondary-hover);
   box-shadow: inset 0 -2px 0 0 var(--control-border-secondary-hover);
 }
-/* FIX: Add data-state='active' to the selected state rule for the edit button. */
 .btn-secondary:active:not(:disabled), .btn-secondary.active, .btn-secondary[data-state='active'] {
   background-color: var(--primitives-grey-100);
   border-color: var(--control-border-secondary-pressed);
-  /* FIX: Remove transform and match hover state's shadow thickness. */
   box-shadow: inset 0 -2px 0 0 var(--control-border-secondary-pressed);
 }
 .btn-secondary.icon-only {
@@ -72,42 +68,40 @@
 }
 
 /* --- Tertiary Button Styles --- */
+/* FIX: Standardize height to 38px and adjust padding for consistency */
 .btn-tertiary {
-  padding: var(--spacing-1p5);
-  height: 34px;
+  padding: var(--spacing-2);
+  height: 38px;
   background: none;
   border: 1px solid transparent; 
   color: var(--surface-fg-secondary);
   border-radius: var(--spacing-2);
 }
 .btn-tertiary.icon-text {
-  padding: var(--spacing-1p5) var(--spacing-2);
+  padding: var(--spacing-2);
   gap: var(--spacing-2);
   color: var(--surface-fg-tertiary);
 }
 .btn-tertiary.icon-only {
-  padding: var(--spacing-1p5);
+  width: 38px;
+  padding: var(--spacing-2);
 }
 .btn-tertiary:hover:not(:disabled) {
   background-color: var(--control-bg-tertiary-hover);
   color: var(--control-fg-tertiary-hover);
-  /* Use faint border for top/sides */
   border-top: 1px solid var(--control-border-tertiary-faint-hover);
   border-right: 1px solid var(--control-border-tertiary-faint-hover);
   border-left: 1px solid var(--control-border-tertiary-faint-hover);
-  border-bottom: 1px solid transparent; /* Bottom border is handled by shadow */
-  /* Use stronger inset shadow for the bottom border effect */
+  border-bottom: 1px solid transparent;
   box-shadow: inset 0 -3px 0 0 var(--control-border-tertiary-hover);
 }
 .btn-tertiary:active:not(:disabled) {
   background-color: var(--control-bg-tertiary-pressed);
   color: var(--control-fg-tertiary-hover);
-  /* FIX: Ensure active border matches hover border style. */
   border-top: 1px solid var(--control-border-tertiary-faint-pressed);
   border-right: 1px solid var(--control-border-tertiary-faint-pressed);
   border-left: 1px solid var(--control-border-tertiary-faint-pressed);
   border-bottom: 1px solid transparent;
-  /* FIX: Remove transform and match hover state's shadow thickness. */
   box-shadow: inset 0 -3px 0 0 var(--control-border-tertiary-pressed);
 }
 
@@ -127,11 +121,9 @@
 .btn-quaternary:hover:not(:disabled) {
   background-color: var(--control-bg-quaternary-hover);
   color: var(--control-fg-quaternary-hover);
-  /* For quaternary button borders, the border should only be on hover state. */
   border-color: var(--quaternary-border-color-on-hover, transparent);
 }
 .btn-quaternary:active:not(:disabled) {
-  /* FIX: Remove transform. The background change is the only feedback. */
   background-color: var(--control-bg-quaternary-pressed);
 }
 
