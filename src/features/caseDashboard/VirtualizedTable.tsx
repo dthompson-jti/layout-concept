@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
 import { AnimatePresence, motion } from 'framer-motion';
-import { SearchInput } from '../../components/SearchInput';
+import { useViewContext } from './ViewContext'; // NEW
 import styles from './VirtualizedTable.module.css';
 
 interface VirtualizedTableProps<T extends object> {
@@ -15,11 +15,7 @@ interface VirtualizedTableProps<T extends object> {
 }
 
 export const VirtualizedTable = <T extends object>({ tableInstance: table }: VirtualizedTableProps<T>) => {
-  // FIX: Disable the linter rule for this specific line. This is the correct location for the override,
-  // as `table.getState().globalFilter` is the source of the `any` type.
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const globalFilter: string = table.getState().globalFilter ?? '';
-
+  const viewContext = useViewContext(); // NEW
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const { rows } = table.getRowModel();
 
@@ -38,22 +34,17 @@ export const VirtualizedTable = <T extends object>({ tableInstance: table }: Vir
   const numSelected = Object.keys(table.getState().rowSelection ?? {}).length;
 
   return (
-    <div className={styles.tableContainer}>
-      <div className={styles.toolbar}>
-        <div className={styles.searchWrapper}>
-          <SearchInput value={globalFilter} onChange={table.setGlobalFilter} placeholder="Filter items..." variant="integrated" />
-        </div>
-        <AnimatePresence>
-          {numSelected > 0 && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className={styles.selectionToolbar}>
-              <span>{numSelected} selected</span>
-              <button className="btn btn-tertiary">Export</button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+    <div className={styles.tableOuterWrapper}>
+      <AnimatePresence>
+        {numSelected > 0 && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className={styles.selectionToolbar}>
+            <span>{numSelected} selected</span>
+            <button className="btn btn-tertiary">Export</button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <div ref={tableContainerRef} className={styles.tableScrollWrapper}>
+      <div ref={tableContainerRef} className={styles.tableScrollWrapper} data-context={viewContext}>
         <table className={styles.table}>
           <thead className={styles.tableHeader}>
             {table.getHeaderGroups().map((headerGroup) => (

@@ -1,0 +1,20 @@
+/* src/features/caseDashboard/TileDocuments.module.css */
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.contentToolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4) var(--spacing-2);
+  border-bottom: 1px solid var(--surface-border-secondary);
+  flex-shrink: 0;
+}
+
+.searchWrapper {
+  flex-grow: 1;
+  min-width: 150px;
+}

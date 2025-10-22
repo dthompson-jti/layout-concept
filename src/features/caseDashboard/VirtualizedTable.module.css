@@ -1,26 +1,9 @@
 /* src/features/caseDashboard/VirtualizedTable.module.css */
-.tableContainer {
+.tableOuterWrapper {
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 400px; /* Ensure table has a minimum size */
-  max-height: 600px; /* Prevent table from becoming too tall inside a tile */
   background-color: var(--surface-bg-primary);
-}
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--spacing-2) var(--spacing-4);
-  border-bottom: 1px solid var(--surface-border-secondary);
-  flex-shrink: 0;
-  min-height: 57px; /* Account for padding and line height */
-}
-
-.searchWrapper {
-  flex: 1;
-  max-width: 400px;
 }
 
 .selectionToolbar {
@@ -28,18 +11,34 @@
   align-items: center;
   gap: var(--spacing-3);
   padding: var(--spacing-1p5) var(--spacing-3);
+  margin: var(--spacing-2) var(--spacing-4);
   background-color: var(--surface-bg-theme-subtle);
   border-radius: var(--spacing-2);
   border: 1px solid var(--surface-border-theme-subtle);
   color: var(--surface-fg-theme);
   font-size: 0.9em;
   font-weight: 500;
+  flex-shrink: 0;
 }
 
 .tableScrollWrapper {
   flex-grow: 1;
   overflow: auto;
+  border: 1px solid var(--surface-border-secondary);
+  border-radius: var(--spacing-2);
+  margin: 0 var(--spacing-4) var(--spacing-4);
 }
+
+/* NEW: Table height contexts */
+.tableScrollWrapper[data-context='masonry'] {
+  /* 7 rows * 49px row height + 49px header height = 392px */
+  height: 392px;
+}
+.tableScrollWrapper[data-context='maximized'] {
+  height: 100%;
+  margin: var(--spacing-4);
+}
+
 
 .table {
   width: 100%;
@@ -85,6 +84,10 @@
   border-bottom: 1px solid var(--surface-border-secondary);
   transition: background-color 0.2s;
 }
+.table tbody tr:last-child {
+  border-bottom: none;
+}
+
 
 .table tbody tr:hover {
   background-color: var(--surface-bg-secondary);

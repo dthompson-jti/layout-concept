@@ -1,14 +1,16 @@
 // src/features/caseDashboard/TileDocuments.tsx
-import { useEffect, useState, useCallback } from 'react'; // FIX: Imported useCallback
-import { useAtom } from 'jotai';
+import { useEffect, useState, useCallback } from 'react';
+import { useAtom, useSetAtom } from 'jotai';
 import { SortingState, getCoreRowModel, getSortedRowModel, useReactTable, createColumnHelper, getFilteredRowModel } from '@tanstack/react-table';
-import { tileViewModesAtom, TileContentViewMode } from './dashboardState';
+import { tileViewModesAtom, TileContentViewMode, tileMetaFamily, TileComponentProps } from './dashboardState';
 import { Document, documentsData } from '../../data/fakeData';
 import { VirtualizedTable } from './VirtualizedTable';
 import { VirtualizedCards } from './VirtualizedCards';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import { Select, SelectItem } from '../../components/Select';
 import { TableCheckbox } from '../../components/TableCheckbox';
+import { SearchInput } from '../../components/SearchInput';
+import styles from './TileDocuments.module.css';
 
 const columnHelper = createColumnHelper<Document>();
 const documentColumns = [
@@ -24,14 +26,10 @@ const documentColumns = [
   columnHelper.accessor('by', { header: 'Uploaded By', size: 150, meta: { priority: 3, cardRole: 'meta' } }),
 ];
 
-interface TileDocumentsProps {
-  tileId: string;
-  setHeaderControls: (controls: React.ReactNode) => void;
-}
-
-export const TileDocuments = ({ tileId, setHeaderControls }: TileDocumentsProps) => {
+export const TileDocuments = ({ tileId }: TileComponentProps) => {
   const [viewModes, setViewModes] = useAtom(tileViewModesAtom);
   const viewMode = viewModes[tileId] || 'table';
+  const setTileMeta = useSetAtom(tileMetaFamily(tileId));
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
 
@@ -48,24 +46,28 @@ export const TileDocuments = ({ tileId, setHeaderControls }: TileDocumentsProps)
 
   const { rows } = table.getRowModel();
 
-  // FIX: Wrap the setViewMode function definition in useCallback.
-  // This memoizes the function, ensuring its reference is stable across re-renders
-  // and satisfying the exhaustive-deps lint rule.
+  useEffect(() => {
+    setTileMeta({ count: documentsData.length, isUpdated: true });
+  }, [setTileMeta]);
+
   const setViewMode = useCallback((mode: TileContentViewMode) => {
     setViewModes(prev => ({ ...prev, [tileId]: mode }));
   }, [setViewModes, tileId]);
   
-  useEffect(() => {
-    const viewToggleOptions = [
-      { value: 'table', label: 'Table View', icon: 'table_rows' },
-      { value: 'cards', label: 'Card View', icon: 'view_agenda' },
-    ];
+  const viewToggleOptions = [
+    { value: 'table', label: 'Table View', icon: 'data_table' }, // UPDATED ICON
+    { value: 'cards', label: 'Card View', icon: 'view_agenda' },
+  ];
     
-    const sortableColumns = documentColumns.filter(c => 'accessorKey' in c);
-    const currentSortCol = sorting[0]?.id;
+  const sortableColumns = documentColumns.filter(c => 'accessorKey' in c);
+  const currentSortCol = sorting[0]?.id;
 
-    const controls = (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+  return (
+    <div className={styles.contentWrapper}>
+      <div className={styles.contentToolbar}>
+        <div className={styles.searchWrapper}>
+           <SearchInput value={globalFilter} onChange={setGlobalFilter} placeholder="Filter documents..." />
+        </div>
         <IconToggleGroup
           options={viewToggleOptions}
           value={viewMode}
@@ -83,13 +85,7 @@ export const TileDocuments = ({ tileId, setHeaderControls }: TileDocumentsProps)
           </Select>
         )}
       </div>
-    );
-    setHeaderControls(controls);
-  }, [viewMode, sorting, setHeaderControls, setViewMode]);
-
-
-  return (
-    <div style={{ paddingTop: 'var(--spacing-1)' }}>
+      
       {viewMode === 'table' ? (
         <VirtualizedTable tableInstance={table} />
       ) : (

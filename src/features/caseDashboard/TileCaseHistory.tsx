@@ -1,11 +1,17 @@
 // src/features/caseDashboard/TileCaseHistory.tsx
+import { useEffect } from 'react';
+import { useSetAtom } from 'jotai';
 import { TilePlaceholder } from './TilePlaceholder';
-import { TileComponentProps } from './dashboardState';
+import { TileComponentProps, tileMetaFamily } from './dashboardState';
+import { caseHistoryData } from '../../data/fakeData';
 
-// This is a placeholder for the real Case History tile.
-// It also needs to accept the standard props.
-// FIX: Pass props explicitly instead of spreading.
 export const TileCaseHistory = (props: TileComponentProps) => {
-  // In a real implementation, this would contain the same logic as TileDocuments.
-  return <TilePlaceholder tileId={props.tileId} setHeaderControls={props.setHeaderControls} title="Case History" />;
+  const setTileMeta = useSetAtom(tileMetaFamily(props.tileId));
+
+  useEffect(() => {
+    // Report metadata to the global state for the Tile header to use
+    setTileMeta({ count: caseHistoryData.length, isUpdated: false });
+  }, [setTileMeta]);
+
+  return <TilePlaceholder tileId={props.tileId} title="Case History" />;
 };

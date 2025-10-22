@@ -10,7 +10,6 @@
   padding: var(--spacing-4);
 }
 
-/* FIX: Add the necessary styles for react-masonry-css */
 .masonryGrid {
   display: flex;
   margin-left: calc(-1 * var(--spacing-4)); /* gutter size offset */
@@ -31,12 +30,10 @@
   gap: var(--spacing-2);
 }
 
-/* REMOVED: The old controls header styles are no longer needed */
-
 .modalBackdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: hsla(var(--surface-fg-primary-hsl), 0.7);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -73,4 +70,7 @@
 .modalBody {
   flex-grow: 1;
   overflow-y: auto;
+  /* NEW: Ensure the body is a flex container for children to fill height */
+  display: flex;
+  flex-direction: column;
 }

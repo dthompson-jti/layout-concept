@@ -1,6 +1,6 @@
 // src/features/caseDashboard/dashboardState.ts
 import { atom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
+import { atomWithStorage, atomFamily } from 'jotai/utils';
 
 export type DashboardViewMode = 'grid' | 'list';
 export type TileContentViewMode = 'table' | 'cards';
@@ -8,7 +8,6 @@ export type TileContentViewMode = 'table' | 'cards';
 // A common interface for props passed to ALL tile content components.
 export interface TileComponentProps {
   tileId: string;
-  setHeaderControls: (controls: React.ReactNode) => void;
 }
 
 export interface TileConfig {
@@ -16,6 +15,12 @@ export interface TileConfig {
   componentKey: string;
   isCollapsed: boolean;
   isHidden: boolean;
+}
+
+// NEW: A type for the metadata each tile can report about itself.
+export interface TileMeta {
+  count?: number;
+  isUpdated?: boolean;
 }
 
 const defaultLayout: TileConfig[] = [
@@ -38,4 +43,10 @@ export const dashboardViewModeAtom = atomWithStorage<DashboardViewMode>('dashboa
 
 export const tileViewModesAtom = atomWithStorage<Record<string, TileContentViewMode>>('tile-content-view-modes', {});
 
-// REMOVED: The binary headerVisibilityAtom is no longer needed.
+// REFINED: Use atomFamily for performant, per-tile state.
+// Each tile's component will write to its own atom, and each Tile header
+// will read only from its corresponding atom, preventing unnecessary re-renders.
+export const tileMetaFamily = atomFamily(
+  () => atom<TileMeta>({ count: undefined, isUpdated: false }),
+  (a, b) => a === b
+);
